@@ -7,12 +7,14 @@ public class Medico extends Pessoa {
     private String crm;
     private LocalDate dataContratacao;
     private int Salario;
+    private final LocalDate dataCadastro;
 
     public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email,
                   String especialidade, String crm, LocalDate dataContratacao, int Salario) {
         super(nome, cpf, idade, endereco, telefone, email);
         this.especialidade = especialidade;
         this.crm = crm;
+        this.dataCadastro = LocalDate.now();
         this.Salario = Salario;
         this.dataContratacao = dataContratacao;
     }
