@@ -6,7 +6,7 @@ public class PlanoBasico extends PlanoSaude {
         super("Plano Premium", codigo, 300.0, "Completa", 12, true, 
               "Apartamento", true, true, false, 0.0, "Nacional", java.time.LocalDate.now());
     }
-    }
+    
 
     @Override
     public double calcularMensalidade() {
