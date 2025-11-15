@@ -3,6 +3,7 @@ package br.com.sistemaPlanoSaude.model;
 import java.time.LocalDate;
 public class Paciente extends Pessoa {
     private String numeroCarteirinha;
+    private String planoSaude;
     private final LocalDate dataCadastro;
     private boolean possuiDependentes;
     

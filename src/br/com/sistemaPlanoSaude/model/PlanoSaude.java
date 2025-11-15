@@ -11,7 +11,8 @@ public abstract class PlanoSaude {
     private String cobertura;          // Tipo de cobertura (ex: Ambulatorial, Hospitalar, Completa)
     private int limiteConsultas;       // Consultas mensais incluídas
     private boolean ativo;             // Status do plano
-
+    private double valorMensal;
+   
     // Atributos adicionais
     private String tipoAcomodacao;     // Ex: "Enfermaria", "Apartamento"
     private boolean incluiOdontologia; // Cobertura odontológica
@@ -86,6 +87,10 @@ public abstract class PlanoSaude {
 
     public LocalDate getUltimaAtualizacao() { return ultimaAtualizacao; }
     public void setUltimaAtualizacao(LocalDate ultimaAtualizacao) { this.ultimaAtualizacao = ultimaAtualizacao; }
+
+    public double getValorMensal() { return valorMensal; }
+    public void setValorMensal(double valorMensal) { this.valorMensal = valorMensal;}
+    
 
     // Método abstrato (será sobrescrito nas subclasses)
     public abstract double calcularMensalidade();
