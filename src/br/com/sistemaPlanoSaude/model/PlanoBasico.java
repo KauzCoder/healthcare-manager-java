@@ -1,4 +1,5 @@
 package br.com.sistemaPlanoSaude.model;
+<<<<<<< HEAD
 
 import model.enums.Cobertura;
 import model.enums.Abrangencia;
@@ -18,6 +19,12 @@ public class PlanoBasico extends PlanoSaude {
             Abrangencia.ESTADUAL,
             LocalDate.now()
         );
+=======
+public class PlanoBasico extends PlanoSaude {
+
+    public PlanoBasico(String codigo) {
+        super("Plano Basico", codigo, 100.0, "Basica", 5);
+>>>>>>> af1304a (refactor: corrige nomes de classes e construtores entre PlanoBasico e PlanoPremium)
     }
 
     @Override
