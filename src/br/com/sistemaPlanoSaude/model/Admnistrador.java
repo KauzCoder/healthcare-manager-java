@@ -5,16 +5,7 @@ import java.util.List;
 public class Admnistrador {
     private String nome;
     private String codigoAcesso;
-    private String cpf;
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
+    
     private List<Medico> medicos = new ArrayList<>();
     private List<PlanoSaude> planos = new ArrayList<>();
 
