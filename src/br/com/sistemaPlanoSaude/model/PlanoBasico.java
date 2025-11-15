@@ -1,8 +1,8 @@
 package br.com.sistemaPlanoSaude.model;
-public class PlanoPremium extends PlanoSaude {
+public class PlanoBasico extends PlanoSaude {
 
-    public PlanoPremium(String codigo) {
-        super("Plano Premium", codigo, 250.0, "Completa", 10);
+    public PlanoBasico(String codigo) {
+        super("Plano Basico", codigo, 100.0, "Basica", 5);
     }
 
     @Override

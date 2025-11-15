@@ -1,8 +1,8 @@
 package br.com.sistemaPlanoSaude.model;
 
-public class PlanoBasico extends PlanoSaude {
+public class PlanoPremium extends PlanoSaude {
 
-    public PlanoBasico(String codigo) {
+    public PlanoPremium(String codigo) {
         super("Plano Premium", codigo, 300.0, "Completa", 12, true, 
               "Apartamento", true, true, false, 0.0, "Nacional", java.time.LocalDate.now());
     }
