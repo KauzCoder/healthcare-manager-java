@@ -5,9 +5,9 @@ import model.enums.NivelAcesso;
 import model.enums.Sexo;
 public class Paciente extends Pessoa {
     private String numeroCarteirinha;
-    private String planoSaude;
-    private LocalDate dataCadastro;
-
+    private final LocalDate dataCadastro;
+    private boolean possuiDependentes;
+    
 
     //Construtor parametrizado e com uso do super
 

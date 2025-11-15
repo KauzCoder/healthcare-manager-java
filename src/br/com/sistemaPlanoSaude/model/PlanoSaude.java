@@ -9,13 +9,14 @@ import java.util.Random;
 public abstract class PlanoSaude {
 
     // Atributos principais
-    protected  String nomePlano;          // Nome comercial do plano
-    protected  String codigo;             // Identificador único do plano
-    protected  double valorBase;          // Valor base mensal
-    protected  Cobertura cobertura; // Tipo de cobertura (ex: Ambulatorial, Hospitalar, Completa)
-    protected  int limiteConsultas;       // Consultas mensais incluídas
-    protected  boolean ativo;             // Status do plano
-
+    private String nomePlano;          // Nome comercial do plano
+    private String codigo;             // Identificador único do plano
+    private double valorBase;          // Valor base mensal
+    private String cobertura;          // Tipo de cobertura (ex: Ambulatorial, Hospitalar, Completa)
+    private int limiteConsultas;       // Consultas mensais incluídas
+    private boolean ativo;             // Status do plano
+    private double valorMensal;
+   
     // Atributos adicionais
     protected  TipoAcomodacao tipoAcomodacao;     // Ex: "Enfermaria", "Apartamento"
     protected  Abrangencia abrangencia;        // Ex: "Regional", "Nacional", "Internacional"
@@ -67,31 +68,11 @@ public abstract class PlanoSaude {
     public LocalDate getUltimaAtualizacao() { return ultimaAtualizacao; }
     public void setUltimaAtualizacao(LocalDate ultimaAtualizacao) { this.ultimaAtualizacao = ultimaAtualizacao; }
 
-    // método para gerar código de carteirinha baseado no código do plano
-    public String gerarCodigoCarteirinha() {
-        Random random = new Random();
-        int sufixo = random.nextInt(900000000) + 100000000; // gera número aleatório de 9 dígitos
-        return this.codigo + sufixo; // concatena código do plano + número aleatório
-    }
-
-   // Status helpers
-    public boolean estaAtivo() { return this.ativo; }
-
-    public void ativar() {
-        if (!this.ativo) {
-            this.ativo = true;
-            this.ultimaAtualizacao = LocalDate.now();
-        }
-    }
-
-    public void desativar() {
-        if (this.ativo) {
-            this.ativo = false;
-            this.ultimaAtualizacao = LocalDate.now();
-        }
-    }
+    public double getValorMensal() { return valorMensal; }
+    public void setValorMensal(double valorMensal) { this.valorMensal = valorMensal;}
     
-    // Método abstrato — as subclasses são obrigadas a implementar.
+
+    // Método abstrato (será sobrescrito nas subclasses)
     public abstract double calcularMensalidade();
 
     public abstract void descricaoCompleta();
