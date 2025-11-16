@@ -1,5 +1,6 @@
 package br.com.sistemaPlanoSaude.model;
 import model.enums.Especialidades;
+import model.enums.Sexo;
 import model.enums.NivelAcesso;
 
 import java.time.LocalDate;
@@ -11,9 +12,21 @@ public class Medico extends Pessoa {
     private int salario;
     private final LocalDate dataCadastro;
 
-    public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email,
+
+    // ===============================
+    //     Construtores
+    // ===============================
+    public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email, Sexo sexo, String dataDeNascimento,
                 Especialidades especialidade, String crm, LocalDate dataContratacao, int salario, NivelAcesso nivelAcesso) {
-            super(nome, cpf, idade, endereco, telefone, email, NivelAcesso.MEDICO);
+            super( nome, 
+                    cpf, 
+                    idade, 
+                    endereco, 
+                    telefone, 
+                    email, 
+                    sexo, 
+                    dataDeNascimento,
+                    NivelAcesso.MEDICO);
 
         if (crm == null || crm.isBlank()) {
             throw new IllegalArgumentException("CRM não pode ser vazio.");
@@ -26,7 +39,9 @@ public class Medico extends Pessoa {
     this.dataCadastro = LocalDate.now();
     }
 
-    // Getters e Setters
+    // ===============================
+    //        Getters e Setters
+    // ===============================
     public Especialidades getEspecialidade() { return especialidade; }
     public void setEspecialidade(Especialidades especialidade) { this.especialidade = especialidade; }
 
@@ -45,17 +60,27 @@ public class Medico extends Pessoa {
 
     @Override
     public void exibirInfo() {
-        System.out.println("=== Dados do Médico ===");
-        System.out.println("Nome: " + nome);
-        System.out.println("CPF: " + cpf);
-        System.out.println("Idade: " + idade);
-        System.out.println("Endereço: " + endereco);
-        System.out.println("Telefone: " + telefone);
-        System.out.println("Email: " + email);
-        System.out.println("Especialidade: " + especialidade);
-        System.out.println("CRM: " + crm);
-        System.out.println("Data de Contratação: " + dataContratacao);
-        System.out.println("Data de Cadastro no Sistema: " + dataCadastro);
-        System.out.println("Salário: R$ " + salario);
-    }
+        System.out.println("\n===== INFORMAÇÕES DO MÉDICO =====");
+
+        // Dados herdados da classe Pessoa
+        System.out.println("Nome: " + getNome());
+        System.out.println("CPF: " + getCpf());
+        System.out.println("Idade: " + getIdade());
+        System.out.println("Sexo: " + getSexo());
+        System.out.println("Data de Nascimento: " + getDataDeNascimento());
+        System.out.println("Endereço: " + getEndereco());
+        System.out.println("Telefone: " + getTelefone());
+        System.out.println("E-mail: " + getEmail());
+        System.out.println("Nível de acesso: " + getNivelAcesso());
+
+        // Dados exclusivos do médico
+        System.out.println("Especialidade: " + getEspecialidade());
+        System.out.println("CRM: " + getCrm());
+        System.out.println("Data de contratação: " + getDataContratacao());
+        System.out.println("Salário: R$ " + getSalario());
+        System.out.println("Data de cadastro no sistema: " + getDataCadastro());
+
+        System.out.println("=================================\n");
+}
+
 }

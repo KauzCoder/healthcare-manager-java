@@ -5,7 +5,9 @@ import model.enums.Abrangencia;
 import model.enums.TipoAcomodacao;
 import java.time.LocalDate;
 public class PlanoBasico extends PlanoSaude {
-
+    // ===============================
+    //     Construtores
+    // ===============================
    public PlanoBasico(String codigo) {
         super(
             "Plano Basico",
@@ -19,14 +21,35 @@ public class PlanoBasico extends PlanoSaude {
             LocalDate.now()
         );
     }
+    
+        public void darAcesso() {
+            System.out.println("Acesso concedido ao " + getNomePlano() + "! Benefícios ativados.");
+        }
+    
+@Override
+    public double calcularMensalidade() {
+        // Preço fixo ou lógica de cálculo adicional
+        return getValorBase();
+    }
 
     @Override
-    public double calcularMensalidade() {
-        // Exemplo de cálculo com adicional
-        return getValorBase() * 1.3; 
+    public void descricaoCompleta() {
+        System.out.println("\n===== DESCRIÇÃO DO PLANO BASICO =====");
+
+        System.out.println("Plano: " + getNomePlano());
+        System.out.println("Código do plano: " + getCodigo());
+        System.out.println("Status: " + (isAtivo() ? "Ativo" : "Inativo"));
+        System.out.println("Data de criação: " + getDataCriacao());
+        System.out.println("Última atualização: " + getUltimaAtualizacao());
+
+        System.out.println("\n------- Cobertura e Estrutura do Plano -------");
+        System.out.println("Cobertura: " + getCobertura());
+        System.out.println("Tipo de acomodação: " + getTipoAcomodacao());
+        System.out.println("Abrangência: " + getAbrangencia());
+        System.out.println("Limite mensal de consultas: " + getLimiteConsultas());
+        System.out.printf("Valor base: R$ %.2f%n", getValorBase());
+        System.out.printf("Mensalidade final: R$ %.2f%n", calcularMensalidade());
+
+        System.out.println("======================================\n");
     }
-    
-    public void darAcesso() {
-            System.out.println("Acesso concedido ao plano BÁSICO. Bem-vindo ao sistema de pacientes!");
-        }
 }

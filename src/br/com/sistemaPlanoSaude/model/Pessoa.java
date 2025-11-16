@@ -13,10 +13,12 @@ public abstract class Pessoa {
     protected  String email;
     protected  NivelAcesso nivelAcesso;
 
-
+    // ===============================
+    //     Construtores
+    // ===============================
     public Pessoa(String nome, String cpf, int idade, String endereco, 
                   String telefone, String email, Sexo sexo, 
-                  String dataDeNascimento) {
+                  String dataDeNascimento, NivelAcesso nivelAcesso) {
         this.nome = nome;
         this.cpf = cpf;
         this.idade = idade;
@@ -25,12 +27,17 @@ public abstract class Pessoa {
         this.email = email;
         this.sexo = sexo;
         this.dataDeNascimento = dataDeNascimento;
-        this.nivelAcesso = NivelAcesso.INTERESSADO; // padrão
+        this.nivelAcesso = NivelAcesso.INTERESSADO;
     }
 
-    //Getters e Setters
-    public Sexo getSexo(Sexo sexo){ return sexo; }
-    public void setSexo(Sexo sexo) { this.sexo = sexo;}
+     // ===============================
+    //        Getters e Setters
+    // ===============================
+    public Sexo getSexo() { return sexo; }
+    public void setSexo(Sexo sexo) { this.sexo = sexo; }
+
+    public String getDataDeNascimento() { return dataDeNascimento; }
+    public void setDataDeNascimento(String dataDeNascimento) { this.dataDeNascimento = dataDeNascimento; }
     
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
@@ -53,6 +60,8 @@ public abstract class Pessoa {
     public NivelAcesso getNivelAcesso() { return nivelAcesso; }
     public void setNivelAcesso(NivelAcesso nivelAcesso) { this.nivelAcesso = nivelAcesso; }
 
+    
     // Método abstrato — as subclasses são obrigadas a implementar,
     public abstract void exibirInfo();
 }
+

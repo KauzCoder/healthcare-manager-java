@@ -1,6 +1,12 @@
 package br.com.sistemaPlanoSaude.model;
 
 import java.time.LocalDate;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import model.enums.StatusPaciente;
+import model.enums.TipoSanguineo;
 import model.enums.NivelAcesso;
 import model.enums.Sexo;
 public class Paciente extends Pessoa {
@@ -8,14 +14,39 @@ public class Paciente extends Pessoa {
     private String planoSaude;
     private LocalDate dataCadastro;
 
+    private TipoSanguineo tipoSanguineo;
+    private StatusPaciente status;
 
-    //Construtor parametrizado e com uso do super
+    private double peso;
+    private double altura;
+
+    private final List<String> alergias = new ArrayList<>();
+    private final List<String> doencasCronicas = new ArrayList<>();
+    private final List<String> historicoCirurgias = new ArrayList<>();
+    private final List<String> medicamentosEmUso = new ArrayList<>();
+
+
+
+
+    // ===============================
+    //     Construtores
+    // ===============================
 
       public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,
-                    Sexo sexo, String dataDeNascimento, String numeroCarteirinha, String planoSaude) {
-        super(nome, cpf, idade, endereco, telefone, email, sexo, dataDeNascimento, NivelAcesso.PACIENTE);
+                    Sexo sexo, String dataDeNascimento, String numeroCarteirinha, String planoSaude, NivelAcesso nivelAcesso) {
+        super(
+            nome, 
+            cpf, 
+            idade, 
+            endereco, 
+            telefone, 
+            email, 
+            sexo, 
+            dataDeNascimento, 
+            NivelAcesso.PACIENTE
+        );
 
-    if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
+        if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
             throw new IllegalArgumentException("Número da carteirinha não pode ser vazio.");
         }
         if (planoSaude == null || planoSaude.trim().isEmpty()) {
@@ -25,9 +56,14 @@ public class Paciente extends Pessoa {
         this.numeroCarteirinha = numeroCarteirinha;
         this.planoSaude = planoSaude;
         this.dataCadastro = LocalDate.now();
+        this.status = StatusPaciente.ATIVO;
     }
 
-    // Getters e Setters
+
+     // ===============================
+    //        Getters e Setters
+    // ===============================
+
     public String getNumeroCarteirinha() { return numeroCarteirinha; }
     public void setNumeroCarteirinha(String numeroCarteirinha) {
         if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
@@ -45,4 +81,94 @@ public class Paciente extends Pessoa {
     }
 
     public LocalDate getDataCadastro() { return dataCadastro; }
+
+    public double getPeso() {return peso;}
+    public void setPeso(double peso) {this.peso = peso;}
+
+    public double getAltura() {return altura;}
+    public void setAltura(double altura) {this.altura = altura;}
+
+    public StatusPaciente getStatus() {return status;}
+    public void setStatus(StatusPaciente status) {this.status = status;}
+
+    public TipoSanguineo getTipoSanguineo() {return tipoSanguineo; }
+    public void setTipoSanguineo(TipoSanguineo tipoSanguineo) {this.tipoSanguineo = tipoSanguineo;}
+
+    public List<String> getAlergias() {return alergias;}
+
+    public List<String> getDoencasCronicas() {return doencasCronicas;}
+
+    public List<String> getHistoricoCirurgias() {return historicoCirurgias;}
+
+    public List<String> getMedicamentosEmUso() { return medicamentosEmUso; }
+
+    
+
+      // ===============================
+    //      Métodos de cálculo
+    // ===============================
+
+
+    public double calcularIMC() {
+        if (altura <= 0) return 0;
+        return peso / (altura * altura);
+    }
+
+
+      // ===============================
+    //       Métodos auxiliares
+    // ===============================
+
+    public void atualizarEndereco(String novoEndereco) {
+        super.setEndereco(novoEndereco);
+    }
+
+    public void adicionarAlergia(String alergia) {
+        if (alergia != null && !alergias.contains(alergia)) {
+            alergias.add(alergia);
+        }
+    }
+
+    public void adicionarMedicamento(String medicamento) {
+        if (medicamento != null && !medicamentosEmUso.contains(medicamento)) {
+            medicamentosEmUso.add(medicamento);
+        }
+    }
+
+
+    @Override
+    public void exibirInfo(){
+    System.out.println("\n===== INFORMAÇÕES DO PACIENTE =====");
+
+    System.out.println("Nome: " + getNome());
+    System.out.println("CPF: " + getCpf());
+    System.out.println("Data de nascimento: " + getDataDeNascimento());
+    System.out.println("Sexo: " + getSexo());
+    System.out.println("Endereço: " + getEndereco());
+    System.out.println("Telefone: " + getTelefone());
+    System.out.println("E-mail: " + getEmail());
+    System.out.println("Nível de acesso: " + getNivelAcesso());
+
+    System.out.println("\n--- Dados do Paciente ---");
+    System.out.println("Número da carteirinha: " + getNumeroCarteirinha());
+    System.out.println("Plano de saúde: " + getPlanoSaude());
+    System.out.println("Data de cadastro: " + getDataCadastro());
+    System.out.println("Status: " + getStatus());
+    System.out.println("Tipo sanguíneo: " + getTipoSanguineo());
+
+    System.out.println("\n--- Dados de Saúde ---");
+    System.out.println("Peso: " + getPeso() + " kg");
+    System.out.println("Altura: " + getAltura() + " m");
+    System.out.println("IMC: " + String.format("%.2f", calcularIMC()));
+
+    System.out.println("\n--- Condições e Histórico ---");
+    System.out.println("Alergias: " + (alergias.isEmpty() ? "Nenhuma" : alergias));
+    System.out.println("Doenças Crônicas: " + (doencasCronicas.isEmpty() ? "Nenhuma" : doencasCronicas));
+    System.out.println("Histórico de Cirurgias: " + (historicoCirurgias.isEmpty() ? "Nenhum" : historicoCirurgias));
+    System.out.println("Medicamentos em Uso: " + (medicamentosEmUso.isEmpty() ? "Nenhum" : medicamentosEmUso));
+
+    System.out.println("====================================\n");
+    }
+
+
 }

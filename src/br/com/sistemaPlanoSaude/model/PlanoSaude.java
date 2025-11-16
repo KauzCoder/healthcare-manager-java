@@ -10,25 +10,26 @@ public abstract class PlanoSaude {
 
     // Atributos principais
     protected  String nomePlano;          // Nome comercial do plano
-    protected  String codigo;             // Identificador único do plano
+    protected final String codigo;             // Identificador imutavel único do plano
     protected  double valorBase;          // Valor base mensal
     protected  Cobertura cobertura; // Tipo de cobertura (ex: Ambulatorial, Hospitalar, Completa)
     protected  int limiteConsultas;       // Consultas mensais incluídas
     protected  boolean ativo;             // Status do plano
 
-    // Atributos adicionais
     protected  TipoAcomodacao tipoAcomodacao;     // Ex: "Enfermaria", "Apartamento"
     protected  Abrangencia abrangencia;        // Ex: "Regional", "Nacional", "Internacional"
     protected  LocalDate dataCriacao;     // Data em que o plano foi criado
     protected  LocalDate ultimaAtualizacao; // Última modificação de dados\
-
-    // Construtor
-    public PlanoSaude(String nomePlano, String codigo, double valorBase, 
+    
+    // ===============================
+    //     Construtores
+    // ===============================
+    public PlanoSaude(String nomePlano, String codigoPrefixo, double valorBase, 
                     Cobertura cobertura, int limiteConsultas, boolean ativo,
                     TipoAcomodacao tipoAcomodacao, Abrangencia abrangencia, LocalDate dataCriacao) {
 
         this.nomePlano = nomePlano;
-        this.codigo = gerarCodigoCarteirinha();
+        this.codigo = gerarCodigoCarteirinha(codigoPrefixo);
         this.valorBase = valorBase;
         this.cobertura = cobertura;
         this.limiteConsultas = limiteConsultas;
@@ -39,9 +40,13 @@ public abstract class PlanoSaude {
         this.ultimaAtualizacao = LocalDate.now();
     }
 
-    // Getters e Setters (Encapsulamento)
+     // ===============================
+    //        Getters e Setters
+    // ===============================
     public String getNomePlano() { return nomePlano; }
     public void setNomePlano(String nomePlano) { this.nomePlano = nomePlano; }
+    
+    public String getCodigo() { return codigo; }
 
     public TipoAcomodacao getTipoAcomodacao() { return tipoAcomodacao; }
     public void setTipoAcomodacao(TipoAcomodacao tipoAcomodacao) { this.tipoAcomodacao = tipoAcomodacao; }
@@ -68,11 +73,12 @@ public abstract class PlanoSaude {
     public void setUltimaAtualizacao(LocalDate ultimaAtualizacao) { this.ultimaAtualizacao = ultimaAtualizacao; }
 
     // método para gerar código de carteirinha baseado no código do plano
-    public String gerarCodigoCarteirinha() {
+    private String gerarCodigoCarteirinha(String codigoBase) {
         Random random = new Random();
-        int sufixo = random.nextInt(900000000) + 100000000; // gera número aleatório de 9 dígitos
-        return this.codigo + sufixo; // concatena código do plano + número aleatório
+        int sufixo = random.nextInt(900000000) + 100000000;
+        return codigoBase + sufixo;
     }
+
 
    // Status helpers
     public boolean estaAtivo() { return this.ativo; }
@@ -93,6 +99,5 @@ public abstract class PlanoSaude {
     
     // Método abstrato — as subclasses são obrigadas a implementar.
     public abstract double calcularMensalidade();
-
     public abstract void descricaoCompleta();
 }
