@@ -135,6 +135,20 @@ public class Paciente extends Pessoa {
         }
     }
 
+    public void adicionarDoencaCronica(String doencaCronica) {
+        if (doencaCronica != null && !doencasCronicas.contains(doencaCronica)) {
+            doencasCronicas.add(doencaCronica);
+        }
+    }
+
+    public void adicionarHistoricoCirurgia(String cirurgia) {
+        if (cirurgia != null && !historicoCirurgias.contains(cirurgia)) {
+            historicoCirurgias.add(cirurgia);
+        }
+    }
+
+    //O método contains() é utilizado para verificar se um elemento específico já existe em uma coleção (como uma lista, conjunto, etc.). No contexto do código, o contains() está sendo utilizado para garantir que um item (como uma alergia, doença crônica ou medicamento) não seja adicionado novamente à lista, evitando duplicações.
+
 
     @Override
     public void exibirInfo(){
