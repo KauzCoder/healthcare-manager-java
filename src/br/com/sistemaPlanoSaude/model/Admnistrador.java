@@ -81,6 +81,7 @@ public class Admnistrador extends Pessoa {
     }
 
     public void bloquearUsuario(String cpf) {
+        
         System.out.println("Usuário bloqueado: " + cpf);
     }
 

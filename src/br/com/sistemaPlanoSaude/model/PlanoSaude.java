@@ -97,7 +97,8 @@ public abstract class PlanoSaude {
         }
     }
     
-    // Método abstrato — as subclasses são obrigadas a implementar.
+
+    // Método abstrato (será sobrescrito nas subclasses)
     public abstract double calcularMensalidade();
     public abstract void descricaoCompleta();
 }
