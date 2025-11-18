@@ -61,7 +61,9 @@ public abstract class Pessoa {
     public void setNivelAcesso(NivelAcesso nivelAcesso) { this.nivelAcesso = nivelAcesso; }
 
     
-    // Método abstrato — as subclasses são obrigadas a implementar,
+    // ===============================
+    //        Método abstrato 
+    // ===============================
     public abstract void exibirInfo();
 }
 
