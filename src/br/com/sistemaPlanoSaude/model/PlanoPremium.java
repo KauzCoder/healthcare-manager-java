@@ -1,5 +1,11 @@
 package br.com.sistemaPlanoSaude.model;
 
+import model.enums.Cobertura;
+import model.enums.Abrangencia;
+import model.enums.TipoAcomodacao;
+
+import java.time.LocalDate;
+
 public class PlanoPremium extends PlanoSaude {
 
     private boolean atendimentoDomiciliar;
