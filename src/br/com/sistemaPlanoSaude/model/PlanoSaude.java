@@ -80,7 +80,9 @@ public abstract class PlanoSaude {
     }
 
 
-   // Status helpers
+   // ===============================
+    //        Status Helpers 
+    // ===============================
     public boolean estaAtivo() { return this.ativo; }
 
     public void ativar() {
