@@ -1,0 +1,167 @@
+package br.com.sistemaPlanoSaude.model;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import model.enums.NivelAcesso;
+import model.enums.Sexo;    
+import model.enums.StatusPaciente;
+
+public class Administrador extends Pessoa {
+    private String senhaHash;
+    private final LocalDate dataCadastro;
+    private LocalDate ultimoLogin; 
+    
+    
+    private final List<Medico> medicos = new ArrayList<>();
+    private final List<Paciente> pacientes = new ArrayList<>();
+
+
+
+    // ===============================
+    //     Construtores
+    // ===============================
+    public Administrador(String nome, String cpf, int idade, String endereco, String telefone, String email, Sexo sexo, String dataDeNascimento,
+                        NivelAcesso nivelAcesso, String senhaHash, LocalDate dataCadastro, LocalDate ultimoLogin){
+            super(
+                nome, 
+                cpf, 
+                idade, 
+                endereco, 
+                telefone, 
+                email, 
+                sexo, 
+                dataDeNascimento, 
+                NivelAcesso.ADMINISTRADOR
+                );
+
+                this.senhaHash = senhaHash;
+                this.dataCadastro = dataCadastro != null ? dataCadastro : LocalDate.now();
+                if (ultimoLogin != null) {
+                    this.ultimoLogin = ultimoLogin;
+                } else {
+                    atualizarUltimoLogin();
+                }
+    }
+    
+    public String getSenhaHash(){ return senhaHash; }
+    public void setSenhaHash(String senhaHash) { this.senhaHash = senhaHash;}
+
+    public LocalDate getDataCadastro() { return dataCadastro; }
+
+    public LocalDate getUltimoLogin(){ return ultimoLogin; }
+
+    private void atualizarUltimoLogin() {
+        this.ultimoLogin = LocalDate.now();
+    }
+
+
+
+    // ===============================
+    //       Métodos auxiliares
+    // ===============================
+
+
+    //Metodos para alterar medico
+    public void cadastrarMedico(Medico m){
+        medicos.add(m);
+        System.out.println("Plano de saúde cadastrado: " + m.getNome());
+    }
+    public void listarMedicos(){
+        System.out.println("\n--- Lista de Médicos ---");
+        for (Medico m : medicos){
+            System.out.println(m);
+        }
+    }
+    public void removerMedico(String crm) {
+        medicos.removeIf(m -> m.getCrm().equals(crm));
+        System.out.println("Médico removido: " + crm);
+    }
+
+    // ===============================
+    //   Métodos de Controle de Paciente
+    // ===============================
+
+    public void registrarLogin() {
+        atualizarUltimoLogin();
+    }
+
+    public void criarPaciente(Paciente p) {
+        pacientes.add(p);
+        System.out.println("Paciente criado: " + p.getNome());
+    }
+
+    public void bloquearPaciente(String numeroCarteirinha) {
+        Paciente p = buscarPacientePorCarteirinha(numeroCarteirinha);
+
+        if (p != null) {
+            p.setStatus(StatusPaciente.BLOQUEADO);
+            System.out.println("Paciente bloqueado: " + numeroCarteirinha);
+        } else {
+            System.out.println("Paciente não encontrado!");
+        }
+    }
+
+    public void desbloquearPaciente(String numeroCarteirinha) {
+        Paciente p = buscarPacientePorCarteirinha(numeroCarteirinha);
+
+        if (p != null) {
+            p.setStatus(StatusPaciente.ATIVO);
+            System.out.println("Paciente desbloqueado: " + numeroCarteirinha);
+        } else {
+            System.out.println("Paciente não encontrado!");
+        }
+    }
+
+    public void alterarPermissoes(String numeroCarteirinha, NivelAcesso nivel) {
+        Paciente p = buscarPacientePorCarteirinha(numeroCarteirinha);
+
+        if (p != null) {
+            p.setNivelAcesso(nivel);
+            System.out.println("Permissão alterada para: " + nivel);
+        } else {
+            System.out.println("Paciente não encontrado!");
+        }
+    }
+
+    public void resetarSenhaPaciente(String numeroCarteirinha) {
+        Paciente p = buscarPacientePorCarteirinha(numeroCarteirinha);
+
+        if (p != null) {
+            // Método setSenhaHash não existe em Paciente — apenas sinalizamos o reset aqui.
+            System.out.println("Senha resetada (simulada) para o paciente da carteirinha: " + numeroCarteirinha);
+        } else {
+            System.out.println("Paciente não encontrado!");
+        }
+    }
+
+
+
+    private Paciente buscarPacientePorCarteirinha(String codigoCarteirinha) {
+    for (Paciente p : pacientes) {
+        if (p.getNumeroCarteirinha().equals(codigoCarteirinha)) {
+            return p;
+        }
+    }
+    return null;
+}
+
+
+
+    @Override
+    public void exibirInfo() {
+        System.out.println("\n===== INFORMAÇÕES DO MÉDICO =====");
+
+        // Dados herdados da classe Pessoa
+        System.out.println("Nome: " + getNome());
+        System.out.println("CPF: " + getCpf());
+        System.out.println("Idade: " + getIdade());
+        System.out.println("Sexo: " + getSexo());
+        System.out.println("Data de Nascimento: " + getDataDeNascimento());
+        System.out.println("Endereço: " + getEndereco());
+        System.out.println("Telefone: " + getTelefone());
+        System.out.println("E-mail: " + getEmail());
+        System.out.println("Nível de acesso: " + getNivelAcesso());
+
+        System.out.println("=================================\n");
+}
+}
