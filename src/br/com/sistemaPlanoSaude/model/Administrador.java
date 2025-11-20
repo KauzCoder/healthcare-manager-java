@@ -14,6 +14,8 @@ public class Administrador extends Pessoa {
     
     private final List<Medico> medicos = new ArrayList<>();
     private final List<Paciente> pacientes = new ArrayList<>();
+    private final List<Consulta> consultas = new ArrayList<>();
+
 
 
 
@@ -76,6 +78,31 @@ public class Administrador extends Pessoa {
         medicos.removeIf(m -> m.getCrm().equals(crm));
         System.out.println("Médico removido: " + crm);
     }
+
+    
+    // ===============================
+    //   Métodos de consulta 
+    // ===============================
+
+    public List<Consulta> consultarConsultaPorCPF(String cpf) { 
+    List<Consulta> consultasDoPaciente = new ArrayList<>();
+
+    for (Consulta c : consultas) {
+        if (c.getPaciente().getCpf().equals(cpf)) {
+            consultasDoPaciente.add(c);
+        }
+    }
+
+    if (consultasDoPaciente.isEmpty()) {
+        System.out.println("Nenhuma consulta encontrada para o CPF: " + cpf);
+    }
+
+    return consultasDoPaciente; 
+}
+
+
+
+
 
     // ===============================
     //   Métodos de Controle de Paciente
@@ -144,6 +171,56 @@ public class Administrador extends Pessoa {
     }
     return null;
 }
+
+    // ===============================
+    //   Métodos de Gestão de Preços (Planos)
+    // ===============================
+
+    
+    /**
+     * Atualiza o valor base de um plano para um novo valor absoluto.
+     */
+    public void atualizarPrecoPlano(PlanoSaude plano, double novoValor) {
+        if (plano == null) {
+            System.out.println("Plano inválido.");
+            return;
+        }
+        double antigo = plano.getValorBase();
+        plano.setValorBase(novoValor);
+        plano.setUltimaAtualizacao(java.time.LocalDate.now());
+        System.out.printf("Preço do plano %s (%s) alterado de R$ %.2f para R$ %.2f%n",
+                plano.getNomePlano(), plano.getCodigo(), antigo, novoValor);
+    }
+
+    /**
+     * Aplica um reajuste percentual (por exemplo 10.0 = +10%) sobre o valor base do plano.
+     * Percentual pode ser negativo para redução.
+     */
+    public void aplicarReajustePercentual(PlanoSaude plano, double percentual) {
+        if (plano == null) {
+            System.out.println("Plano inválido.");
+            return;
+        }
+        double antigo = plano.getValorBase();
+        double novo = antigo * (1.0 + percentual / 100.0);
+        plano.setValorBase(novo);
+        plano.setUltimaAtualizacao(java.time.LocalDate.now());
+        System.out.printf("Reajuste de %.2f%% aplicado ao plano %s: R$ %.2f -> R$ %.2f%n",
+                percentual, plano.getNomePlano(), antigo, novo);
+    }
+
+    /**
+     * Aplica reajuste percentual a uma lista de planos.
+     */
+    public void aplicarReajusteEmLista(List<PlanoSaude> planos, double percentual) {
+        if (planos == null || planos.isEmpty()) {
+            System.out.println("Nenhum plano informado para reajuste.");
+            return;
+        }
+        for (PlanoSaude p : planos) {
+            aplicarReajustePercentual(p, percentual);
+        }
+    }
 
 
 
