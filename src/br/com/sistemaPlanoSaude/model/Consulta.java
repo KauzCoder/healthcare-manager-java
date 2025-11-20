@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import br.com.sistemaPlanoSaude.model.enums.ConsultaStatus;
 import java.util.Date;
 import java.time.ZoneId;
-import br.com.sistemaPlanoSaude.model.Horario;
-import br.com.sistemaPlanoSaude.model.Medico;
-import br.com.sistemaPlanoSaude.model.Paciente;
 
 public class Consulta {    
 

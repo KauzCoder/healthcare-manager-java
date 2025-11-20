@@ -49,5 +49,14 @@ public class Horario {
                "Paciente: " + (paciente != null ? paciente.getNome() : "Nenhum");
     }
 
+    // Getter e setter para paciente
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
 
 }
