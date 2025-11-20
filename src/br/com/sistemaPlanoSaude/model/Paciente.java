@@ -10,6 +10,9 @@ import model.enums.TipoSanguineo;
 import model.enums.NivelAcesso;
 import model.enums.Sexo;
 public class Paciente extends Pessoa {
+    // Referência ao plano de saúde do paciente
+    private PlanoSaude plano;
+
     private String numeroCarteirinha;
     private String planoSaude;
     private LocalDate dataCadastro;
@@ -26,14 +29,12 @@ public class Paciente extends Pessoa {
     private final List<String> medicamentosEmUso = new ArrayList<>();
 
 
-
-
     // ===============================
     //     Construtores
     // ===============================
 
       public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,
-                    Sexo sexo, String dataDeNascimento, String numeroCarteirinha, String planoSaude, NivelAcesso nivelAcesso) {
+                    Sexo sexo, String dataDeNascimento, String numeroCarteirinha, String planoSaude) {
         super(
             nome, 
             cpf, 
@@ -46,7 +47,7 @@ public class Paciente extends Pessoa {
             NivelAcesso.PACIENTE
         );
 
-        if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
+    if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
             throw new IllegalArgumentException("Número da carteirinha não pode ser vazio.");
         }
         if (planoSaude == null || planoSaude.trim().isEmpty()) {
@@ -59,11 +60,7 @@ public class Paciente extends Pessoa {
         this.status = StatusPaciente.ATIVO;
     }
 
-
-     // ===============================
-    //        Getters e Setters
-    // ===============================
-
+    // Getters e Setters
     public String getNumeroCarteirinha() { return numeroCarteirinha; }
     public void setNumeroCarteirinha(String numeroCarteirinha) {
         if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
@@ -102,7 +99,34 @@ public class Paciente extends Pessoa {
 
     public List<String> getMedicamentosEmUso() { return medicamentosEmUso; }
 
-    
+
+
+
+    // ===============================
+    //      Métodos de Plano de Saúde
+    // ===============================
+
+
+    /**
+     * Vincula um plano de saúde ao paciente.
+     */
+    public void vincularPlano(PlanoSaude plano) {
+        this.plano = plano;
+    }
+
+    /**
+     * Remove o vínculo do plano de saúde do paciente.
+     */
+    public void desvincularPlano() {
+        this.plano = null;
+    }
+
+    /**
+     * Retorna o plano de saúde vinculado ao paciente.
+     */
+    public PlanoSaude getPlano() {
+        return plano;
+    }
 
       // ===============================
     //      Métodos de cálculo

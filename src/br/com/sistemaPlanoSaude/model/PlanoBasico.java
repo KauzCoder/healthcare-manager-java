@@ -8,10 +8,10 @@ public class PlanoBasico extends PlanoSaude {
     // ===============================
     //     Construtores
     // ===============================
-   public PlanoBasico(String codigo) {
+   public PlanoBasico() {
         super(
             "Plano Basico",
-            codigo,
+            "BASICO123",
             1500.0,
             Cobertura.AMBULATORIAL,
             10,

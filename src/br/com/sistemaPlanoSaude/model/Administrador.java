@@ -35,7 +35,7 @@ public class Administrador extends Pessoa {
                 dataDeNascimento, 
                 NivelAcesso.ADMINISTRADOR
                 );
-
+                     
                 this.senhaHash = senhaHash;
                 this.dataCadastro = dataCadastro != null ? dataCadastro : LocalDate.now();
                 if (ultimoLogin != null) {
@@ -47,22 +47,30 @@ public class Administrador extends Pessoa {
     
     public String getSenhaHash(){ return senhaHash; }
     public void setSenhaHash(String senhaHash) { this.senhaHash = senhaHash;}
-
+    
     public LocalDate getDataCadastro() { return dataCadastro; }
 
     public LocalDate getUltimoLogin(){ return ultimoLogin; }
-
+    
     private void atualizarUltimoLogin() {
         this.ultimoLogin = LocalDate.now();
     }
+    
+    
 
+    // ===============================
+    //       Métodos automaticos 
+    // ===============================
 
-
+    public void registrarLogin() {
+        atualizarUltimoLogin();
+    }
+    
     // ===============================
     //       Métodos auxiliares
     // ===============================
-
-
+    
+    
     //Metodos para alterar medico
     public void cadastrarMedico(Medico m){
         medicos.add(m);
@@ -108,9 +116,6 @@ public class Administrador extends Pessoa {
     //   Métodos de Controle de Paciente
     // ===============================
 
-    public void registrarLogin() {
-        atualizarUltimoLogin();
-    }
 
     public void criarPaciente(Paciente p) {
         pacientes.add(p);
