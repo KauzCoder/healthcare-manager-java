@@ -1,7 +1,7 @@
 package br.com.sistemaPlanoSaude.model;
-import model.enums.Especialidades;
-import model.enums.Sexo;
-import model.enums.NivelAcesso;
+import br.com.sistemaPlanoSaude.model.enums.Especialidades;
+import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 
 import java.time.LocalDate;
 public class Medico extends Pessoa {

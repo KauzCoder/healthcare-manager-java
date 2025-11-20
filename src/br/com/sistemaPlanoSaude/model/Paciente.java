@@ -5,10 +5,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.enums.StatusPaciente;
-import model.enums.TipoSanguineo;
-import model.enums.NivelAcesso;
-import model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.enums.StatusPaciente;
+import br.com.sistemaPlanoSaude.model.enums.TipoSanguineo;
+import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
+import br.com.sistemaPlanoSaude.model.enums.Sexo;
 public class Paciente extends Pessoa {
     // Referência ao plano de saúde do paciente
     private PlanoSaude plano;
@@ -195,9 +195,9 @@ public class Paciente extends Pessoa {
     System.out.println("Tipo sanguíneo: " + getTipoSanguineo());
 
     System.out.println("\n--- Dados de Saúde ---");
-    System.out.println("Peso: " + getPeso() + " kg");
-    System.out.println("Altura: " + getAltura() + " m");
-    System.out.println("IMC: " + String.format("%.2f", calcularIMC()));
+        System.out.println("Peso: " + (getPeso() > 0 ? String.format("%.2f kg", getPeso()) : "N/A"));
+        System.out.println("Altura: " + (getAltura() > 0 ? String.format("%.2f m", getAltura()) : "N/A"));
+        System.out.println("IMC: " + (getAltura() > 0 && getPeso() > 0 ? String.format("%.2f", calcularIMC()) : "N/A"));
 
     System.out.println("\n--- Condições e Histórico ---");
     System.out.println("Alergias: " + (alergias.isEmpty() ? "Nenhuma" : alergias));

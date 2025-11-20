@@ -1,4 +1,4 @@
-package model.enums;
+package br.com.sistemaPlanoSaude.model.enums;
 
 public enum TipoSanguineo {
     A_POS, A_NEG,

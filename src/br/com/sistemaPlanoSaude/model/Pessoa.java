@@ -1,6 +1,6 @@
 package br.com.sistemaPlanoSaude.model;
-import model.enums.Sexo;
-import model.enums.NivelAcesso;
+import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 
 public abstract class Pessoa {
     protected  String nome;
@@ -27,7 +27,7 @@ public abstract class Pessoa {
         this.email = email;
         this.sexo = sexo;
         this.dataDeNascimento = dataDeNascimento;
-        this.nivelAcesso = NivelAcesso.INTERESSADO;
+        this.nivelAcesso = (nivelAcesso != null) ? nivelAcesso : NivelAcesso.INTERESSADO;
     }
 
      // ===============================

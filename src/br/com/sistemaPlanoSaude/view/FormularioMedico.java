@@ -1,6 +1,9 @@
 package br.com.sistemaPlanoSaude.view;
 
 import br.com.sistemaPlanoSaude.model.Medico;
+import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.enums.Especialidades;
+import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import java.util.Scanner;
 import java.time.LocalDate;
 
@@ -29,8 +32,25 @@ public class FormularioMedico {
         System.out.print("E-mail: ");
         String email = scanner.nextLine();
 
-        System.out.print("Especialidade: ");
-        String especialidade = scanner.nextLine();
+        System.out.print("Sexo (MASCULINO/FEMININO): ");
+        Sexo sexo;
+        try {
+            sexo = Sexo.valueOf(scanner.nextLine().trim().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            sexo = Sexo.MASCULINO;
+        }
+
+        System.out.print("Data de Nascimento (dd/MM/yyyy): ");
+        String dataDeNascimento = scanner.nextLine().trim();
+
+        System.out.print("Especialidade (CARDIOLOGIA/PEDIATRIA/...): ");
+        String especialidade = scanner.nextLine().trim();
+        Especialidades especialidadeEnum;
+        try {
+            especialidadeEnum = Especialidades.valueOf(especialidade.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            especialidadeEnum = Especialidades.CARDIOLOGIA;
+        }
 
         System.out.print("CRM: ");
         String crm = scanner.nextLine();
@@ -49,10 +69,13 @@ public class FormularioMedico {
             endereco,
             telefone,
             email,
-            especialidade,
+            sexo,
+            dataDeNascimento,
+            especialidadeEnum,
             crm,
             dataContratacao,
-            salario
+            salario,
+            NivelAcesso.MEDICO
         );
 
         System.out.println("\n✅ Médico cadastrado com sucesso!");

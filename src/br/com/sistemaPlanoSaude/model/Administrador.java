@@ -2,9 +2,9 @@ package br.com.sistemaPlanoSaude.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import model.enums.NivelAcesso;
-import model.enums.Sexo;    
-import model.enums.StatusPaciente;
+import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
+import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.enums.StatusPaciente;
 
 public class Administrador extends Pessoa {
     private String senhaHash;

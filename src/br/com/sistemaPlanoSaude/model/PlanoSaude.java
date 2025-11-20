@@ -1,7 +1,7 @@
 package br.com.sistemaPlanoSaude.model;
-import model.enums.Cobertura;
-import model.enums.Abrangencia;
-import model.enums.TipoAcomodacao;
+import br.com.sistemaPlanoSaude.model.enums.Cobertura;
+import br.com.sistemaPlanoSaude.model.enums.Abrangencia;
+import br.com.sistemaPlanoSaude.model.enums.TipoAcomodacao;
 
 import java.time.LocalDate;
 import java.util.Random;
