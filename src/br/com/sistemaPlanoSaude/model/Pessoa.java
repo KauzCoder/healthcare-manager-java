@@ -1,12 +1,15 @@
 package br.com.sistemaPlanoSaude.model;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
+
+import java.time.LocalDate;
+
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 
 public abstract class Pessoa {
     protected  String nome;
     protected  String cpf;
     protected Sexo sexo;
-    protected String dataDeNascimento;
+    protected LocalDate dataDeNascimento;
     protected  int idade;
     protected  String endereco;
     protected  String telefone;
@@ -18,7 +21,7 @@ public abstract class Pessoa {
     // ===============================
     public Pessoa(String nome, String cpf, int idade, String endereco, 
                   String telefone, String email, Sexo sexo, 
-                  String dataDeNascimento, NivelAcesso nivelAcesso) {
+                  LocalDate dataDeNascimento, NivelAcesso nivelAcesso) {
         this.nome = nome;
         this.cpf = cpf;
         this.idade = idade;
@@ -36,8 +39,8 @@ public abstract class Pessoa {
     public Sexo getSexo() { return sexo; }
     public void setSexo(Sexo sexo) { this.sexo = sexo; }
 
-    public String getDataDeNascimento() { return dataDeNascimento; }
-    public void setDataDeNascimento(String dataDeNascimento) { this.dataDeNascimento = dataDeNascimento; }
+    public LocalDate getDataDeNascimento() { return dataDeNascimento; }
+    public void setDataDeNascimento(LocalDate dataDeNascimento) { this.dataDeNascimento = dataDeNascimento; }
     
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
@@ -60,7 +63,8 @@ public abstract class Pessoa {
     public NivelAcesso getNivelAcesso() { return nivelAcesso; }
     public void setNivelAcesso(NivelAcesso nivelAcesso) { this.nivelAcesso = nivelAcesso; }
 
-    
+
+
     // ===============================
     //        Método abstrato 
     // ===============================

@@ -1,4 +1,4 @@
-package br.com.sistemaPlanoSaude.view;
+package br.com.sistemaPlanoSaude.view.formularios;
 
 import br.com.sistemaPlanoSaude.model.Medico;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
@@ -6,6 +6,7 @@ import br.com.sistemaPlanoSaude.model.enums.Especialidades;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class FormularioMedico {
 
@@ -41,7 +42,9 @@ public class FormularioMedico {
         }
 
         System.out.print("Data de Nascimento (dd/MM/yyyy): ");
-        String dataDeNascimento = scanner.nextLine().trim();
+        String dataDeNascimentoStr = scanner.nextLine().trim();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dataDeNascimento = LocalDate.parse(dataDeNascimentoStr, fmt);
 
         System.out.print("Especialidade (CARDIOLOGIA/PEDIATRIA/...): ");
         String especialidade = scanner.nextLine().trim();

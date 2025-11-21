@@ -16,7 +16,7 @@ public class Medico extends Pessoa {
     // ===============================
     //     Construtores
     // ===============================
-    public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email, Sexo sexo, String dataDeNascimento,
+    public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email, Sexo sexo, LocalDate dataDeNascimento,
                 Especialidades especialidade, String crm, LocalDate dataContratacao, int salario, NivelAcesso nivelAcesso) {
             super( nome, 
                     cpf, 

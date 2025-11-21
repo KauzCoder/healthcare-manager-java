@@ -1,4 +1,11 @@
-# Pacote view
+# 🖥️ View
 
-Responsável pela **interface com o usuário**, exibindo menus e recebendo entradas no console.  
-Mantém a separação entre apresentação e lógica de negócio.
+Contém toda a parte de interação com o usuário.
+
+Aqui ficam os formulários, menus e interfaces visuais (mesmo em console).
+
+Esta camada:
+✅ Recebe dados do usuário
+✅ Exibe informações
+✅ Envia comandos para o Model
+❌ Não contém regras de negócio

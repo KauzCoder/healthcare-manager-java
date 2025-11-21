@@ -33,8 +33,7 @@ public class Paciente extends Pessoa {
     //     Construtores
     // ===============================
 
-      public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,
-                    Sexo sexo, String dataDeNascimento, String numeroCarteirinha, String planoSaude) {
+      public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento, String numeroCarteirinha, String planoSaude) {
         super(
             nome, 
             cpf, 
