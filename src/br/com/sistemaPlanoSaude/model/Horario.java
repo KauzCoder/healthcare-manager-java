@@ -49,6 +49,29 @@ public class Horario {
                "Paciente: " + (paciente != null ? paciente.getNome() : "Nenhum");
     }
 
+    // Getters e setters para paciente
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+    // equals/hashCode baseados na data (úteis para contains/remove por valor)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Horario horario = (Horario) o;
+        return data != null ? data.equals(horario.data) : horario.data == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return data != null ? data.hashCode() : 0;
+    }
+
     // Getter e setter para paciente
     public Paciente getPaciente() {
         return paciente;
