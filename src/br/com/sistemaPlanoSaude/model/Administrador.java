@@ -22,7 +22,7 @@ public class Administrador extends Pessoa {
     // ===============================
     //     Construtores
     // ===============================
-    public Administrador(String nome, String cpf, int idade, String endereco, String telefone, String email, Sexo sexo, String dataDeNascimento,
+    public Administrador(String nome, String cpf, int idade, String endereco, String telefone, String email, Sexo sexo, LocalDate dataDeNascimento,
                         NivelAcesso nivelAcesso, String senhaHash, LocalDate dataCadastro, LocalDate ultimoLogin){
             super(
                 nome, 
