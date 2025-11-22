@@ -170,4 +170,20 @@ public final class ValidacaoUtil {
         return java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "");
     }
+// ===============================
+    // Validação de CRM 
+    // ===============================
+public static boolean validarCRM(String crm) {
+
+    if (crm == null) return false;
+
+    return crm.matches("^[0-9]{4,6}-[A-Z]{2}$");
+
+}
+
+
+
+
+
+
 }
