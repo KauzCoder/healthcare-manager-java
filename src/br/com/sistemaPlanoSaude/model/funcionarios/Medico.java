@@ -1,7 +1,11 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.funcionarios;
 
+import br.com.sistemaPlanoSaude.model.consulta.Consulta;
+import br.com.sistemaPlanoSaude.model.consulta.Horario;
 import br.com.sistemaPlanoSaude.model.enums.Especialidades;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+import br.com.sistemaPlanoSaude.model.pessoas.Pessoa;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import java.time.LocalDate;
 import java.util.Date;

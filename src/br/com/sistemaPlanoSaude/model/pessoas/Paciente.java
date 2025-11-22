@@ -1,4 +1,4 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.pessoas;
 
 import java.time.LocalDate;
 
@@ -7,6 +7,7 @@ import java.util.List;
 
 import br.com.sistemaPlanoSaude.model.enums.StatusPaciente;
 import br.com.sistemaPlanoSaude.model.enums.TipoSanguineo;
+import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 public class Paciente extends Pessoa {
@@ -32,7 +33,7 @@ public class Paciente extends Pessoa {
     //     Construtores
     // ===============================
 
-      public Paciente(PlanoSaude plano, String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento, String numeroCarteirinha) {
+      public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento, String numeroCarteirinha) {
         super(
             nome, 
             cpf, 
@@ -44,9 +45,8 @@ public class Paciente extends Pessoa {
             dataDeNascimento, 
             NivelAcesso.PACIENTE
         );
-
     if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
-            throw new IllegalArgumentException("Número da carteirinha não pode ser vazio.");
+            throw new IllegalArgumentException("Paciente precisa ter um plano de saúde!");
         }
         this.plano = plano;
         this.numeroCarteirinha = numeroCarteirinha;

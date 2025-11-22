@@ -1,6 +1,8 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.consulta;
 
 import java.util.Date;
+
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 
 public class Horario {
 

@@ -1,4 +1,4 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.planos;
 
 import br.com.sistemaPlanoSaude.model.enums.Cobertura;
 import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;

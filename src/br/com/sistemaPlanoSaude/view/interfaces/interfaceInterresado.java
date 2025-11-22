@@ -2,10 +2,12 @@ package br.com.sistemaPlanoSaude.view.interfaces;
 
 import java.util.Scanner;
 
-import br.com.sistemaPlanoSaude.model.PlanoBasico;
-import br.com.sistemaPlanoSaude.model.PlanoPremium;
-import br.com.sistemaPlanoSaude.model.PlanoSaude;
 import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
+import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
+import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
+import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
 
 public class interfaceInterresado {
 
@@ -89,14 +91,9 @@ public class interfaceInterresado {
 
             case 4: 
                 System.out.println("╔═══════════════════════════════════════════╗");
-                System.out.println("║     📝 FORMULÁRIO DE AQUISIÇÃO DE PLANO   ║");
+                System.out.println("║     📝 FORMULÁRIO DE AQUISIÇÃO DE PLANO    ║");
                 System.out.println("╚═══════════════════════════════════════════╝\n");
 
-                System.out.print("Digite seu nome completo: ");
-                String nome = scanner.nextLine();
-
-                System.out.print("Digite seu CPF: ");
-                String cpf = scanner.nextLine();
 
                 PlanoSaude planoEscolhido = escolherPlanoParaContratacao();
                 if (planoEscolhido == null) {
@@ -104,10 +101,16 @@ public class interfaceInterresado {
                     break;
                 }
 
-                System.out.println("\n✨ Obrigado, " + nome + "!");
+                Paciente novoPaciente = FormularioPaciente.cadastrarPaciente(scanner);
+                if (novoPaciente == null) {
+                    System.out.println("\nCadastro cancelado. Você pode retornar ao menu principal a qualquer momento.");
+                    break;
+                }
+
+                System.out.println("\n✨ Obrigado, " + novoPaciente.getNome() + "!");
                 System.out.println("Seu pedido de contratação do **" + formatarNomePlano(planoEscolhido) + "** foi recebido.");
                 System.out.println("Nosso time entrará em contato via WhatsApp em até 24 horas.");
-                System.out.println("\n📄 CPF informado: " + cpf);
+                System.out.println("\n📄 CPF informado: " + novoPaciente.getCpf());
                 System.out.println("🌱 Bem-vindo à Health Care! Sua saúde está em boas mãos.");
                 break;
 
@@ -120,10 +123,6 @@ public class interfaceInterresado {
                 System.out.println("❌ Opção inválida! Tente novamente.");
                 break;
         }
-
-        System.out.println("\nPressione ENTER para voltar ao menu...");
-        scanner.nextLine();
-        exibirMenu();
     }
 
     private void limparTela() {
@@ -158,6 +157,7 @@ public class interfaceInterresado {
         if (plano == null || plano.getNomePlano() == null) {
             return "Plano de Saúde";
         }
+
         PlanosDeSaude tipo = plano.getNomePlano();
         return switch (tipo) {
             case PLANO_BASICO -> "Plano Básico";

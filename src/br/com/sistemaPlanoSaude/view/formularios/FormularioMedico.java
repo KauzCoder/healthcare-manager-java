@@ -4,9 +4,9 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import br.com.sistemaPlanoSaude.model.Medico;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
 import br.com.sistemaPlanoSaude.model.enums.Especialidades;
 import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
 

@@ -1,4 +1,4 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.planos;
 import br.com.sistemaPlanoSaude.model.enums.Cobertura;
 import br.com.sistemaPlanoSaude.model.enums.Abrangencia;
 import br.com.sistemaPlanoSaude.model.enums.TipoAcomodacao;
@@ -89,11 +89,18 @@ public abstract class PlanoSaude {
     }
 
     private List<String> obterListaDoPlanoAtual() {
-        return switch (this.nomePlano) {
-            case PLANO_BASICO -> CODIGOS_BASICO;
-            case PLANO_PREMIUM -> CODIGOS_PREMIUM;
-            default -> throw new IllegalStateException("Plano não suportado: " + this.nomePlano);
-        };
+        if (this.nomePlano == null) {
+            throw new IllegalStateException("Plano atual não definido para o objeto");
+        }
+
+        switch (this.nomePlano) {
+            case PLANO_BASICO:
+                return CODIGOS_BASICO;
+            case PLANO_PREMIUM:
+                return CODIGOS_PREMIUM;
+            default:
+                throw new IllegalStateException("Plano não suportado: " + this.nomePlano);
+        }
     }
 
     public boolean registrarCarteirinhaPaciente(String carteirinha) {

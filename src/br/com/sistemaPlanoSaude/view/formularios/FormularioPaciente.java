@@ -2,24 +2,21 @@ package br.com.sistemaPlanoSaude.view.formularios;
 
 import java.util.Scanner;
 
-import br.com.sistemaPlanoSaude.model.Paciente;
-import br.com.sistemaPlanoSaude.model.PlanoBasico;
-import br.com.sistemaPlanoSaude.model.PlanoPremium;
-import br.com.sistemaPlanoSaude.model.PlanoSaude;
 import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 import br.com.sistemaPlanoSaude.model.enums.TipoSanguineo;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
+import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
+import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
 
 public class FormularioPaciente {
 
     public static Paciente cadastrarPaciente(Scanner scanner) {
+
         System.out.println("\n=== Cadastro de Paciente ===");
-
-        //Selecionar Plano de Saúde
-        PlanoSaude planoSelecionado = selecionarPlano(scanner);
-
 
         // Nome
         String nome;
@@ -179,7 +176,6 @@ public class FormularioPaciente {
         }
 
         Paciente novo = new Paciente(
-            planoSelecionado,
             nome,
             cpf,
             idade,
@@ -212,27 +208,6 @@ public class FormularioPaciente {
 
 
 
-
-
-    private static PlanoSaude selecionarPlano(Scanner scanner) {
-        System.out.println("\nSelecione o plano:");
-        System.out.println("1 - Plano Básico");
-        System.out.println("2 - Plano Premium");
-        while (true) {
-            System.out.print("Opção: ");
-            String opcao = scanner.nextLine().trim();
-            switch (opcao) {
-                case "1" -> {
-                    return new PlanoBasico();
-                }
-                case "2" -> {
-                    return new PlanoPremium();
-                }
-                default -> System.out.println("Opção inválida. Tente novamente.");
-            }
-        }
-    }
-
     /**
      * Método de conveniência que cria um paciente exemplo (não interativo) vinculado a um PlanoBasico.
      */
@@ -241,7 +216,6 @@ public class FormularioPaciente {
         plano.registrarCarteirinhaPaciente("CAR-0001");
 
         Paciente novoPaciente = new Paciente(
-            plano,
             "João Silva",
             "12345678901",
             35,

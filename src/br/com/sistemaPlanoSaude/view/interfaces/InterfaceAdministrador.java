@@ -1,6 +1,6 @@
 package br.com.sistemaPlanoSaude.view.interfaces;
 
-import br.com.sistemaPlanoSaude.model.Administrador;
+import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioAdministrador;
 
 public class InterfaceAdministrador {

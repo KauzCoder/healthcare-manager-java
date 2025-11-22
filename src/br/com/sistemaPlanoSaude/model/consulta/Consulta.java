@@ -1,8 +1,12 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.consulta;
 
 import java.time.LocalTime;
 import java.time.LocalDate;
+
 import br.com.sistemaPlanoSaude.model.enums.ConsultaStatus;
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+
 import java.util.Date;
 import java.time.ZoneId;
 

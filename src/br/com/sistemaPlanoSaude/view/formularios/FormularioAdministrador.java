@@ -1,8 +1,8 @@
 package br.com.sistemaPlanoSaude.view.formularios;
 
-import br.com.sistemaPlanoSaude.model.Administrador;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
 import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
 
 import java.time.LocalDate;
