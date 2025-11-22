@@ -4,10 +4,10 @@ import br.com.sistemaPlanoSaude.model.Administrador;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-
 
 public class FormularioAdministrador {
 
@@ -17,6 +17,7 @@ public class FormularioAdministrador {
 
         System.out.println("======= FORMULÁRIO DE CADASTRO DO ADMINISTRADOR =======");
 
+        // Nome
         String nome;
         while (true) {
             System.out.print("Nome completo: ");
@@ -59,8 +60,8 @@ public class FormularioAdministrador {
             String telefoneInput = scanner.nextLine().trim();
             String formatado =  ValidacaoUtil.validarEFormatarTelefone(telefoneInput);
             if (formatado != null) { 
-				telefone = formatado; break; 
-			}
+			telefone = formatado; break; 
+		}
             System.out.println("Telefone inválido. Informe apenas dígitos ou formato comum (ex: (11)99999-0000).");
         }
 
@@ -76,7 +77,14 @@ public class FormularioAdministrador {
 
 		// valueOf() tenta converter a string para um valor do enum Sexo. Se a entrada não corresponder a nenhum valor válido, uma exceção será lançada, e o código dentro do catch será executado.
 
-
+		
+        System.out.print("Sexo (MASCULINO/FEMININO): ");
+        Sexo sexo;
+        try {
+            sexo = Sexo.valueOf(scanner.nextLine().trim().toUpperCase());
+        } catch (Exception e) {
+            sexo = Sexo.MASCULINO;
+        }
 
         // Data de nascimento
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -87,22 +95,25 @@ public class FormularioAdministrador {
             if (ValidacaoUtil.validarDataNascimento(dataStr)) {
                 dataDeNascimento = LocalDate.parse(dataStr, fmt);
                 break;
-            }
+            }   
             System.out.println("Data inválida. Use dd/MM/yyyy e não informe uma data futura.");
         }
+
+
+        // Senha
         System.out.print("Senha (hash ou senha normal): ");
         String senhaHash = scanner.nextLine();
 
-
+        // Criação do objeto Administrador
         Administrador admin = new Administrador(
-                nome, 
-                cpf, 
-                idade, 
-                endereco, 
-                telefone, 
+                nome,
+                cpf,
+                idade,
+                endereco,
+                telefone,
                 email,
-                Sexo.MASCULINO,
-                dataDeNascimento, 
+                sexo,
+                dataDeNascimento,
                 NivelAcesso.ADMINISTRADOR,
                 senhaHash,
                 LocalDate.now(),
@@ -115,18 +126,5 @@ public class FormularioAdministrador {
         System.out.println("=========================================================");
 
         return admin;
-    }
-
-    private Sexo escolherSexo() {
-        while (true) {
-            String opcao = scanner.nextLine();
-
-            switch (opcao) {
-                case "1": return Sexo.MASCULINO;
-                case "2": return Sexo.FEMININO;
-                default:
-                    System.out.print("Opção inválida! Escolha 1, 2 ou 3: ");
-            }
-        }
     }
 }

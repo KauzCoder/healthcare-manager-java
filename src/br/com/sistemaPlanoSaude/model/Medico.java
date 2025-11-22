@@ -25,17 +25,21 @@ public class Medico extends Pessoa {
     // ===============================
     //     Construtores
     // ===============================
-    public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email,
-                  Sexo sexo, String dataDeNascimento,
-                  Especialidades especialidade, String crm, LocalDate dataContratacao, int salario, NivelAcesso nivelAcesso) {
-        super(nome, cpf, idade, endereco, telefone, email, sexo, dataDeNascimento, nivelAcesso != null ? nivelAcesso : NivelAcesso.MEDICO);
-
-        if (crm == null || crm.isBlank()) {
-            throw new IllegalArgumentException("CRM não pode ser vazio.");
-        }
+    public Medico(String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento,Especialidades especialidade, String crm, LocalDate dataContratacao, int salario, NivelAcesso nivelAcesso) {
+        super(
+            nome, 
+            cpf, 
+            idade, 
+            endereco, 
+            telefone, 
+            email, 
+            sexo, 
+            dataDeNascimento, 
+            NivelAcesso.MEDICO
+        );
 
         this.especialidade = especialidade;
-        this.setCrm(crm); // valida pelo setter
+        this.crm  = crm;
         this.salario = salario;
         this.dataContratacao = dataContratacao;
         this.dataCadastro = LocalDate.now();
@@ -127,12 +131,7 @@ public class Medico extends Pessoa {
     public void setEspecialidade(Especialidades especialidade) { this.especialidade = especialidade; }
 
     public String getCrm() { return crm; }
-    public void setCrm(String crm) {
-        if (crm == null || !crm.matches("^[0-9]{4,6}-[A-Z]{2}$")) {
-            throw new IllegalArgumentException("CRM inválido. Formato esperado: 123456-SP");
-        }
-        this.crm = crm;
-    }
+    public void setCrm(String crm) { this.crm = crm;}
 
     public LocalDate getDataContratacao() { return dataContratacao; }
     public void setDataContratacao(LocalDate dataContratacao) { this.dataContratacao = dataContratacao; }

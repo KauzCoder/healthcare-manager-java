@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import br.com.sistemaPlanoSaude.model.Paciente;
 import br.com.sistemaPlanoSaude.model.PlanoBasico;
+import br.com.sistemaPlanoSaude.model.PlanoPremium;
+import br.com.sistemaPlanoSaude.model.PlanoSaude;
 import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,10 @@ public class FormularioPaciente {
 
     public static Paciente cadastrarPaciente(Scanner scanner) {
         System.out.println("\n=== Cadastro de Paciente ===");
+
+        //Selecionar Plano de Saúde
+        PlanoSaude planoSelecionado = selecionarPlano(scanner);
+
 
         // Nome
         String nome;
@@ -93,16 +99,39 @@ public class FormularioPaciente {
             if (ValidacaoUtil.validarDataNascimento(dataStr)) {
                 dataDeNascimento = LocalDate.parse(dataStr, fmt);
                 break;
-            }
+            }   
             System.out.println("Data inválida. Use dd/MM/yyyy e não informe uma data futura.");
         }
 
         // Número da carteirinha e plano
-        System.out.print("Número da carteirinha: ");
-        String numeroCarteirinha = scanner.nextLine().trim();
+        String numeroCarteirinha;
+        while (true) {
+            System.out.print("Número da carteirinha: ");
+            numeroCarteirinha = scanner.nextLine().trim();
 
-        System.out.print("Plano de saúde (nome): ");
-        String planoSaude = scanner.nextLine().trim();
+            if (numeroCarteirinha.isEmpty()) {
+                System.out.println("Número de carteirinha não pode ser vazio.");
+                continue;
+            }
+
+            boolean jaRegistrada = ValidacaoUtil.validarCarteirinhaSaude(
+                numeroCarteirinha,
+                PlanoSaude.listarCarteirinhasBasico(),
+                PlanoSaude.listarCarteirinhasPremium()
+            );
+
+            if (jaRegistrada) {
+                System.out.println("Esta carteirinha já está associada a um plano. Informe outro código.");
+                continue;
+            }
+
+            if (planoSelecionado.registrarCarteirinhaPaciente(numeroCarteirinha)) {
+                break;
+            }
+
+            System.out.println("Não foi possível registrar a carteirinha. Tente novamente.");
+        }
+
 
         // Tipo sanguíneo
         System.out.print("Tipo sanguíneo (A_POS/A_NEG/B_POS/B_NEG/AB_POS/AB_NEG/O_POS/O_NEG): ");
@@ -150,6 +179,7 @@ public class FormularioPaciente {
         }
 
         Paciente novo = new Paciente(
+            planoSelecionado,
             nome,
             cpf,
             idade,
@@ -158,8 +188,7 @@ public class FormularioPaciente {
             email,
             sexo,
             dataDeNascimento,
-            numeroCarteirinha,
-            planoSaude
+            numeroCarteirinha
         );
 
 		// Atribui tipo sanguíneo se informado (o nível de acesso permanece padrão definido em Pessoa/Paciente)
@@ -181,42 +210,38 @@ public class FormularioPaciente {
         return novo;
     }
 
-    // Versão sem parâmetros para compatibilidade (usa System.in)
-    public static Paciente cadastrarPaciente() {
-        return cadastrarPaciente(new Scanner(System.in));
-    }
 
-    /**
-     * Cria um plano básico padrão e o retorna.
-     */
-    public static PlanoBasico criarPlanoBasicoPadrao() {
-        return new PlanoBasico();
-    }
 
-    /**
-     * Cadastra um paciente interativamente e vincula um plano básico padrão a ele.
-     */
-    public static Paciente cadastrarPacienteComPlanoPadrao(Scanner scanner) {
-        PlanoBasico plano = criarPlanoBasicoPadrao();
-        System.out.println("\nSerá utilizado o plano padrão: " + plano.getNomePlano());
-        Paciente p = cadastrarPaciente(scanner);
-        p.vincularPlano(plano);
-        return p;
-    }
 
-    /**
-     * Versão sem Scanner (compatibilidade) — cria um scanner temporário.
-     */
-    public static Paciente cadastrarPacienteComPlanoPadrao() {
-        return cadastrarPacienteComPlanoPadrao(new Scanner(System.in));
+
+    private static PlanoSaude selecionarPlano(Scanner scanner) {
+        System.out.println("\nSelecione o plano:");
+        System.out.println("1 - Plano Básico");
+        System.out.println("2 - Plano Premium");
+        while (true) {
+            System.out.print("Opção: ");
+            String opcao = scanner.nextLine().trim();
+            switch (opcao) {
+                case "1" -> {
+                    return new PlanoBasico();
+                }
+                case "2" -> {
+                    return new PlanoPremium();
+                }
+                default -> System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
     }
 
     /**
      * Método de conveniência que cria um paciente exemplo (não interativo) vinculado a um PlanoBasico.
      */
     public static Paciente criarPacienteExemplo() {
-        PlanoBasico plano = criarPlanoBasicoPadrao();
-        Paciente p = new Paciente(
+        PlanoBasico plano = new PlanoBasico();
+        plano.registrarCarteirinhaPaciente("CAR-0001");
+
+        Paciente novoPaciente = new Paciente(
+            plano,
             "João Silva",
             "12345678901",
             35,
@@ -225,14 +250,12 @@ public class FormularioPaciente {
             "joao.silva@example.com",
             Sexo.MASCULINO,
             LocalDate.of(1990, 1, 1),
-            "CAR-0001",
-            plano.getNomePlano()
+            "CAR-0001"
         );
-        p.vincularPlano(plano);
         // Valores de exemplo para peso e altura
-        p.setPeso(70.0);
-        p.setAltura(1.75);
-        return p;
+        novoPaciente.setPeso(70.0);
+        novoPaciente.setAltura(1.75);
+        return novoPaciente;
     }
 
     // ------------------ Coleta de listas (interativas) ------------------

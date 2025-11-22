@@ -2,6 +2,7 @@ package br.com.sistemaPlanoSaude.model;
 
 import br.com.sistemaPlanoSaude.model.enums.Cobertura;
 import br.com.sistemaPlanoSaude.model.enums.Abrangencia;
+import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
 import br.com.sistemaPlanoSaude.model.enums.TipoAcomodacao;
 
 import java.time.LocalDate;
@@ -11,12 +12,14 @@ public class PlanoPremium extends PlanoSaude {
     private boolean atendimentoDomiciliar;
     private boolean coberturaInternacional;
 
+    
+
     // ===============================
     //     Construtores
     // ===============================
     public PlanoPremium(boolean atendimentoDomiciliar, boolean coberturaInternacional, String codigo) {
         super(
-            "Plano Premium",          // nome do plano
+            PlanosDeSaude.PLANO_PREMIUM,          // nome do plano
             "PRM123",                   // código do plano
             1500.0,                   // valor base
             Cobertura.COMPLETA,       // cobertura (enum)
@@ -29,6 +32,10 @@ public class PlanoPremium extends PlanoSaude {
 
         this.atendimentoDomiciliar = atendimentoDomiciliar;
         this.coberturaInternacional = coberturaInternacional;
+    }
+
+    public PlanoPremium() {
+        this(true, true, "PRM123");
     }
 
     

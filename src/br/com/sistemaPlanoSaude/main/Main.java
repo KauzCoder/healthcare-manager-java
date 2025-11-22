@@ -81,9 +81,9 @@ while (loopMenu) {
 	String opcaoNumero = scanner.nextLine().trim();
     System.out.println(BLUE + "╚════════════════════════════════════════════╝" + RESET);
 
-			switch (opcaoNumero) {
+				switch (opcaoNumero) {
 				case "1":
-					Paciente p = FormularioPaciente.cadastrarPacienteComPlanoPadrao(scanner);
+					Paciente p = FormularioPaciente.cadastrarPaciente(scanner);
 					pacientes.add(p);
 					System.out.println(GREEN + "✅ Cadastro de paciente selecionado!" + RESET);
 					break;
@@ -120,7 +120,7 @@ while (loopMenu) {
 			}
 		}
 
-		System.out.println("Encerrando aplicação. Até mais!");;
+		System.out.println("Encerrando aplicação. Até mais!");
 	}
 
 	 private static void printBarra(int grupos) {

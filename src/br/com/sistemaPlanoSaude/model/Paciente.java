@@ -14,7 +14,6 @@ public class Paciente extends Pessoa {
     private PlanoSaude plano;
 
     private String numeroCarteirinha;
-    private String planoSaude;
     private LocalDate dataCadastro;
 
     private TipoSanguineo tipoSanguineo;
@@ -33,7 +32,7 @@ public class Paciente extends Pessoa {
     //     Construtores
     // ===============================
 
-      public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento, String numeroCarteirinha, String planoSaude) {
+      public Paciente(PlanoSaude plano, String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento, String numeroCarteirinha) {
         super(
             nome, 
             cpf, 
@@ -49,32 +48,17 @@ public class Paciente extends Pessoa {
     if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
             throw new IllegalArgumentException("Número da carteirinha não pode ser vazio.");
         }
-        if (planoSaude == null || planoSaude.trim().isEmpty()) {
-            throw new IllegalArgumentException("Plano de saúde não pode ser vazio.");
-        }
-
+        this.plano = plano;
         this.numeroCarteirinha = numeroCarteirinha;
-        this.planoSaude = planoSaude;
         this.dataCadastro = LocalDate.now();
         this.status = StatusPaciente.ATIVO;
     }
 
     // Getters e Setters
-    public String getNumeroCarteirinha() { return numeroCarteirinha; }
-    public void setNumeroCarteirinha(String numeroCarteirinha) {
-        if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
-            throw new IllegalArgumentException("Número da carteirinha não pode ser vazio.");
-        }
-        this.numeroCarteirinha = numeroCarteirinha;
-    }
+    public PlanoSaude getPlanoSaude() { return plano; } 
+    public void setPlanoSaude(PlanoSaude plano) { this.plano = plano; }
 
-    public String getPlanoSaude() { return planoSaude; }
-    public void setPlanoSaude(String planoSaude) {
-        if (planoSaude == null || planoSaude.trim().isEmpty()) {
-            throw new IllegalArgumentException("Plano de saúde não pode ser vazio.");
-        }
-        this.planoSaude = planoSaude;
-    }
+    public String getNumeroCarteirinha() { return numeroCarteirinha; }
 
     public LocalDate getDataCadastro() { return dataCadastro; }
 
@@ -104,6 +88,7 @@ public class Paciente extends Pessoa {
     // ===============================
     //      Métodos de Plano de Saúde
     // ===============================
+    
 
 
     /**
@@ -138,7 +123,7 @@ public class Paciente extends Pessoa {
     }
 
 
-      // ===============================
+    // ===============================
     //       Métodos auxiliares
     // ===============================
 
@@ -188,7 +173,6 @@ public class Paciente extends Pessoa {
 
     System.out.println("\n--- Dados do Paciente ---");
     System.out.println("Número da carteirinha: " + getNumeroCarteirinha());
-    System.out.println("Plano de saúde: " + getPlanoSaude());
     System.out.println("Data de cadastro: " + getDataCadastro());
     System.out.println("Status: " + getStatus());
     System.out.println("Tipo sanguíneo: " + getTipoSanguineo());
@@ -204,7 +188,6 @@ public class Paciente extends Pessoa {
     System.out.println("Histórico de Cirurgias: " + (historicoCirurgias.isEmpty() ? "Nenhum" : historicoCirurgias));
     System.out.println("Medicamentos em Uso: " + (medicamentosEmUso.isEmpty() ? "Nenhum" : medicamentosEmUso));
 
-    System.out.println("====================================\n");
     }
 
 

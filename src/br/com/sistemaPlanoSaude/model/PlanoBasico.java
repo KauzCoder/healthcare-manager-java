@@ -1,16 +1,20 @@
 package br.com.sistemaPlanoSaude.model;
 
 import br.com.sistemaPlanoSaude.model.enums.Cobertura;
+import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
 import br.com.sistemaPlanoSaude.model.enums.Abrangencia;
 import br.com.sistemaPlanoSaude.model.enums.TipoAcomodacao;
 import java.time.LocalDate;
+
 public class PlanoBasico extends PlanoSaude {
+
+
     // ===============================
     //     Construtores
     // ===============================
    public PlanoBasico() {
         super(
-            "Plano Basico",
+            PlanosDeSaude.PLANO_BASICO,
             "BASICO123",
             1500.0,
             Cobertura.AMBULATORIAL,
@@ -25,6 +29,8 @@ public class PlanoBasico extends PlanoSaude {
         public void darAcesso() {
             System.out.println("Acesso concedido ao " + getNomePlano() + "! Benefícios ativados.");
         }
+
+
     
 @Override
     public double calcularMensalidade() {
@@ -42,14 +48,15 @@ public class PlanoBasico extends PlanoSaude {
         System.out.println("Data de criação: " + getDataCriacao());
         System.out.println("Última atualização: " + getUltimaAtualizacao());
 
-        System.out.println("\n------- Cobertura e Estrutura do Plano -------");
+        System.out.println("\n------- Cobertura e Estrutura -------");
         System.out.println("Cobertura: " + getCobertura());
-        System.out.println("Tipo de acomodação: " + getTipoAcomodacao());
+        System.out.println("Acomodação: " + getTipoAcomodacao());
         System.out.println("Abrangência: " + getAbrangencia());
         System.out.println("Limite mensal de consultas: " + getLimiteConsultas());
+        
         System.out.printf("Valor base: R$ %.2f%n", getValorBase());
         System.out.printf("Mensalidade final: R$ %.2f%n", calcularMensalidade());
 
-        System.out.println("======================================\n");
+        System.out.println("=========================================\n");
     }
 }
