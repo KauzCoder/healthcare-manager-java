@@ -71,15 +71,4 @@ public class Horario {
     public int hashCode() {
         return data != null ? data.hashCode() : 0;
     }
-
-    // Getter e setter para paciente
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
-    }
-
-
 }
