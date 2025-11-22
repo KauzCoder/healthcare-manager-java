@@ -1,10 +1,10 @@
 package br.com.sistemaPlanoSaude.model;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 import br.com.sistemaPlanoSaude.model.enums.StatusPaciente;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Administrador extends Pessoa {
     private String senhaHash;
@@ -155,6 +155,7 @@ public class Administrador extends Pessoa {
         }
     }
 
+
     public void resetarSenhaPaciente(String numeroCarteirinha) {
         Paciente p = buscarPacientePorCarteirinha(numeroCarteirinha);
 
@@ -176,6 +177,17 @@ public class Administrador extends Pessoa {
     }
     return null;
 }
+
+    // ===============================
+    //   Métodos de Verificação de dados
+    // ===============================
+    public boolean verificarSenha(String senhaDigitada) {
+        if (this.senhaHash == null) {
+            return false;
+        }
+        return this.senhaHash.equals(senhaDigitada);
+    }
+
 
     // ===============================
     //   Métodos de Gestão de Preços (Planos)
@@ -231,7 +243,7 @@ public class Administrador extends Pessoa {
 
     @Override
     public void exibirInfo() {
-        System.out.println("\n===== INFORMAÇÕES DO MÉDICO =====");
+        System.out.println("\n===== INFORMAÇÕES DO Médico =====");
 
         // Dados herdados da classe Pessoa
         System.out.println("Nome: " + getNome());
