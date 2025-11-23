@@ -1,4 +1,4 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.pessoas;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 
 import java.time.LocalDate;

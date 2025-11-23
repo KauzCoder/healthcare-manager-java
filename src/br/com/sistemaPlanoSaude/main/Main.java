@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import br.com.sistemaPlanoSaude.model.Paciente;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
+import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
+import br.com.sistemaPlanoSaude.view.interfaces.interfaceInterresado;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
 
@@ -51,8 +54,8 @@ System.out.println(
 
         System.out.println("\nCarregando programa:");
 
-        for (int i = 1; i <= maxGrupos; i++) {
-            printBarra(i);
+		for (int i = 1; i <= maxGrupos; i++) {
+			printBarra(i, maxGrupos);
             Thread.sleep(300);
         }
 		
@@ -74,16 +77,17 @@ while (loopMenu) {
     System.out.println(CYAN + "║  [2] 📋 Criar paciente exemplo              ║" + RESET);
     System.out.println(CYAN + "║  [3] 📄 Listar pacientes                    ║" + RESET);
     System.out.println(CYAN + "║  [4] 👨‍⚕️ Cadastrar médico                 ║" + RESET);
-    System.out.println(RED  + "║  [5] ❌ Sair                                ║" + RESET);
+    System.out.println(CYAN + "║  [6] 🧾 Área do Interessado                ║" + RESET);
+    System.out.println(RED  + "║  [7] ❌ Sair                                ║" + RESET);
 
-    System.out.println(BLUE + "╠════════════════════════════════════════════╣" + RESET);
-    System.out.print(YELLOW + "║ 🔹 Escolha uma opção: " + RESET);
-	String opcaoNumero = scanner.nextLine().trim();
-    System.out.println(BLUE + "╚════════════════════════════════════════════╝" + RESET);
+		System.out.println(BLUE + "╠════════════════════════════════════════════╣" + RESET);
+		System.out.print(YELLOW + "║ 🔹 Escolha uma opção: " + RESET);
+		String opcaoNumero = scanner.nextLine().trim();
+		System.out.println(BLUE + "╚════════════════════════════════════════════╝" + RESET);
 
-			switch (opcaoNumero) {
+				switch (opcaoNumero) {
 				case "1":
-					Paciente p = FormularioPaciente.cadastrarPacienteComPlanoPadrao(scanner);
+					Paciente p = FormularioPaciente.cadastrarPaciente(scanner);
 					pacientes.add(p);
 					System.out.println(GREEN + "✅ Cadastro de paciente selecionado!" + RESET);
 					break;
@@ -110,25 +114,39 @@ while (loopMenu) {
 					System.out.println(GREEN + "\n✅ Cadastro de médico selecionado!" + RESET);
 					FormularioMedico.cadastrarMedico();
 					break;
-				case "5":
+                case "6": 
+                        System.out.println(RED + "\n TESTANDO SISTEMA DE INTERRESSADO" + RESET);
+                        exibirInterfaceInteressado();
+                        break;
+				case "7":
 					System.out.println(RED + "\n🚪 Saindo do sistema... Obrigado!" + RESET);
 					loopMenu = false;
 					break;
+
+
 
 				default:
 					System.out.println(YELLOW + "\n⚠ Opção inválida! Tente novamente." + RESET);
 			}
 		}
 
-		System.out.println("Encerrando aplicação. Até mais!");;
+		System.out.println("Encerrando aplicação. Até mais!");
 	}
 
-	 private static void printBarra(int grupos) {
-        StringBuilder barra = new StringBuilder();
-        for (int j = 0; j < grupos; j++) {
-            barra.append(" ■  ■  ■ ");
-        }
-        System.out.print("\r" + barra.toString() + "    ");
+	private static void exibirInterfaceInteressado() {
+		interfaceInterresado telaInteressado = new interfaceInterresado();
+		telaInteressado.exibirMenu();
+	}
+
+	 private static void printBarra(int grupos, int total) {
+    StringBuilder barra = new StringBuilder();
+    int porcentagem = (grupos * 100) / total;
+
+    for (int j = 0; j < grupos; j++) {
+        barra.append(" ■ ");
     }
+
+    System.out.print("\r" + barra + " " + porcentagem + "%");
+}
 }
 

@@ -1,71 +1,154 @@
 package br.com.sistemaPlanoSaude.view.formularios;
 
-import br.com.sistemaPlanoSaude.model.Medico;
-import br.com.sistemaPlanoSaude.model.enums.Sexo;
-import br.com.sistemaPlanoSaude.model.enums.Especialidades;
-import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
+import br.com.sistemaPlanoSaude.model.enums.Sexo;
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.model.enums.Especialidades;
+import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
+
 public class FormularioMedico {
 
-    private static final Scanner scanner = new Scanner(System.in);
-
-    public static void cadastrarMedico() {
+    public static Medico cadastrarMedico(Scanner scanner) {
         System.out.println("\n=== Cadastro de Médico ===");
 
-        System.out.print("Nome: ");
-        String nome = scanner.nextLine();
+        // Nome
+        String nome;
+        while (true) {
+            System.out.print("Nome completo: ");
+            nome = scanner.nextLine();
+            if (ValidacaoUtil.validarNome(nome)) { nome = nome.trim(); break; }
+            System.out.println("Nome inválido. Informe um nome com pelo menos 10 caracteres e apenas letras.");
+        }
 
-        System.out.print("CPF: ");
-        String cpf = scanner.nextLine();
+        // CPF
+        String cpf;
+        while (true) {
+            System.out.print("CPF: ");
+            cpf = scanner.nextLine().trim();
+            if (ValidacaoUtil.validarCPF(cpf)) break;
+            System.out.println("CPF inválido. Informe um CPF válido (11 dígitos).");
+        }
 
-        System.out.print("Idade: ");
-        int idade = Integer.parseInt(scanner.nextLine());
+        // Idade
+        int idade;
+        while (true) {
+            System.out.print("Idade: ");
+            String idadeInput = scanner.nextLine().trim();
+            try {
+                idade = Integer.parseInt(idadeInput);
+                if (ValidacaoUtil.validarIdade(idade)) break;
+                System.out.println("Idade inválida. Informe um número inteiro entre 1 e 150.");
+            } catch (NumberFormatException ex) {
+                System.out.println("Entrada inválida. Informe a idade como um número inteiro (ex: 35).");
+            }
+        }
 
+        // Endereço
         System.out.print("Endereço: ");
-        String endereco = scanner.nextLine();
+        String endereco = scanner.nextLine().trim();
 
-        System.out.print("Telefone: ");
-        String telefone = scanner.nextLine();
+        // Telefone (validação e formatação via Pessoa)
+        String telefone;
+        while (true) {
+            System.out.print("Telefone: ");
+            String telefoneInput = scanner.nextLine().trim();
+            String formatado =  ValidacaoUtil.validarEFormatarTelefone(telefoneInput);
+            if (formatado != null) { 
+				telefone = formatado; break; 
+			}
+            System.out.println("Telefone inválido. Informe apenas dígitos ou formato comum (ex: (11)99999-0000).");
+        }
 
-        System.out.print("E-mail: ");
-        String email = scanner.nextLine();
+        // E-mail (opcional)
+        System.out.print("E-mail (opcional): ");
+        String email = scanner.nextLine().trim();
+        if (email == null || email.isEmpty()) email = "não informado";
+        else if (!ValidacaoUtil.validarEmail(email)) System.out.println("Aviso: formato de e-mail parece inválido, mas será registrado.");
 
+        // Sexo
+		
         System.out.print("Sexo (MASCULINO/FEMININO): ");
         Sexo sexo;
         try {
             sexo = Sexo.valueOf(scanner.nextLine().trim().toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
+        } catch (Exception e) {
             sexo = Sexo.MASCULINO;
         }
 
-        System.out.print("Data de Nascimento (dd/MM/yyyy): ");
-        String dataDeNascimentoStr = scanner.nextLine().trim();
+        // Data de nascimento
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dataDeNascimento = LocalDate.parse(dataDeNascimentoStr, fmt);
-
-        System.out.print("Especialidade (CARDIOLOGIA/PEDIATRIA/...): ");
-        String especialidade = scanner.nextLine().trim();
-        Especialidades especialidadeEnum;
-        try {
-            especialidadeEnum = Especialidades.valueOf(especialidade.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            especialidadeEnum = Especialidades.CARDIOLOGIA;
+        LocalDate dataDeNascimento;
+        while (true) {
+            System.out.print("Data de nascimento (dd/MM/yyyy): ");
+            String dataStr = scanner.nextLine().trim();
+            if (ValidacaoUtil.validarDataNascimento(dataStr)) {
+                dataDeNascimento = LocalDate.parse(dataStr, fmt);
+                break;
+            }   
+            System.out.println("Data inválida. Use dd/MM/yyyy e não informe uma data futura.");
         }
 
-        System.out.print("CRM: ");
-        String crm = scanner.nextLine();
 
-        System.out.print("Data de Contratação (YYYY-MM-DD): ");
-        String dataContratacaoStr = scanner.nextLine();
-        LocalDate dataContratacao = LocalDate.parse(dataContratacaoStr);
+        // CRM
+        String crm;
+        while (true) {
+            System.out.print("CRM: ");
+            crm = scanner.nextLine().trim();
+            if (ValidacaoUtil.validarCRM(crm)) break;
+            System.out.println("CRM inválido. Informe algo como 12345-PA.");
+        }
 
-        System.out.print("Salário: ");
-        int salario = Integer.parseInt(scanner.nextLine());
+        // Especialidade
+        System.out.println("\n=== Especialidades Disponíveis ===");
+        for (Especialidades esp : Especialidades.values()) {
+            System.out.println("- " + esp);
+        }
 
-        Medico novo = new Medico(
+        Especialidades especialidade = null;
+        while (especialidade == null) {
+            System.out.print("Digite a especialidade: ");
+            String entrada = scanner.nextLine().trim();
+            especialidade = buscarEspecialidade(entrada);
+
+            if (especialidade == null) {
+                System.out.println("❌ Especialidade inválida. Tente novamente.\n");
+            }
+        }
+
+        System.out.println("✔ Especialidade selecionada: " + especialidade);
+
+        // Data de contratação
+        LocalDate dataContratacao;
+        while (true) {
+            System.out.print("Data de contratação (dd/MM/yyyy): ");
+            String inputData = scanner.nextLine().trim();
+            try {
+                dataContratacao = LocalDate.parse(inputData, fmt);
+                break;
+            } catch (Exception e) {
+                System.out.println("Data inválida. Tente novamente.");
+            }
+        }
+
+        // Salário
+        double salario;
+        while (true) {
+            System.out.print("Salário: ");
+            String input = scanner.nextLine().trim();
+            try {
+                salario = Double.parseDouble(input);
+                break;
+            } catch (Exception e) {
+                System.out.println("Informe um valor numérico válido (ex: 15000.50).");
+            }
+        }
+
+        // Criando o objeto Médico
+        Medico medico = new Medico(
             nome,
             cpf,
             idade,
@@ -74,14 +157,36 @@ public class FormularioMedico {
             email,
             sexo,
             dataDeNascimento,
-            especialidadeEnum,
+            especialidade,
             crm,
             dataContratacao,
-            salario,
+            (int) Math.round(salario),
             NivelAcesso.MEDICO
         );
 
-        System.out.println("\n✅ Médico cadastrado com sucesso!");
-        System.out.println(novo);
+        System.out.println("\nMédico cadastrado com sucesso!");
+        System.out.println("Nome: " + medico.getNome());
+        System.out.println("CRM: " + medico.getCrm());
+        System.out.println("Especialidade: " + medico.getEspecialidade());
+        System.out.println("=========================================");
+
+        return medico;
+    }
+
+    public static Medico cadastrarMedico() {
+        return cadastrarMedico(new Scanner(System.in));
+    }
+
+    // -------------------------------
+    // MÉTODOS DE APOIO
+    // -------------------------------
+
+    private static Especialidades buscarEspecialidade(String entrada) {
+        for (Especialidades esp : Especialidades.values()) {
+            if (esp.name().equalsIgnoreCase(entrada)) {
+                return esp;
+            }
+        }
+        return null;
     }
 }

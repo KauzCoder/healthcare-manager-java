@@ -1,15 +1,23 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.planos;
 import br.com.sistemaPlanoSaude.model.enums.Cobertura;
 import br.com.sistemaPlanoSaude.model.enums.Abrangencia;
 import br.com.sistemaPlanoSaude.model.enums.TipoAcomodacao;
+import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
+
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public abstract class PlanoSaude {
+    private static final List<String> CODIGOS_BASICO = new ArrayList<>();
+    private static final List<String> CODIGOS_PREMIUM = new ArrayList<>();
+
 
     // Atributos principais
-    protected  String nomePlano;          // Nome comercial do plano
+    protected  PlanosDeSaude nomePlano;          // Nome comercial do plano
     protected final String codigo;             // Identificador imutavel único do plano
     protected  double valorBase;          // Valor base mensal
     protected  Cobertura cobertura; // Tipo de cobertura (ex: Ambulatorial, Hospitalar, Completa)
@@ -20,11 +28,12 @@ public abstract class PlanoSaude {
     protected  Abrangencia abrangencia;        // Ex: "Regional", "Nacional", "Internacional"
     protected  LocalDate dataCriacao;     // Data em que o plano foi criado
     protected  LocalDate ultimaAtualizacao; // Última modificação de dados\
+
     
     // ===============================
     //     Construtores
     // ===============================
-    public PlanoSaude(String nomePlano, String codigoPrefixo, double valorBase, 
+    public PlanoSaude(PlanosDeSaude nomePlano, String codigoPrefixo, double valorBase, 
                     Cobertura cobertura, int limiteConsultas, boolean ativo,
                     TipoAcomodacao tipoAcomodacao, Abrangencia abrangencia, LocalDate dataCriacao) {
 
@@ -43,8 +52,8 @@ public abstract class PlanoSaude {
      // ===============================
     //        Getters e Setters
     // ===============================
-    public String getNomePlano() { return nomePlano; }
-    public void setNomePlano(String nomePlano) { this.nomePlano = nomePlano; }
+    public PlanosDeSaude getNomePlano() { return nomePlano; }
+    public void setNomePlano(PlanosDeSaude nomePlano) { this.nomePlano = nomePlano; }
     
     public String getCodigo() { return codigo; }
 
@@ -79,6 +88,52 @@ public abstract class PlanoSaude {
         return codigoBase + sufixo;
     }
 
+    private List<String> obterListaDoPlanoAtual() {
+        if (this.nomePlano == null) {
+            throw new IllegalStateException("Plano atual não definido para o objeto");
+        }
+
+        switch (this.nomePlano) {
+            case PLANO_BASICO:
+                return CODIGOS_BASICO;
+            case PLANO_PREMIUM:
+                return CODIGOS_PREMIUM;
+            default:
+                throw new IllegalStateException("Plano não suportado: " + this.nomePlano);
+        }
+    }
+
+    public boolean registrarCarteirinhaPaciente(String carteirinha) {
+        if (carteirinha == null || carteirinha.trim().isEmpty()) {
+            return false;
+        }
+        List<String> carteirinhas = obterListaDoPlanoAtual();
+        String codigoNormalizado = carteirinha.trim().toUpperCase();
+        if (carteirinhas.contains(codigoNormalizado)) {
+            return false;
+        }
+        carteirinhas.add(codigoNormalizado);
+        return true;
+    }
+
+    public boolean carteirinhaJaRegistrada(String carteirinha) {
+        if (carteirinha == null) {
+            return false;
+        }
+        return obterListaDoPlanoAtual().contains(carteirinha.trim().toUpperCase());
+    }
+
+    public List<String> listarCarteirinhasRegistradas() {
+        return Collections.unmodifiableList(new ArrayList<>(obterListaDoPlanoAtual()));
+    }
+
+    public static List<String> listarCarteirinhasBasico() {
+        return Collections.unmodifiableList(new ArrayList<>(CODIGOS_BASICO));
+    }
+
+    public static List<String> listarCarteirinhasPremium() {
+        return Collections.unmodifiableList(new ArrayList<>(CODIGOS_PREMIUM));
+    }
 
    // ===============================
     //        Status Helpers 

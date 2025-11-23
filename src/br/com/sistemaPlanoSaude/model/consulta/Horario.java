@@ -1,6 +1,8 @@
-package br.com.sistemaPlanoSaude.model;
+package br.com.sistemaPlanoSaude.model.consulta;
 
 import java.util.Date;
+
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 
 public class Horario {
 
@@ -71,15 +73,4 @@ public class Horario {
     public int hashCode() {
         return data != null ? data.hashCode() : 0;
     }
-
-    // Getter e setter para paciente
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
-    }
-
-
 }
