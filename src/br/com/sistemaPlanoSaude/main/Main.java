@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
 import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
 import br.com.sistemaPlanoSaude.view.interfaces.interfaceInterresado;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
+import br.com.sistemaPlanoSaude.view.interfaces.InterfaceConsulta;
 
 public class Main {
 
@@ -76,8 +78,8 @@ while (loopMenu) {
     System.out.println(CYAN + "║  [1] 🧑 Cadastrar paciente                  ║" + RESET);
     System.out.println(CYAN + "║  [2] 📋 Criar paciente exemplo              ║" + RESET);
     System.out.println(CYAN + "║  [3] 📄 Listar pacientes                    ║" + RESET);
-    System.out.println(CYAN + "║  [4] 👨‍⚕️ Cadastrar médico                 ║" + RESET);
-    System.out.println(CYAN + "║  [6] 🧾 Área do Interessado                ║" + RESET);
+    System.out.println(CYAN + "║  [4] 👨‍⚕️ Cadastrar médico                    ║" + RESET);
+    System.out.println(CYAN + "║  [6] 🧾 Área do Interessado                 ║" + RESET);
     System.out.println(RED  + "║  [7] ❌ Sair                                ║" + RESET);
 
 		System.out.println(BLUE + "╠════════════════════════════════════════════╣" + RESET);
@@ -122,7 +124,8 @@ while (loopMenu) {
 					System.out.println(RED + "\n🚪 Saindo do sistema... Obrigado!" + RESET);
 					loopMenu = false;
 					break;
-
+				
+				case "8": 
 
 
 				default:
@@ -136,6 +139,11 @@ while (loopMenu) {
 	private static void exibirInterfaceInteressado() {
 		interfaceInterresado telaInteressado = new interfaceInterresado();
 		telaInteressado.exibirMenu();
+	}
+
+	private static void exibirInterfaceConsulta() {
+		InterfaceConsulta telaConsulta = new InterfaceConsulta();
+		telaConsulta.exibirMenuConsulta();
 	}
 
 	 private static void printBarra(int grupos, int total) {
