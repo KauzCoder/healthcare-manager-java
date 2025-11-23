@@ -6,7 +6,6 @@ import br.com.sistemaPlanoSaude.model.enums.StatusPaciente;
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.model.pessoas.Pessoa;
 import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +89,11 @@ public class Administrador extends Pessoa {
     public void removerMedico(String crm) {
         medicos.removeIf(m -> m.getCrm().equals(crm));
         System.out.println("Médico removido: " + crm);
+    }
+
+    // Retorna a lista de médicos cadastrados
+    public List<Medico> getMedicos() {
+        return medicos;
     }
 
     
