@@ -3,7 +3,7 @@ package br.com.sistemaPlanoSaude.main;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
+import br.com.sistemaPlanoSaude.view.interfaces.InterfaceMedico;
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
 import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
@@ -123,7 +123,10 @@ while (loopMenu) {
 					loopMenu = false;
 					break;
 
-
+				case "8":
+					System.out.println(GREEN + "\n✅ Área do Médico selecionada!" + RESET);
+					exibirInterfaceMedico();
+					break;
 
 				default:
 					System.out.println(YELLOW + "\n⚠ Opção inválida! Tente novamente." + RESET);
@@ -138,7 +141,11 @@ while (loopMenu) {
 		telaInteressado.exibirMenu();
 	}
 
-	 private static void printBarra(int grupos, int total) {
+	private static void exibirInterfaceMedico() {
+	InterfaceMedico telaMedico = new InterfaceMedico();
+		telaMedico.exibirMenu();}
+	
+		private static void printBarra(int grupos, int total) {
     StringBuilder barra = new StringBuilder();
     int porcentagem = (grupos * 100) / total;
 
