@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.util.ConsoleColors;
 import br.com.sistemaPlanoSaude.view.interfaces.interfaceInterresado;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
 import br.com.sistemaPlanoSaude.util.PacienteMockUtil;
+import br.com.sistemaPlanoSaude.view.interfaces.InterfaceConsulta;
 
 public class Main {
 
@@ -109,7 +111,10 @@ while (loopMenu) {
 					loopMenu = false;
 					break;
 
-
+				case "8":
+					System.out.println(GREEN + "\n✅ Área do Médico selecionada!" + RESET);
+					exibirInterfaceMedico();
+					break;
 
 				default:
 					System.out.println(ConsoleColors.YELLOW + "\n⚠ Opção inválida! Tente novamente." + ConsoleColors.RESET);
@@ -124,7 +129,16 @@ while (loopMenu) {
 		telaInteressado.exibirMenu();
 	}
 
-	 private static void printBarra(int grupos, int total) {
+	private static void exibirInterfaceMedico() {
+	InterfaceMedico telaMedico = new InterfaceMedico();
+		telaMedico.exibirMenu();}
+	
+	private static void exibirInterfaceConsulta() {
+		InterfaceConsulta telaConsulta = new InterfaceConsulta();
+		telaConsulta.exibirMenuConsulta();
+	}
+
+		private static void printBarra(int grupos, int total) {
     StringBuilder barra = new StringBuilder();
     int porcentagem = (grupos * 100) / total;
 
