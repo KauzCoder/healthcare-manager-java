@@ -124,9 +124,11 @@ while (loopMenu) {
 					System.out.println(RED + "\n🚪 Saindo do sistema... Obrigado!" + RESET);
 					loopMenu = false;
 					break;
-				
-				case "8": 
 
+				case "8":
+					System.out.println(GREEN + "\n✅ Área do Médico selecionada!" + RESET);
+					exibirInterfaceMedico();
+					break;
 
 				default:
 					System.out.println(YELLOW + "\n⚠ Opção inválida! Tente novamente." + RESET);
@@ -141,12 +143,16 @@ while (loopMenu) {
 		telaInteressado.exibirMenu();
 	}
 
+	private static void exibirInterfaceMedico() {
+	InterfaceMedico telaMedico = new InterfaceMedico();
+		telaMedico.exibirMenu();}
+	
 	private static void exibirInterfaceConsulta() {
 		InterfaceConsulta telaConsulta = new InterfaceConsulta();
 		telaConsulta.exibirMenuConsulta();
 	}
 
-	 private static void printBarra(int grupos, int total) {
+		private static void printBarra(int grupos, int total) {
     StringBuilder barra = new StringBuilder();
     int porcentagem = (grupos * 100) / total;
 
