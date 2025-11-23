@@ -13,9 +13,9 @@ import br.com.sistemaPlanoSaude.model.enums.Sexo;
 public class Paciente extends Pessoa {
     // Referência ao plano de saúde do paciente
     private PlanoSaude plano;
-
     private String numeroCarteirinha;
-    private LocalDate dataCadastro;
+
+    private final LocalDate dataCadastro;
 
     private TipoSanguineo tipoSanguineo;
     private StatusPaciente status;
@@ -33,7 +33,7 @@ public class Paciente extends Pessoa {
     //     Construtores
     // ===============================
 
-      public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento, String numeroCarteirinha) {
+    public Paciente(String nome, String cpf, int idade, String endereco, String telefone, String email,Sexo sexo, LocalDate dataDeNascimento) {
         super(
             nome, 
             cpf, 
@@ -45,11 +45,7 @@ public class Paciente extends Pessoa {
             dataDeNascimento, 
             NivelAcesso.PACIENTE
         );
-    if (numeroCarteirinha == null || numeroCarteirinha.trim().isEmpty()) {
-            throw new IllegalArgumentException("Paciente precisa ter um plano de saúde!");
-        }
-        this.plano = plano;
-        this.numeroCarteirinha = numeroCarteirinha;
+
         this.dataCadastro = LocalDate.now();
         this.status = StatusPaciente.ATIVO;
     }
@@ -59,6 +55,7 @@ public class Paciente extends Pessoa {
     public void setPlanoSaude(PlanoSaude plano) { this.plano = plano; }
 
     public String getNumeroCarteirinha() { return numeroCarteirinha; }
+    public void setNumeroCarteirinha(String numeroCarteirinha) { this.numeroCarteirinha = numeroCarteirinha; }
 
     public LocalDate getDataCadastro() { return dataCadastro; }
 
@@ -126,10 +123,6 @@ public class Paciente extends Pessoa {
     // ===============================
     //       Métodos auxiliares
     // ===============================
-
-    public void atualizarEndereco(String novoEndereco) {
-        super.setEndereco(novoEndereco);
-    }
 
     public void adicionarAlergia(String alergia) {
         if (alergia != null && !alergias.contains(alergia)) {

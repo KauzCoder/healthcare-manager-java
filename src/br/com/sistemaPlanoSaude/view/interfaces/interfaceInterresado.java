@@ -32,6 +32,7 @@ public class interfaceInterresado {
         System.out.println(" [ 1 ] ➜ Conhecer nossos Planos de Saúde");
         System.out.println(" [ 2 ] ➜ Saber mais sobre a empresa Health Care");
         System.out.println(" [ 3 ] ➜ Falar com um atendente virtual");
+        System.out.println(" [ 4 ] ➜ Preencher formulário para aquisição de plano");
         System.out.println(" [ 0 ] ➜ Sair");
         System.out.println();
 
@@ -53,13 +54,13 @@ public class interfaceInterresado {
                 System.out.println("║   🏥 TIPOS DE PLANOS DISPONÍVEIS   ║");
                 System.out.println("╚════════════════════════════════════╝\n");
 
-                System.out.println("Oferecemos planos feitos sob medida\n" +
-                                   "para sua saúde, segurança e bem-estar.\n");
+                System.out.println("""
+                Oferecemos planos feitos sob medida
+                para sua saúde, segurança e bem-estar.
+                """);
 
                 System.out.println("• Plano Básico - Coberturas essenciais por um preço acessível.");
                 System.out.println("• Plano Premium - Consultas mais rápidas e ampla rede.");
-                System.out.println("• Plano Elite - Atendimento VIP, enfermaria e ampla cobertura.");
-                System.out.println("• Plano Familiar - Proteção completa para toda a família.");
                 System.out.println();
                 System.out.println("👉 Para adquirir um plano, volte ao menu e escolha o formulário.");
                 break;
@@ -69,10 +70,13 @@ public class interfaceInterresado {
                 System.out.println("║     🏢 SOBRE A HEALTH CARE     ║");
                 System.out.println("╚═══════════════════════════════╝\n");
 
-                System.out.println("A Health Care nasceu com o objetivo de proporcionar\n" +
-                                   "acesso à saúde com rapidez, qualidade e transparência.\n" +
-                                   "Contamos com mais de 500 médicos credenciados, hospitais\n" +
-                                   "parceiros e atendimento humanizado 24 horas.\n");
+                System.out.println("""
+                A Health Care nasceu com o objetivo de proporcionar
+                acesso à saúde com rapidez, qualidade e transparência.
+                Contamos com mais de 500 médicos credenciados, hospitais
+                parceiros e atendimento humanizado 24 horas.
+                """);
+
                 System.out.println("Nosso compromisso é com você e sua família.\n");
                 break;
 
@@ -81,12 +85,14 @@ public class interfaceInterresado {
                 System.out.println("║     💬 ATENDIMENTO VIRTUAL       ║");
                 System.out.println("╚══════════════════════════════════╝\n");
 
-                System.out.println("Olá! Sou o atendente virtual da Health Care.\n" +
-                                   "Como posso ajudar hoje?\n" +
-                                   "• Informações sobre planos\n" +
-                                   "• Valores e mensalidades\n" +
-                                   "• Como contratar um plano\n" +
-                                   "• Como funciona nossa rede credenciada\n");
+                System.out.println("""
+                Olá! Sou o atendente virtual da Health Care.
+                Como posso ajudar hoje?
+                • Informações sobre planos
+                • Valores e mensalidades
+                • Como contratar um plano
+                • Como funciona nossa rede credenciada
+                """);
                 break;
 
             case 4: 
@@ -96,16 +102,21 @@ public class interfaceInterresado {
 
 
                 PlanoSaude planoEscolhido = escolherPlanoParaContratacao();
-                if (planoEscolhido == null) {
-                    System.out.println("\nOperação cancelada. Você pode retornar ao menu principal a qualquer momento.");
-                    break;
-                }
-
                 Paciente novoPaciente = FormularioPaciente.cadastrarPaciente(scanner);
+
                 if (novoPaciente == null) {
                     System.out.println("\nCadastro cancelado. Você pode retornar ao menu principal a qualquer momento.");
                     break;
                 }
+
+                if (planoEscolhido == null) {
+                    System.out.println("\nOperação cancelada. Você pode retornar ao menu principal a qualquer momento.");
+                    break;
+                }
+                
+                novoPaciente.setNumeroCarteirinha(planoEscolhido.getCodigo());
+                novoPaciente.setPlanoSaude(planoEscolhido);
+                
 
                 System.out.println("\n✨ Obrigado, " + novoPaciente.getNome() + "!");
                 System.out.println("Seu pedido de contratação do **" + formatarNomePlano(planoEscolhido) + "** foi recebido.");
@@ -159,9 +170,13 @@ public class interfaceInterresado {
         }
 
         PlanosDeSaude tipo = plano.getNomePlano();
-        return switch (tipo) {
-            case PLANO_BASICO -> "Plano Básico";
-            case PLANO_PREMIUM -> "Plano Premium";
-        };
+        switch (tipo) {
+            case PLANO_BASICO:
+                return "Plano Básico";
+            case PLANO_PREMIUM:
+                return "Plano Premium";
+            default:
+                return "Plano de Saúde";
+        }
     }
 }

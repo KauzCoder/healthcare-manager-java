@@ -5,27 +5,13 @@ import java.util.List;
 import java.util.Scanner;
 
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
-import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
-import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
+import br.com.sistemaPlanoSaude.util.ConsoleColors;
 import br.com.sistemaPlanoSaude.view.interfaces.interfaceInterresado;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
+import br.com.sistemaPlanoSaude.util.PacienteMockUtil;
 
 public class Main {
-
-    // =============================================================
-    //      Cores para melhorar a interface do sistema
-    // =============================================================
-
-	public static final String RESET = "\u001B[0m";
-	public static final String BLACK = "\u001B[30m";
-	public static final String RED = "\u001B[31m";
-	public static final String GREEN = "\u001B[32m";
-	public static final String YELLOW = "\u001B[33m";
-	public static final String BLUE = "\u001B[34m";
-	public static final String PURPLE = "\u001B[35m";
-	public static final String CYAN = "\u001B[36m";
-	public static final String WHITE = "\u001B[37m";
 
 	public static void main(String[] args) throws InterruptedException {
 		Scanner scanner = new Scanner(System.in);
@@ -59,50 +45,50 @@ System.out.println(
             Thread.sleep(300);
         }
 		
-		System.out.println("\n" + GREEN +
+		System.out.println("\n" + ConsoleColors.GREEN +
 "╔════════════════════════════════════════════╗\n" +
 "║   SISTEMA DE GERENCIAMENTO DE SAÚDE        ║\n" +
-"╚════════════════════════════════════════════╝" + RESET);
+"╚════════════════════════════════════════════╝" + ConsoleColors.RESET);
 
 boolean loopMenu = true;
 
 while (loopMenu) {
 
-    System.out.println(BLUE +
+    System.out.println(ConsoleColors.BLUE +
     "\n╔════════════════════════════════════════════╗" +
     "\n║                MENU PRINCIPAL              ║" +
-    "\n╠════════════════════════════════════════════╣" + RESET);
+    "\n╠════════════════════════════════════════════╣" + ConsoleColors.RESET);
 
-    System.out.println(CYAN + "║  [1] 🧑 Cadastrar paciente                  ║" + RESET);
-    System.out.println(CYAN + "║  [2] 📋 Criar paciente exemplo              ║" + RESET);
-    System.out.println(CYAN + "║  [3] 📄 Listar pacientes                    ║" + RESET);
-    System.out.println(CYAN + "║  [4] 👨‍⚕️ Cadastrar médico                 ║" + RESET);
-    System.out.println(CYAN + "║  [6] 🧾 Área do Interessado                ║" + RESET);
-    System.out.println(RED  + "║  [7] ❌ Sair                                ║" + RESET);
+    System.out.println(ConsoleColors.CYAN + "║  [1] 🧑 Cadastrar paciente                  ║" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.CYAN + "║  [2] 📋 Criar paciente exemplo              ║" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.CYAN + "║  [3] 📄 Listar pacientes                    ║" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.CYAN + "║  [4] 👨‍⚕️ Cadastrar médico                 ║" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.CYAN + "║  [6] 🧾 Área do Interessado                ║" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.RED  + "║  [7] ❌ Sair                                ║" + ConsoleColors.RESET);
 
-		System.out.println(BLUE + "╠════════════════════════════════════════════╣" + RESET);
-		System.out.print(YELLOW + "║ 🔹 Escolha uma opção: " + RESET);
+		System.out.println(ConsoleColors.BLUE + "╠════════════════════════════════════════════╣" + ConsoleColors.RESET);
+		System.out.print(ConsoleColors.YELLOW + "║ 🔹 Escolha uma opção: " + ConsoleColors.RESET);
 		String opcaoNumero = scanner.nextLine().trim();
-		System.out.println(BLUE + "╚════════════════════════════════════════════╝" + RESET);
+		System.out.println(ConsoleColors.BLUE + "╚════════════════════════════════════════════╝" + ConsoleColors.RESET);
 
-				switch (opcaoNumero) {
+			switch (opcaoNumero) {
 				case "1":
 					Paciente p = FormularioPaciente.cadastrarPaciente(scanner);
 					pacientes.add(p);
-					System.out.println(GREEN + "✅ Cadastro de paciente selecionado!" + RESET);
+					System.out.println(ConsoleColors.GREEN + "✅ Cadastro de paciente selecionado!" + ConsoleColors.RESET);
 					break;
 
 				case "2":
-					Paciente exemplo = FormularioPaciente.criarPacienteExemplo();
+					Paciente exemplo = PacienteMockUtil.criarPacientePlanoBasicoExemplo();
 					pacientes.add(exemplo);
-					System.out.println(GREEN + "✅ Cadastro de paciente selecionado!" + RESET);
+					System.out.println(ConsoleColors.GREEN + "✅ Cadastro de paciente selecionado!" + ConsoleColors.RESET);
 					break;
 
 				case "3":
 					if (pacientes.isEmpty()) {
-						System.out.println(YELLOW + "Nenhum paciente cadastrado." + RESET);
+						System.out.println(ConsoleColors.YELLOW + "Nenhum paciente cadastrado." + ConsoleColors.RESET);
 					} else {
-						System.out.println(GREEN + "\n✅ Listando pacientes..." + RESET);
+						System.out.println(ConsoleColors.GREEN + "\n✅ Listando pacientes..." + ConsoleColors.RESET);
 						for (int i = 0; i < pacientes.size(); i++) {
 							System.out.println("\n--- Paciente " + (i + 1) + " ---");
 							pacientes.get(i).exibirInfo();
@@ -111,22 +97,22 @@ while (loopMenu) {
 					break;
 
 				case "4":
-					System.out.println(GREEN + "\n✅ Cadastro de médico selecionado!" + RESET);
+					System.out.println(ConsoleColors.GREEN + "\n✅ Cadastro de médico selecionado!" + ConsoleColors.RESET);
 					FormularioMedico.cadastrarMedico();
 					break;
                 case "6": 
-                        System.out.println(RED + "\n TESTANDO SISTEMA DE INTERRESSADO" + RESET);
+                        System.out.println(ConsoleColors.RED + "\n TESTANDO SISTEMA DE INTERRESSADO" + ConsoleColors.RESET);
                         exibirInterfaceInteressado();
                         break;
 				case "7":
-					System.out.println(RED + "\n🚪 Saindo do sistema... Obrigado!" + RESET);
+					System.out.println(ConsoleColors.RED + "\n🚪 Saindo do sistema... Obrigado!" + ConsoleColors.RESET);
 					loopMenu = false;
 					break;
 
 
 
 				default:
-					System.out.println(YELLOW + "\n⚠ Opção inválida! Tente novamente." + RESET);
+					System.out.println(ConsoleColors.YELLOW + "\n⚠ Opção inválida! Tente novamente." + ConsoleColors.RESET);
 			}
 		}
 

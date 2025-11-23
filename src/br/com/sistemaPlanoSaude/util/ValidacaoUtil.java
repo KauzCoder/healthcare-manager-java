@@ -9,9 +9,7 @@ import java.util.List;
 
 public final class ValidacaoUtil {
 
-    private ValidacaoUtil() {
-    }
-
+    
     // ===============================
     // Validação de Carteirinha de Saúde
     // ===============================

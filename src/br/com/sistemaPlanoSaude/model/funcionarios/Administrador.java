@@ -61,7 +61,6 @@ public class Administrador extends Pessoa {
         this.ultimoLogin = LocalDate.now();
     }
     
-    
 
     // ===============================
     //       Métodos automaticos 
@@ -112,9 +111,6 @@ public class Administrador extends Pessoa {
 
     return consultasDoPaciente; 
 }
-
-
-
 
 
     // ===============================

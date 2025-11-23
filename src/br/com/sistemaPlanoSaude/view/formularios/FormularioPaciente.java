@@ -1,16 +1,15 @@
 package br.com.sistemaPlanoSaude.view.formularios;
 
 import java.util.Scanner;
-
-import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
+
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 import br.com.sistemaPlanoSaude.model.enums.TipoSanguineo;
+
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
-import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
-import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
-import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
 
 public class FormularioPaciente {
 
@@ -72,13 +71,9 @@ public class FormularioPaciente {
         if (email == null || email.isEmpty()) email = "não informado";
         else if (!ValidacaoUtil.validarEmail(email)) System.out.println("Aviso: formato de e-mail parece inválido, mas será registrado.");
 
+
+
         // Sexo
-
-		// toUpperCase() garante que a entrada seja convertida para letras maiúsculas, permitindo que corresponda exatamente aos nomes do enum.
-
-		// valueOf() tenta converter a string para um valor do enum Sexo. Se a entrada não corresponder a nenhum valor válido, uma exceção será lançada, e o código dentro do catch será executado.
-
-		
         System.out.print("Sexo (MASCULINO/FEMININO): ");
         Sexo sexo;
         try {
@@ -86,47 +81,21 @@ public class FormularioPaciente {
         } catch (Exception e) {
             sexo = Sexo.MASCULINO;
         }
+        // toUpperCase() garante que a entrada seja convertida para letras maiúsculas, permitindo que corresponda exatamente aos nomes do enum.
+        // valueOf() tenta converter a string para um valor do enum Sexo. Se a entrada não corresponder a nenhum valor válido, uma exceção será lançada, e o código dentro do catch será executado.
 
+        
         // Data de nascimento
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dataDeNascimento;
         while (true) {
             System.out.print("Data de nascimento (dd/MM/yyyy): ");
-            String dataStr = scanner.nextLine().trim();
-            if (ValidacaoUtil.validarDataNascimento(dataStr)) {
-                dataDeNascimento = LocalDate.parse(dataStr, fmt);
+            String InputDataString = scanner.nextLine().trim();
+            if (ValidacaoUtil.validarDataNascimento(InputDataString)) {
+                dataDeNascimento = LocalDate.parse(InputDataString, fmt);
                 break;
             }   
             System.out.println("Data inválida. Use dd/MM/yyyy e não informe uma data futura.");
-        }
-
-        // Número da carteirinha e plano
-        String numeroCarteirinha;
-        while (true) {
-            System.out.print("Número da carteirinha: ");
-            numeroCarteirinha = scanner.nextLine().trim();
-
-            if (numeroCarteirinha.isEmpty()) {
-                System.out.println("Número de carteirinha não pode ser vazio.");
-                continue;
-            }
-
-            boolean jaRegistrada = ValidacaoUtil.validarCarteirinhaSaude(
-                numeroCarteirinha,
-                PlanoSaude.listarCarteirinhasBasico(),
-                PlanoSaude.listarCarteirinhasPremium()
-            );
-
-            if (jaRegistrada) {
-                System.out.println("Esta carteirinha já está associada a um plano. Informe outro código.");
-                continue;
-            }
-
-            if (planoSelecionado.registrarCarteirinhaPaciente(numeroCarteirinha)) {
-                break;
-            }
-
-            System.out.println("Não foi possível registrar a carteirinha. Tente novamente.");
         }
 
 
@@ -183,8 +152,7 @@ public class FormularioPaciente {
             telefone,
             email,
             sexo,
-            dataDeNascimento,
-            numeroCarteirinha
+            dataDeNascimento
         );
 
 		// Atribui tipo sanguíneo se informado (o nível de acesso permanece padrão definido em Pessoa/Paciente)
@@ -204,32 +172,6 @@ public class FormularioPaciente {
 
         System.out.println("\n✅ Paciente cadastrado com sucesso: " + novo.getNome());
         return novo;
-    }
-
-
-
-    /**
-     * Método de conveniência que cria um paciente exemplo (não interativo) vinculado a um PlanoBasico.
-     */
-    public static Paciente criarPacienteExemplo() {
-        PlanoBasico plano = new PlanoBasico();
-        plano.registrarCarteirinhaPaciente("CAR-0001");
-
-        Paciente novoPaciente = new Paciente(
-            "João Silva",
-            "12345678901",
-            35,
-            "Rua das Flores, 100",
-            "(11)99999-0000",
-            "joao.silva@example.com",
-            Sexo.MASCULINO,
-            LocalDate.of(1990, 1, 1),
-            "CAR-0001"
-        );
-        // Valores de exemplo para peso e altura
-        novoPaciente.setPeso(70.0);
-        novoPaciente.setAltura(1.75);
-        return novoPaciente;
     }
 
     // ------------------ Coleta de listas (interativas) ------------------

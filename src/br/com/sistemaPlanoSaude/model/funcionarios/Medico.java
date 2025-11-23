@@ -25,6 +25,7 @@ public class Medico extends Pessoa {
     private List<Consulta> consultas;
     private List<Paciente> pacientes;
     private List<Horario> horarioAtendimento;
+    private final List<String> horariosDisponiveis = new ArrayList<>();
 
     // ===============================
     //     Construtores
@@ -53,13 +54,13 @@ public class Medico extends Pessoa {
         this.horarioAtendimento = new ArrayList<>();
     }
 
-    // ---------------- MÉTODOS SOLICITADOS ----------------
+    // ---------------- MÉTODOS CONSULTAS ----------------
 
     public Consulta agendarConsulta(Paciente p, Date data) {
         if (p == null) throw new IllegalArgumentException("Paciente não pode ser nulo");
         if (data == null) throw new IllegalArgumentException("Data não pode ser nula");
 
-        // Procura um horário disponível que bata com a data informada
+    
         Horario encontrado = null;
         for (Horario h : horarioAtendimento) {
             if (h.getData().equals(data) && h.isDisponibilidade()) {
@@ -69,7 +70,7 @@ public class Medico extends Pessoa {
         }
         if (encontrado == null) return null; // sem horário disponível
 
-        // Usa o construtor existente de Consulta; o construtor já marca o horário como indisponível
+        
         Consulta nova = new Consulta(p, this, encontrado, "", "", null);
         consultas.add(nova);
         if (!pacientes.contains(p)) pacientes.add(p);
@@ -99,25 +100,13 @@ public class Medico extends Pessoa {
         return lista;
     }
 
-    public void adicionarHorario(Horario h) {
-        if (h == null) throw new IllegalArgumentException("Horário não pode ser nulo");
-        if (!horarioAtendimento.contains(h)) horarioAtendimento.add(h);
-    }
-
-    public void removerHorario(Horario h) {
-        horarioAtendimento.remove(h);
-    }
-
+    // ---------------- MÉTODOS VERIFICAR DISPONIBILIDADE ----------------
     public boolean estaDisponivel(Date data) {
         if (data == null) return false;
         for (Horario h : horarioAtendimento) {
             if (h.getData().equals(data) && h.isDisponibilidade()) return true;
         }
         return false;
-    }
-
-    public boolean validarCRM() {
-        return crm != null && crm.matches("^[0-9]{4,6}-[A-Z]{2}$");
     }
 
     // ---------------- GETTERS E SETTERS ----------------
@@ -130,6 +119,8 @@ public class Medico extends Pessoa {
 
     public List<Horario> getHorarioAtendimento() { return new ArrayList<>(horarioAtendimento); }
     public void setHorarioAtendimento(List<Horario> horarioAtendimento) { this.horarioAtendimento = horarioAtendimento != null ? new ArrayList<>(horarioAtendimento) : new ArrayList<>(); }
+
+    public List<String> getHorariosDisponiveis() { return horariosDisponiveis; }
 
     public Especialidades getEspecialidade() { return especialidade; }
     public void setEspecialidade(Especialidades especialidade) { this.especialidade = especialidade; }
