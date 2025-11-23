@@ -96,6 +96,11 @@ public class Administrador extends Pessoa {
         return medicos;
     }
 
+    // Retorna a lista de pacientes cadastrados (cópia defensiva)
+    public List<Paciente> getPacientes() {
+        return new ArrayList<>(pacientes);
+    }
+
     
     // ===============================
     //   Métodos de consulta 
