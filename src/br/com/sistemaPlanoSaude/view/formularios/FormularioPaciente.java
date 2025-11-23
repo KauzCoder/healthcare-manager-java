@@ -1,16 +1,15 @@
 package br.com.sistemaPlanoSaude.view.formularios;
 
-import java.util.Scanner;
-
-import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 import br.com.sistemaPlanoSaude.model.enums.TipoSanguineo;
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
 import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
 import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
+import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class FormularioPaciente {
 
@@ -100,7 +99,22 @@ public class FormularioPaciente {
             System.out.println("Data inválida. Use dd/MM/yyyy e não informe uma data futura.");
         }
 
-        // Número da carteirinha e plano
+        // Seleção do plano (Básico / Premium)
+        br.com.sistemaPlanoSaude.model.planos.PlanoSaude planoSelecionado = null;
+        while (planoSelecionado == null) {
+            System.out.println("Selecione o plano do paciente:");
+            System.out.println("  [1] Básico");
+            System.out.println("  [2] Premium");
+            System.out.print("Escolha: ");
+            String escolhaPlano = scanner.nextLine().trim();
+            switch (escolhaPlano) {
+                case "1" -> planoSelecionado = new PlanoBasico();
+                case "2" -> planoSelecionado = new PlanoPremium();
+                default -> System.out.println("Opção inválida. Digite 1 ou 2.");
+            }
+        }
+
+        // Número da carteirinha e registro no plano selecionado
         String numeroCarteirinha;
         while (true) {
             System.out.print("Número da carteirinha: ");
