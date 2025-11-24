@@ -60,12 +60,38 @@ public class ConsultaService {
     // ===============================
     //           UPDATE
     // ===============================
-    public boolean atualizarConsulta(int idConsulta, String novaDescricao, String novaReceita,
+    public boolean atualizarConsultaInteira(int idConsulta, String novaDescricao, String novaReceita,
                                      ConsultaStatus novoStatus, String novasAnotacoes) {
         Consulta consulta = buscarPorId(idConsulta);
-        if (consulta == null) return false;
+        if (consulta == null ) return false;
 
         return ConsultaDatabase.atualizarConsulta(consulta, novaDescricao, novaReceita, novoStatus, novasAnotacoes);
+        //Se voce chegou aqui e nao ta entendendo esse construtor, ele serve para atualizar os campos editaveis da consulta. Da uma olhada la na ConsultaDatabase na metodo atualizarConsulta
+    }
+
+    public boolean atualizarDescricao(int idConsulta, String novaDescricao) {
+        Consulta consulta = buscarPorId(idConsulta);
+        if (consulta == null) return false;
+        consulta.setDescricao(novaDescricao);
+        return true;
+    }
+    public boolean atualizarReceita(int idConsulta, String novaReceita){
+        Consulta consulta = buscarPorId(idConsulta);
+        if (consulta == null) return false;
+        consulta.setReceita(novaReceita);
+        return true;
+    }
+    public boolean atualizarStatus(int idConsulta, ConsultaStatus novoStatus){
+        Consulta consulta = buscarPorId(idConsulta);
+        if (consulta == null) return false;
+        consulta.setStatus(novoStatus);
+        return true;
+    }
+    public boolean atualizarAnotacoes(int idConsulta, String novasAnotacoes){
+        Consulta consulta = buscarPorId(idConsulta);
+        if (consulta == null) return false;
+        consulta.setAnotacoes(novasAnotacoes);
+        return true;
     }
 
     public boolean reagendarConsulta(int idConsulta, int novoIdHorario) {
@@ -90,18 +116,36 @@ public class ConsultaService {
     }
 
     public boolean realizarConsulta(int idConsulta) {
-        Consulta consulta = buscarPorId(idConsulta);
-        if (consulta == null) return false;
+    Consulta consulta = buscarPorId(idConsulta);
+    if (consulta == null) return false;
 
-        consulta.realizarConsultaStatus();
-        return true;
-    }
+    consulta.realizarConsultaStatus();
+
+    // Agora realmente salva a mudança no banco
+    ConsultaDatabase.atualizarConsulta(
+            consulta,
+            consulta.getDescricao(),
+            consulta.getReceita(),
+            consulta.getStatus(),
+            consulta.getAnotacoes()
+    );
+
+    return true;
+}
 
     public boolean cancelarConsulta(int idConsulta) {
         Consulta consulta = buscarPorId(idConsulta);
         if (consulta == null) return false;
 
+        // Muda o status
         consulta.cancelarConsultaStatus();
+
+        // Libera o horário do médico
+        String crm = consulta.getMedico().getCrm();
+        int idHorario = consulta.getHorario().getIdHorario();
+        horarioService.removerPaciente(crm, idHorario);
+
+        // Remove do “banco”
         ConsultaDatabase.removerConsulta(consulta);
 
         return true;

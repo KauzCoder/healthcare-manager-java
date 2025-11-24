@@ -72,6 +72,7 @@ public class Consulta {
     public void setDescricao(String descricao) { this.descricao = descricao; }
     
     public String getAnotacoes() { return anotacoes; }
+    public void setAnotacoes(String anotacoes) { this.anotacoes = anotacoes; }
     
     public String getNumeroCarteirinha() {
         return paciente != null ? paciente.getNumeroCarteirinha() : null;
