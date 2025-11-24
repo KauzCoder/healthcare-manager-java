@@ -1,14 +1,14 @@
 package br.com.sistemaPlanoSaude.view.admin;
+import br.com.sistemaPlanoSaude.database.MedicoDataBase;
 import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
 import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
-
-
 import java.util.Scanner;
 
 public class AdminMedicoView {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final MedicoDataBase medicoDB = new MedicoDataBase();
 
     public void exibirMenu(Administrador admin) {
 
@@ -90,11 +90,18 @@ public class AdminMedicoView {
 
         Medico novo = FormularioMedico.cadastrarMedico(scanner); // SEU FORMULÁRIO
 
-        if (novo != null) {
-            admin.cadastrarMedico(novo);
-            System.out.println("\n✔ Médico cadastrado com sucesso!");
-        } else {
+        if (novo == null) {
             System.out.println("\n❌ Cadastro cancelado.");
+            return;
+        }
+
+        boolean added = medicoDB.adicionarMedico(novo);
+        if (added) {
+            // mantém lista do administrador sincronizada com o DB em memória
+            admin.getMedicos().add(novo);
+            System.out.println("\n✔ Médico cadastrado com sucesso (DB em memória atualizado)!");
+        } else {
+            System.out.println("\n❌ Não foi possível cadastrar: CRM já existe no banco de dados.");
         }
     }
 
@@ -106,7 +113,21 @@ public class AdminMedicoView {
         System.out.println("║       📋 LISTA DE MÉDICOS");
         System.out.println("╚═════════════════════════╝\n");
 
-        admin.listarMedicos();
+        java.util.List<Medico> lista = medicoDB.listarTodos();
+
+        // Sincroniza a lista do administrador com o DB em memória (substitui conteúdo)
+        admin.getMedicos().clear();
+        admin.getMedicos().addAll(lista);
+
+        if (lista.isEmpty()) {
+            System.out.println("Nenhum médico cadastrado.");
+            return;
+        }
+
+        System.out.println("\n--- Lista de Médicos (do banco em memória) ---");
+        for (Medico m : lista) {
+            System.out.println(m);
+        }
     }
 
     // ===============================================================
@@ -121,9 +142,14 @@ public class AdminMedicoView {
         System.out.print("Digite o CRM do médico para remover: ");
         String crm = scanner.nextLine();
 
-        admin.removerMedico(crm);
-
-        System.out.println("\n✔ Operação concluída.");
+        boolean removed = medicoDB.removerPorCrm(crm);
+        if (removed) {
+            // manter sincronizado com admin
+            admin.removerMedico(crm);
+            System.out.println("\n✔ Médico removido (do DB em memória e do administrador).");
+        } else {
+            System.out.println("\n❌ Médico não encontrado no banco de dados.");
+        }
     }
 
     // ===============================================================
@@ -138,14 +164,17 @@ public class AdminMedicoView {
         System.out.print("Informe o CRM: ");
         String crm = scanner.nextLine();
 
-        for (Medico m : admin.getMedicos()) {
-            if (m.getCrm().equalsIgnoreCase(crm)) {
-                m.exibirInfo();
-                return;
+        Medico m = medicoDB.buscarPorCrm(crm);
+        if (m != null) {
+            // garante sincronização superficial
+            if (!admin.getMedicos().contains(m)) {
+                admin.getMedicos().add(m);
             }
+            m.exibirInfo();
+            return;
         }
 
-        System.out.println("❌ Médico não encontrado!");
+        System.out.println("❌ Médico não encontrado no banco de dados!");
     }
 
     // ===============================================================
