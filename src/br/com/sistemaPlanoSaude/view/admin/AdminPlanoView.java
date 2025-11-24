@@ -1,14 +1,13 @@
 package br.com.sistemaPlanoSaude.view.admin;
 
+import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
+import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
+import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
+import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
+import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
-import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
-import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
-import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
-import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
 
 public class AdminPlanoView {
 
@@ -205,6 +204,100 @@ public class AdminPlanoView {
     private void limparTela() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    // ===============================
+    // MÉTODOS DE INTEGRAÇÃO COM BANCO EM MEMÓRIA
+    // ===============================
+
+    // Simulação de banco de dados em memória para planos
+    private final List<PlanoSaude> planosDB = new ArrayList<>();
+
+    // Adicionar novo plano
+    public void adicionarPlano() {
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║     ➕ ADICIONAR NOVO PLANO      ║");
+        System.out.println("╚══════════════════════════════════╝\n");
+
+        PlanoSaude novoPlano = escolherPlano();
+        if (novoPlano == null) return;
+
+        System.out.print("Informe o valor base do plano: R$ ");
+        double valor = scanner.nextDouble();
+        scanner.nextLine();
+        novoPlano.setValorBase(valor);
+
+        // Adiciona ao banco em memória
+        boolean exists = planosDB.stream().anyMatch(p -> p.getNomePlano() == novoPlano.getNomePlano());
+        if (exists) {
+            System.out.println("❌ Plano já existe no banco de dados!");
+            return;
+        }
+        planosDB.add(novoPlano);
+        System.out.println("✔ Plano adicionado ao banco de dados em memória!");
+    }
+
+    // Listar todos os planos do banco
+    public void listarPlanosBanco() {
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║   📄 LISTA DE PLANOS (BANCO)     ║");
+        System.out.println("╚══════════════════════════════════╝\n");
+
+        if (planosDB.isEmpty()) {
+            System.out.println("Nenhum plano cadastrado no banco.");
+            return;
+        }
+        for (PlanoSaude p : planosDB) {
+            System.out.println("- " + formatarNomePlano(p));
+            System.out.printf("  Valor base: R$ %.2f\n", p.getValorBase());
+            System.out.println("  Última atualização: " + p.getUltimaAtualizacao());
+            System.out.println();
+        }
+    }
+
+    // Buscar plano por tipo
+    public void buscarPlano() {
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║   🔎 BUSCAR PLANO PELO TIPO      ║");
+        System.out.println("╚══════════════════════════════════╝\n");
+
+        System.out.print("Digite o tipo (1-Básico, 2-Premium): ");
+        String tipo = scanner.nextLine();
+        PlanoSaude plano = null;
+        if ("1".equals(tipo)) {
+            plano = planosDB.stream().filter(p -> p instanceof PlanoBasico).findFirst().orElse(null);
+        } else if ("2".equals(tipo)) {
+            plano = planosDB.stream().filter(p -> p instanceof PlanoPremium).findFirst().orElse(null);
+        }
+        if (plano != null) {
+            System.out.println("Plano encontrado:");
+            System.out.println("- " + formatarNomePlano(plano));
+            System.out.printf("  Valor base: R$ %.2f\n", plano.getValorBase());
+            System.out.println("  Última atualização: " + plano.getUltimaAtualizacao());
+        } else {
+            System.out.println("❌ Plano não encontrado no banco de dados.");
+        }
+    }
+
+    // Remover plano pelo tipo
+    public void removerPlano() {
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║     ❌ REMOVER PLANO             ║");
+        System.out.println("╚══════════════════════════════════╝\n");
+
+        System.out.print("Digite o tipo do plano para remover (1-Básico, 2-Premium): ");
+        String tipo = scanner.nextLine();
+        boolean removed = false;
+        if ("1".equals(tipo)) {
+            removed = planosDB.removeIf(p -> p instanceof PlanoBasico);
+        } else if ("2".equals(tipo)) {
+            removed = planosDB.removeIf(p -> p instanceof PlanoPremium);
+        }
+        if (removed) {
+            System.out.println("✔ Plano removido do banco de dados em memória!");
+        } else {
+            System.out.println("❌ Plano não encontrado para remoção.");
+        }
     }
 
 }
