@@ -1,15 +1,16 @@
 package br.com.sistemaPlanoSaude.view.admin;
 
+import br.com.sistemaPlanoSaude.database.PacienteDataBase;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
-import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
-
 import java.util.Scanner;
 
 public class AdminPacienteView {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final PacienteDataBase pacienteDB = new PacienteDataBase();
 
     public void exibirMenu(Administrador admin) {
 
@@ -92,8 +93,14 @@ public class AdminPacienteView {
         Paciente novo = FormularioPaciente.cadastrarPaciente(scanner);
 
         if (novo != null) {
-            admin.criarPaciente(novo);
-            System.out.println("\n✔ Paciente cadastrado com sucesso!");
+            boolean added = pacienteDB.adicionarPaciente(novo);
+            if (added) {
+                // Mantém o administrador atualizado com o paciente criado
+                admin.criarPaciente(novo);
+                System.out.println("\n✔ Paciente cadastrado com sucesso (DB em memória atualizado)!");
+            } else {
+                System.out.println("\n❌ Não foi possível cadastrar: carteirinha já existe no banco de dados.");
+            }
         } else {
             System.out.println("\n❌ Operação cancelada.");
         }
@@ -108,12 +115,24 @@ public class AdminPacienteView {
         System.out.println("║       📋 LISTA DE PACIENTES    ║");
         System.out.println("╚═══════════════════════════════╝\n");
 
-        if (admin.getPacientes().isEmpty()) {
+        java.util.List<Paciente> lista = pacienteDB.listarTodos();
+
+        // Sincroniza o administrador com os pacientes existentes no DB (não remove, apenas adiciona ausentes)
+        for (Paciente p : lista) {
+            boolean presente = admin.getPacientes().stream()
+                    .anyMatch(ap -> ap.getNumeroCarteirinha().equals(p.getNumeroCarteirinha()));
+            if (!presente) {
+                admin.criarPaciente(p);
+            }
+        }
+
+        if (lista.isEmpty()) {
             System.out.println("Nenhum paciente cadastrado.");
             return;
         }
 
-        for (Paciente p : admin.getPacientes()) {
+        System.out.println("\n--- Lista de Pacientes (do banco em memória) ---");
+        for (Paciente p : lista) {
             System.out.println(p);
         }
     }
@@ -130,6 +149,12 @@ public class AdminPacienteView {
         System.out.print("Informe o número da carteirinha: ");
         String codigo = scanner.nextLine();
 
+        // Tenta bloquear no DB primeiro e também no administrador (se existir)
+        boolean dbBlock = pacienteDB.buscarCarteirinha(codigo) != null;
+        if (dbBlock) {
+            // marca no objeto do DB
+            pacienteDB.buscarCarteirinha(codigo).setStatus(br.com.sistemaPlanoSaude.model.enums.StatusPaciente.BLOQUEADO);
+        }
         admin.bloquearPaciente(codigo);
     }
 
@@ -145,6 +170,10 @@ public class AdminPacienteView {
         System.out.print("Informe o número da carteirinha: ");
         String codigo = scanner.nextLine();
 
+        boolean dbFound = pacienteDB.buscarCarteirinha(codigo) != null;
+        if (dbFound) {
+            pacienteDB.buscarCarteirinha(codigo).setStatus(br.com.sistemaPlanoSaude.model.enums.StatusPaciente.ATIVO);
+        }
         admin.desbloquearPaciente(codigo);
     }
 
@@ -176,6 +205,11 @@ public class AdminPacienteView {
             }
         }
 
+        // altera tanto no administrador quanto no DB (se existir)
+        Paciente p = pacienteDB.buscarCarteirinha(codigo);
+        if (p != null) {
+            p.setNivelAcesso(nivel);
+        }
         admin.alterarPermissoes(codigo, nivel);
     }
 
@@ -191,6 +225,12 @@ public class AdminPacienteView {
         System.out.print("Número da carteirinha: ");
         String codigo = scanner.nextLine();
 
+        // Reset simulado no admin e no DB (se aplicável)
+        Paciente p = pacienteDB.buscarCarteirinha(codigo);
+        if (p != null) {
+            // Não há setSenhaHash em Paciente, apenas informar que foi resetado no DB simuladamente
+            System.out.println("Senha resetada (simulada) no DB para a carteirinha: " + codigo);
+        }
         admin.resetarSenhaPaciente(codigo);
     }
 
@@ -206,17 +246,22 @@ public class AdminPacienteView {
         System.out.print("Informe o número da carteirinha: ");
         String codigo = scanner.nextLine();
 
-        Paciente encontrado = admin.getPacientes().stream()
-                .filter(p -> p.getNumeroCarteirinha().equals(codigo))
-                .findFirst()
-                .orElse(null);
+        Paciente encontrado = pacienteDB.buscarCarteirinha(codigo);
 
         if (encontrado == null) {
-            System.out.println("❌ Paciente não encontrado.");
-        } else {
-            System.out.println("\n📄 **Dados do Paciente:**\n");
-            encontrado.exibirInfo();
+            System.out.println("❌ Paciente não encontrado no banco de dados.");
+            return;
         }
+
+        // garante que o administrador possua referência ao paciente em memória
+        boolean presente = admin.getPacientes().stream()
+                .anyMatch(ap -> ap.getNumeroCarteirinha().equals(encontrado.getNumeroCarteirinha()));
+        if (!presente) {
+            admin.criarPaciente(encontrado);
+        }
+
+        System.out.println("\n📄 **Dados do Paciente:**\n");
+        encontrado.exibirInfo();
     }
 
     // ===============================================================
