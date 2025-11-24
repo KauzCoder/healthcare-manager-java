@@ -34,9 +34,7 @@ public class AdminPacienteView {
             System.out.println(" [ 2 ] ➜ Listar Pacientes");
             System.out.println(" [ 3 ] ➜ Bloquear Paciente");
             System.out.println(" [ 4 ] ➜ Desbloquear Paciente");
-            System.out.println(" [ 5 ] ➜ Alterar Permissões");
-            System.out.println(" [ 6 ] ➜ Resetar Senha");
-            System.out.println(" [ 7 ] ➜ Buscar Paciente por Carteirinha");
+            System.out.println(" [ 6 ] ➜ Buscar Paciente por Carteirinha");
             System.out.println(" [ 0 ] ➜ Voltar");
             System.out.println();
 
