@@ -6,14 +6,9 @@ import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
 
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public abstract class PlanoSaude {
-    private static final List<String> CODIGOS_BASICO = new ArrayList<>();
-    private static final List<String> CODIGOS_PREMIUM = new ArrayList<>();
 
 
     // Atributos principais
@@ -87,74 +82,6 @@ public abstract class PlanoSaude {
         int sufixo = random.nextInt(900000000) + 100000000;
         return codigoBase + sufixo;
     }
-
-    private List<String> obterListaDoPlanoAtual() {
-        if (this.nomePlano == null) {
-            throw new IllegalStateException("Plano atual não definido para o objeto");
-        }
-
-        switch (this.nomePlano) {
-            case PLANO_BASICO:
-                return CODIGOS_BASICO;
-            case PLANO_PREMIUM:
-                return CODIGOS_PREMIUM;
-            default:
-                throw new IllegalStateException("Plano não suportado: " + this.nomePlano);
-        }
-    }
-
-    public boolean registrarCarteirinhaPaciente(String carteirinha) {
-        if (carteirinha == null || carteirinha.trim().isEmpty()) {
-            return false;
-        }
-        List<String> carteirinhas = obterListaDoPlanoAtual();
-        String codigoNormalizado = carteirinha.trim().toUpperCase();
-        if (carteirinhas.contains(codigoNormalizado)) {
-            return false;
-        }
-        carteirinhas.add(codigoNormalizado);
-        return true;
-    }
-
-    public boolean carteirinhaJaRegistrada(String carteirinha) {
-        if (carteirinha == null) {
-            return false;
-        }
-        return obterListaDoPlanoAtual().contains(carteirinha.trim().toUpperCase());
-    }
-
-    public List<String> listarCarteirinhasRegistradas() {
-        return Collections.unmodifiableList(new ArrayList<>(obterListaDoPlanoAtual()));
-    }
-
-    public static List<String> listarCarteirinhasBasico() {
-        return Collections.unmodifiableList(new ArrayList<>(CODIGOS_BASICO));
-    }
-
-    public static List<String> listarCarteirinhasPremium() {
-        return Collections.unmodifiableList(new ArrayList<>(CODIGOS_PREMIUM));
-    }
-
-   // ===============================
-    //        Status Helpers 
-    // ===============================
-    public boolean estaAtivo() { return this.ativo; }
-
-    public void ativar() {
-        if (!this.ativo) {
-            this.ativo = true;
-            this.ultimaAtualizacao = LocalDate.now();
-        }
-    }
-
-    public void desativar() {
-        if (this.ativo) {
-            this.ativo = false;
-            this.ultimaAtualizacao = LocalDate.now();
-        }
-    }
-    
-
 
     // ===============================
     //        Método abstrato 
