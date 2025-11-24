@@ -8,6 +8,11 @@ public class PacienteDataBase {
 
     private final List<Paciente> pacientes = new ArrayList<>();
 
+
+    // ===============================
+    //             CREATE
+    // ===============================
+    
     public boolean adicionarPaciente(Paciente paciente) {
     if (buscarCarteirinha(paciente.getNumeroCarteirinha()) != null) return false;
     pacientes.add(paciente);
@@ -16,6 +21,9 @@ public class PacienteDataBase {
     //Evita a duplicidade de carteirinhas ao adicionar um paciente.
 
 
+    // ===============================
+    //             READ
+    // ===============================
     public Paciente buscarCarteirinha(String numeroCarteirinhaPesquisada) {
         for (Paciente paciente : pacientes) {
             if (paciente.getNumeroCarteirinha().equals(numeroCarteirinhaPesquisada)) {
@@ -25,20 +33,9 @@ public class PacienteDataBase {
         return null;
     }
 
-    public boolean removerPorCarteirinha(String numeroCarteirinha) {
-        Paciente paciente = buscarCarteirinha(numeroCarteirinha);
-        if (paciente != null) {
-            pacientes.remove(paciente);
-            return true;
-        }
-        return false;
-    }
-
-
     // ===============================
     //            UPDATE
     // ===============================
-
     /**
      * Atualiza todos os dados do paciente EXCETO:
      * - número da carteirinha (imutável)
@@ -61,6 +58,20 @@ public class PacienteDataBase {
 
         return true;
     }
+
+    // ===============================
+    //             DELETE
+    // ===============================
+    public boolean removerPorCarteirinha(String numeroCarteirinha) {
+        Paciente paciente = buscarCarteirinha(numeroCarteirinha);
+        if (paciente != null) {
+            pacientes.remove(paciente);
+            return true;
+        }
+        return false;
+    }
+
+
 
     public List<Paciente> listarTodos() {
         return new ArrayList<>(pacientes);
