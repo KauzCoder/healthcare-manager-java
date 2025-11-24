@@ -30,24 +30,24 @@ public class MedicoService {
     }
 
     // =============================
-    //           DELETE
-    // =============================
-    public boolean remover(String crm) {
-        return medicoDB.removerPorCrm(crm);
-    }
-
-    // =============================
     //           UPDATE
     // =============================
-
+    
     // Atualização completa (exceto salário e CRM)
     public boolean atualizarMedico(String crm, Medico dados) {
         return medicoDB.atualizarMedico(crm, dados);
     }
-
+    
     // Atualizar salário — restrito ao administrador
     public boolean atualizarSalario(String crm, int novoSalario) {
         return medicoDB.atualizarSalario(crm, novoSalario);
+    }
+    
+    // =============================
+    //           DELETE
+    // =============================
+    public boolean remover(String crm) {
+        return medicoDB.removerPorCrm(crm);
     }
 
     // =============================
@@ -57,44 +57,44 @@ public class MedicoService {
     // --------- CAMPOS EDITÁVEIS ---------
 
     public boolean atualizarNome(String crm, String novoNome) {
-        Medico m = medicoDB.buscarPorCrm(crm);
-        if (m == null) return false;
-        m.setNome(novoNome);
+        Medico medico = medicoDB.buscarPorCrm(crm);
+        if (medico == null) return false;
+        medico.setNome(novoNome);
         return true;
     }
 
     public boolean atualizarEndereco(String crm, String novoEndereco) {
-        Medico m = medicoDB.buscarPorCrm(crm);
-        if (m == null) return false;
-        m.setEndereco(novoEndereco);
+        Medico medico = medicoDB.buscarPorCrm(crm);
+        if (medico == null) return false;
+        medico.setEndereco(novoEndereco);
         return true;
     }
 
     public boolean atualizarTelefone(String crm, String novoTel) {
-        Medico m = medicoDB.buscarPorCrm(crm);
-        if (m == null) return false;
-        m.setTelefone(novoTel);
+        Medico medico = medicoDB.buscarPorCrm(crm);
+        if (medico == null) return false;
+        medico.setTelefone(novoTel);
         return true;
     }
 
     public boolean atualizarEmail(String crm, String novoEmail) {
-        Medico m = medicoDB.buscarPorCrm(crm);
-        if (m == null) return false;
-        m.setEmail(novoEmail);
+        Medico medico = medicoDB.buscarPorCrm(crm);
+        if (medico == null) return false;
+        medico.setEmail(novoEmail);
         return true;
     }
 
     public boolean atualizarEspecialidade(String crm, Especialidades novaEsp) {
-        Medico m = medicoDB.buscarPorCrm(crm);
-        if (m == null) return false;
-        m.setEspecialidade(novaEsp);
+        Medico medico = medicoDB.buscarPorCrm(crm);
+        if (medico == null) return false;
+        medico.setEspecialidade(novaEsp);
         return true;
     }
 
     public boolean atualizarDataContratacao(String crm, LocalDate novaData) {
-        Medico m = medicoDB.buscarPorCrm(crm);
-        if (m == null) return false;
-        m.setDataContratacao(novaData);
+        Medico medico = medicoDB.buscarPorCrm(crm);
+        if (medico == null) return false;
+        medico.setDataContratacao(novaData);
         return true;
     }
 }
