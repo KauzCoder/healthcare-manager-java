@@ -1,134 +1,98 @@
 package br.com.sistemaPlanoSaude.view.interfaces;
 
-import br.com.sistemaPlanoSaude.model.enums.Especialidades;
+
 import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
-import br.com.sistemaPlanoSaude.model.consulta.Horario;
+import br.com.sistemaPlanoSaude.model.enums.Especialidades;
+import br.com.sistemaPlanoSaude.service.ConsultaService;
 import br.com.sistemaPlanoSaude.service.HorarioService;
 import br.com.sistemaPlanoSaude.service.MedicoService;
 import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
+import br.com.sistemaPlanoSaude.view.formularios.FormularioAgendaMedico;
+import br.com.sistemaPlanoSaude.view.consulta.GeraçãoConsultaMedico;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Scanner;
 
 public class InterfaceMedico {
 
     private final Scanner scanner = new Scanner(System.in);
-    private Medico medicoLogado; // médico atualmente logado
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
     private final MedicoService medicoService;
     private final HorarioService horarioService;
+    private final ConsultaService consultaService;
 
-    public InterfaceMedico(MedicoService medicoService, HorarioService horarioService) {
+    private Medico medicoLogado;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    public InterfaceMedico(MedicoService medicoService, HorarioService horarioService,
+                                   ConsultaService consultaService) {
         this.medicoService = medicoService;
         this.horarioService = horarioService;
+        this.consultaService = consultaService;
     }
 
     // =========================
-    // Exibir menu principal
+    // Menu principal do médico
     // =========================
     public void exibirMenu() {
-        MetodosAuxiliares.limparTela();
+        while (true) {
+            MetodosAuxiliares.limparTela();
+            System.out.println("╔════════════════════════════════════════╗");
+            System.out.println("║           🩺 ÁREA DO MÉDICO 🩺         ║");
+            System.out.println("╚════════════════════════════════════════╝\n");
 
-        System.out.println("╔════════════════════════════════════════╗");
-        System.out.println("║        🩺 ÁREA DO MÉDICO 🩺           ║");
-        System.out.println("╚════════════════════════════════════════╝\n");
+            System.out.println("📌 Opções disponíveis:");
+            System.out.println("[1] Gerenciar agenda de horários");
+            System.out.println("[2] Gerenciar consultas");
+            System.out.println("[3] Editar meus dados");
+            System.out.println("[0] Sair");
 
-        System.out.println("📌 **Opções Disponíveis:**\n");
-        System.out.println(" [1] ➜ Visualizar agenda de horários");
-        System.out.println(" [2] ➜ Registrar atendimento");
-        System.out.println(" [3] ➜ Editar dados do médico");
-        System.out.println(" [0] ➜ Voltar ao menu principal\n");
+            System.out.print("👉 Digite sua opção: ");
+            String opcao = scanner.nextLine().trim();
 
-        System.out.print("👉 Digite sua opção: ");
-        String opcao = scanner.nextLine().trim();
-
-        processarOpcao(opcao);
+            switch (opcao) {
+                case "1" -> gerenciarAgenda();
+                case "2" -> gerenciarConsultas();
+                case "3" -> editarDadosMedico();
+                case "0" -> {
+                    System.out.println("Saindo do sistema...");
+                    return;
+                }
+                default -> {
+                    System.out.println("❌ Opção inválida!");
+                    MetodosAuxiliares.pausarTela();
+                }
+            }
+        }
     }
 
     // =========================
-    // Processar opção do menu
+    // Gerenciar agenda
     // =========================
-    private void processarOpcao(String opcao) {
-        MetodosAuxiliares.limparTela();
-
-        switch (opcao) {
-            case "1":
-                if (medicoLogado == null) {
-                    System.out.println("❌ Nenhum médico logado!");
-                    break;
-                }
-
-                exibirAgenda();
-
-                break;
-
-            case "2":
-                System.out.println("📌 Registrar atendimento *Em desenvolvimento*");
-                break;
-
-            case "3":
-                editarDadosMedico();
-                break;
-
-            case "0":
-                System.out.println("Retornando ao menu principal...");
-                return;
-
-            default:
-                System.out.println("❌ Opção inválida!");
+    private void gerenciarAgenda() {
+        if (medicoLogado == null) {
+            System.out.println("❌ Nenhum médico logado!");
+            MetodosAuxiliares.pausarTela();
+            return;
         }
-
-        System.out.println("\n👉 Pressione ENTER para continuar...");
-        scanner.nextLine();
-        exibirMenu();
+        FormularioAgendaMedico formulario = new FormularioAgendaMedico();
+        formulario.abrirMenu();
     }
 
     // =========================
-    // Exibir agenda de horários
+    // Gerenciar consultas
     // =========================
-    private void exibirAgenda() {
-        List<Horario> horarios = horarioService.listarHorariosPorMedico(medicoLogado.getCrm());
-
-        System.out.println("╔══════════════════════════════════════╗");
-        System.out.println("║       🗓 AGENDA DE HORÁRIOS         ║");
-        System.out.println("╚══════════════════════════════════════╝\n");
-
-        if (horarios.isEmpty()) {
-            System.out.println("Nenhum horário cadastrado ainda.");
-        } else {
-            System.out.println("Horários cadastrados:");
-            int count = 1;
-            for (Horario h : horarios) {
-                String status = h.isDisponibilidade() ? "Disponível" : "Ocupado";
-                String dataFormatada = formatter.format(h.getData());
-                System.out.println(count + ". " + dataFormatada + " - " + status);
-                count++;
-            }
+    private void gerenciarConsultas() {
+        if (medicoLogado == null) {
+            System.out.println("❌ Nenhum médico logado!");
+            MetodosAuxiliares.pausarTela();
+            return;
         }
-
-        System.out.print("\nDeseja adicionar um novo horário? (S/N): ");
-        String respostaHorario = scanner.nextLine().trim().toUpperCase();
-        if (respostaHorario.equals("S")) {
-            try {
-                System.out.print("Digite a data e hora do novo horário (yyyy-MM-dd HH:mm): ");
-                Date novaData = formatter.parse(scanner.nextLine().trim());
-
-                boolean sucesso = horarioService.criarHorario(novaData, true, medicoLogado.getCrm());
-                if (sucesso) {
-                    System.out.println("✅ Horário adicionado com sucesso: " + formatter.format(novaData));
-                } else {
-                    System.out.println("❌ Não foi possível adicionar o horário.");
-                }
-
-            } catch (ParseException e) {
-                System.out.println("⚠ Data/hora inválida! Use o formato yyyy-MM-dd HH:mm");
-            }
-        }
+        GeraçãoConsultaMedico geracaoConsulta = new GeraçãoConsultaMedico(medicoLogado, consultaService, horarioService);
+        geracaoConsulta.iniciar();
     }
 
     // =========================
@@ -137,18 +101,15 @@ public class InterfaceMedico {
     private void editarDadosMedico() {
         if (medicoLogado == null) {
             System.out.println("❌ Nenhum médico logado!");
+            MetodosAuxiliares.pausarTela();
             return;
         }
 
-        // Mostra dados atuais
         medicoLogado.exibirInfo();
 
         System.out.print("Deseja alterar algum dado? (S/N): ");
         String resposta = scanner.nextLine().trim().toUpperCase();
-        if (!resposta.equals("S")) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
+        if (!resposta.equals("S")) return;
 
         boolean editar = true;
         while (editar) {
@@ -167,37 +128,33 @@ public class InterfaceMedico {
             String campo = scanner.nextLine().trim();
 
             switch (campo) {
-                case "1":
+                case "1" -> {
                     System.out.print("Novo nome: ");
                     medicoService.atualizarNome(medicoLogado.getCrm(), scanner.nextLine());
-                    break;
-                case "2":
+                }
+                case "2" -> {
                     System.out.print("Novo endereço: ");
                     medicoService.atualizarEndereco(medicoLogado.getCrm(), scanner.nextLine());
-                    break;
-                case "3":
+                }
+                case "3" -> {
                     System.out.print("Novo telefone: ");
                     medicoService.atualizarTelefone(medicoLogado.getCrm(), scanner.nextLine());
-                    break;
-                case "4":
+                }
+                case "4" -> {
                     System.out.print("Novo email: ");
                     medicoService.atualizarEmail(medicoLogado.getCrm(), scanner.nextLine());
-                    break;
-                case "5":
+                }
+                case "5" -> {
                     System.out.println("Escolha especialidade:");
-                    for (Especialidades especialidade : Especialidades.values()) {
-                        System.out.println("- " + especialidade);
-                    }
+                    for (Especialidades e : Especialidades.values()) System.out.println("- " + e);
                     System.out.print("Especialidade: ");
                     medicoService.atualizarEspecialidade(
                             medicoLogado.getCrm(),
                             Especialidades.valueOf(scanner.nextLine().trim().toUpperCase())
                     );
-                    break;
-                case "6":
-                    System.out.println("⚠ CRM não pode ser alterado!");
-                    break;
-                case "7":
+                }
+                case "6" -> System.out.println("⚠ CRM não pode ser alterado!");
+                case "7" -> {
                     System.out.print("Nova data de contratação (yyyy-MM-dd): ");
                     try {
                         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -207,25 +164,20 @@ public class InterfaceMedico {
                     } catch (ParseException e) {
                         System.out.println("⚠ Data inválida!");
                     }
-                    break;
-                case "8":
-                    System.out.println("⚠ Salário só pode ser alterado por administrador!");
-                    break;
-                case "0":
+                }
+                case "8" -> System.out.println("⚠ Salário só pode ser alterado por administrador!");
+                case "0" -> {
                     editar = false;
-                    System.out.println("✔ Alterações salvas com sucesso!");
-                    break;
-                default:
-                    System.out.println("❌ Opção inválida!");
+                    System.out.println("✔ Alterações salvas!");
+                }
+                default -> System.out.println("❌ Opção inválida!");
             }
         }
+        MetodosAuxiliares.pausarTela();
     }
 
-    
-    
-
     // =========================
-    // Método para definir o médico logado
+    // Definir médico logado
     // =========================
     public void setMedicoLogado(Medico medico) {
         this.medicoLogado = medico;
