@@ -101,7 +101,7 @@ public class FormularioAdministrador {
 
         adminService.criarAdministrador(new Administrador(
             nome, cpf, idade, endereco, telefone, email,
-            sexo, dataNasc, NivelAcesso.ADMINISTRADOR, senhaHash
+            sexo, dataNasc, NivelAcesso.ADMINISTRADOR, senhaHash, null, null
         )); 
 
         System.out.println(ConsoleColors.GREEN + "\n✔ Administrador criado com sucesso!" + ConsoleColors.RESET);
