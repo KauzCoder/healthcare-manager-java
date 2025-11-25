@@ -26,6 +26,11 @@ public class AgendaGlobalDataBase {
     }
 
     // Remove um horário pelo CRM do médico e ID do horário
+    
+    // ===============================
+    //             READ
+    // ===============================
+
     public static boolean removerPorId(String crmMedico, int idHorario) {
         Horario horario = buscarHorario(crmMedico, idHorario);
         if (horario != null) {
@@ -35,9 +40,6 @@ public class AgendaGlobalDataBase {
         return false;
     }
 
-    // ===============================
-    //             READ
-    // ===============================
     public static List<Horario> listarHorariosPorMedico(String crmMedico) {
         List<Horario> resultado = new ArrayList<>();
         for (Horario horario : horarios) {
