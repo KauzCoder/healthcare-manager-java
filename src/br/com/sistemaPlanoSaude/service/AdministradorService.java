@@ -41,6 +41,19 @@ public class AdministradorService {
         return administradoresDB.listarTodos();
     }
 
+    
+    // ===============================
+    //         AUTH / LOGIN
+    // ===============================
+    public boolean autenticarAdministrador(String cpf, String senha) {
+        if (cpf == null || senha == null) return false;
+
+        Administrador admin = administradoresDB.buscarPorCpf(cpf);
+        if (admin == null) return false;
+
+        return admin.getSenhaHash().equals(senha);
+    }
+
     // ===============================
     //           UPDATE
     // ===============================
