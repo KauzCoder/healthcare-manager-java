@@ -1,341 +1,282 @@
 package br.com.sistemaPlanoSaude.view.consulta;
 
-import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
 import br.com.sistemaPlanoSaude.model.consulta.Consulta;
-import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.model.consulta.Horario;
 import br.com.sistemaPlanoSaude.model.enums.ConsultaStatus;
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.service.ConsultaService;
+import br.com.sistemaPlanoSaude.service.HorarioService;
+import br.com.sistemaPlanoSaude.util.ConsoleColors;
+import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
 
-//Classe responsável pela geração e gerenciamento de consultas do ponto de vista do médico.
-// Permite visualizar consultas agendadas, registrar receitas, anotações e marcar como realizada.
-// Organização: Menu principal, métodos de criação, auxiliares e de coleta de dados.
- 
+import java.util.List;
+import java.util.Scanner;
+
 public class GeraçãoConsultaMedico {
 
-    // Lista simulada de consultas agendadas
-    private static List<Consulta> consultasAgendadas = new ArrayList<>();
+    private final Medico medico;
+    private final ConsultaService consultaService;
+    private final HorarioService horarioService;
+    private final Scanner scanner = new Scanner(System.in);
 
-    // MENU PRINCIPAL 
+    public GeraçãoConsultaMedico(Medico medico, ConsultaService consultaService, HorarioService horarioService) {
+        this.medico = medico;
+        this.consultaService = consultaService;
+        this.horarioService = horarioService;
+    }
 
-    /**
-     Exibe o menu principal de consultas para o médico.
-
-     @param scanner objeto Scanner para leitura de entrada
-     @param medico o médico logado
-     */
-    public static void menuConsultaMedico(Scanner scanner, Medico medico) {
-        if (medico == null) {
-            System.out.println("Erro: Médico não identificado.");
-            return;
-        }
-
+    public void iniciar() {
         while (true) {
-            System.out.println("\n========== MENU DE CONSULTAS - MÉDICO ==========");
-            System.out.println("1. Ver minhas consultas agendadas");
-            System.out.println("2. Registrar receita");
-            System.out.println("3. Registrar anotações");
-            System.out.println("4. Marcar consulta como realizada");
-            System.out.println("5. Cancelar consulta");
-            System.out.println("6. Voltar");
-            System.out.print("Escolha uma opção: ");
+            MetodosAuxiliares.limparTela();
+            exibirCabecalho();
+            exibirMenu();
 
-            String opcao = scanner.nextLine().trim();
+            int opcao = lerInteiro();
+            if (opcao == 0) break;
+            processarOpcao(opcao);
+        }
+        System.out.println(ConsoleColors.GREEN + "\nSaindo do sistema. Até mais!" + ConsoleColors.RESET);
+    }
+    //Toda a interface de interação do médico com o sistema de consultas se encontra aqui
 
-            switch (opcao) {
-                case "1":
-                    exibirConsultasAgendadas(medico);
-                    break;
-                case "2":
-                    registrarReceita(scanner, medico);
-                    break;
-                case "3":
-                    registrarAnotacoes(scanner, medico);
-                    break;
-                case "4":
-                    marcarComRealizada(scanner, medico);
-                    break;
-                case "5":
-                    cancelarConsultaMedico(scanner, medico);
-                    break;
-                case "6":
-                    System.out.println("Retornando ao menu anterior...");
-                    return;
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
+
+
+    private void exibirCabecalho() {
+        System.out.println(ConsoleColors.BG_BLUE + ConsoleColors.BOLD + "╔════════════════════════════════════════╗" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.BG_BLUE + ConsoleColors.BOLD + "║        🩺  SISTEMA DE CONSULTAS 🩺      ║" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.BG_BLUE + ConsoleColors.BOLD + "╚════════════════════════════════════════╝" + ConsoleColors.RESET);
+        System.out.println("\n" + ConsoleColors.CYAN + "Bem-vindo(a), Dr(a). " + medico.getNome() + ConsoleColors.RESET);
+    }
+    private void exibirMenu() {
+        System.out.println(ConsoleColors.YELLOW + "Escolha uma opção:" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.BOLD + "1" + ConsoleColors.RESET + " - Agendar consulta");
+        System.out.println(ConsoleColors.BOLD + "2" + ConsoleColors.RESET + " - Ver minhas consultas");
+        System.out.println(ConsoleColors.BOLD + "3" + ConsoleColors.RESET + " - Registrar receita (apenas consultas realizadas)");
+        System.out.println(ConsoleColors.BOLD + "4" + ConsoleColors.RESET + " - Registrar anotações (apenas consultas realizadas)");
+        System.out.println(ConsoleColors.BOLD + "5" + ConsoleColors.RESET + " - Marcar consulta como realizada");
+        System.out.println(ConsoleColors.BOLD + "6" + ConsoleColors.RESET + " - Cancelar consulta");
+        System.out.println(ConsoleColors.BOLD + "0" + ConsoleColors.RESET + " - Sair");
+        System.out.print("\nOpção: ");
+    }
+    private void processarOpcao(int opcao) {
+        switch (opcao) {
+            case 1 -> agendarConsulta();
+            case 2 -> exibirConsultas();
+            case 3 -> registrarReceita();
+            case 4 -> registrarAnotacoes();
+            case 5 -> marcarComoRealizada();
+            case 6 -> cancelarConsulta();
+            case 0 -> {
+                // Sair do sistema
+                System.out.println(ConsoleColors.GREEN + "\nSaindo do sistema. Até mais!" + ConsoleColors.RESET);
+            }
+            default -> {
+                System.out.println(ConsoleColors.RED + "❌ Opção inválida!" + ConsoleColors.RESET);
+                MetodosAuxiliares.pausarTela();
             }
         }
     }
 
-    // MÉTODOS DE VISUALIZAÇÃO
+    // ==========================
+    //       VISUALIZAÇÃO
+    // ==========================
+    private void exibirConsultas() {
+        MetodosAuxiliares.limparTela();
+        System.out.println(ConsoleColors.BG_GREEN + ConsoleColors.BOLD + "╔════════════════════════════════════════╗" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.BG_GREEN + ConsoleColors.BOLD + "║          🗂️ MINHAS CONSULTAS 🗂️        ║" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.BG_GREEN + ConsoleColors.BOLD + "╚════════════════════════════════════════╝" + ConsoleColors.RESET);
 
-    /**
-     Exibe todas as consultas agendadas do médico.
+        List<Consulta> consultas = consultaService.listarPorMedico(medico.getCrm());
 
-     @param medico o médico
-     */
-
-    private static void exibirConsultasAgendadas(Medico medico) {
-        System.out.println("\n========== MINHAS CONSULTAS AGENDADAS ==========");
-        System.out.printf("Médico: %s (CRM: %s)%n", medico.getNome(), medico.getCrm());
-        System.out.printf("Especialidade: %s%n", medico.getEspecialidade());
-
-        List<Consulta> minhasConsultas = filtrarConsultasMedico(medico);
-
-        if (minhasConsultas.isEmpty()) {
-            System.out.println("\nVocê não possui consultas agendadas.");
+        if (consultas.isEmpty()) {
+            System.out.println(ConsoleColors.RED + "\nNenhuma consulta agendada." + ConsoleColors.RESET);
         } else {
-            System.out.println("\n--- Lista de Consultas ---");
-            for (int i = 0; i < minhasConsultas.size(); i++) {
-                Consulta c = minhasConsultas.get(i);
-                System.out.printf("%d. ID: %d | Paciente: %s | Data: %s | Hora: %s | Status: %s%n",
-                    i + 1,
-                    c.getIdConsulta(),
-                    c.getPaciente().getNome(),
-                    c.getData(),
-                    c.getHora(),
-                    c.getStatus());
+            for (Consulta consulta : consultas) {
+                System.out.println(ConsoleColors.BLUE + "--------------------------------------------" + ConsoleColors.RESET);
+                System.out.printf("%sID:%s %d | %sPaciente:%s %s | %sStatus:%s %s%n",
+                        ConsoleColors.BOLD, ConsoleColors.RESET, consulta.getIdConsulta(),
+                        ConsoleColors.BOLD, ConsoleColors.RESET, consulta.getPaciente().getNome(),
+                        ConsoleColors.BOLD, ConsoleColors.RESET, consulta.getStatus());
             }
+            System.out.println(ConsoleColors.BLUE + "--------------------------------------------" + ConsoleColors.RESET);
         }
-
-        System.out.println("===============================================\n");
+        MetodosAuxiliares.pausarTela();
     }
 
-    /**
-     Exibe detalhes completos de uma consulta selecionada.
 
-     @param consulta a consulta
-     */
-    private static void exibirDetalhesConsulta(Consulta consulta) {
-        System.out.println("\n--- Detalhes da Consulta ---");
-        System.out.printf("ID: %d%n", consulta.getIdConsulta());
-        System.out.printf("Paciente: %s%n", consulta.getPaciente().getNome());
-        System.out.printf("CPF: %s%n", consulta.getPaciente().getCpf());
-        System.out.printf("Carteirinha: %s%n", consulta.getNumeroCarteirinha());
-        System.out.printf("Data: %s%n", consulta.getData());
-        System.out.printf("Hora: %s%n", consulta.getHora());
-        System.out.printf("Descrição: %s%n", consulta.getDescricao());
-        System.out.printf("Receita: %s%n", 
-            (consulta.getReceita() != null && !consulta.getReceita().isEmpty()) ? consulta.getReceita() : "Não registrada");
-        System.out.printf("Anotações: %s%n", 
-            (consulta.getAnotacoes() != null && !consulta.getAnotacoes().isEmpty()) ? consulta.getAnotacoes() : "Não registradas");
-        System.out.printf("Status: %s%n", consulta.getStatus());
-        System.out.println("============================\n");
+
+    private void agendarConsulta() {
+    MetodosAuxiliares.limparTela();
+    System.out.println(ConsoleColors.BG_PURPLE + ConsoleColors.BOLD + "╔════════════════════════════════════════╗" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.BG_PURPLE + ConsoleColors.BOLD + "║           🗓️ AGENDAR CONSULTA 🗓️       ║" + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.BG_PURPLE + ConsoleColors.BOLD + "╚════════════════════════════════════════╝" + ConsoleColors.RESET);
+
+    // ==========================
+    // Selecionar paciente
+    // ==========================
+    System.out.print(ConsoleColors.YELLOW + "Digite o CPF do paciente: " + ConsoleColors.RESET);
+    String cpfPaciente = scanner.nextLine().trim();
+    if (cpfPaciente.isEmpty()) {
+        System.out.println(ConsoleColors.RED + "❌ CPF inválido!" + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+        return;
     }
 
-    // MÉTODOS DE OPERAÇÃO 
+    // ==========================
+    // Listar horários disponíveis
+    // ==========================
+    List<Horario> horarios = horarioService.listarHorariosPorMedico(medico.getCrm());
+    horarios.removeIf(h -> !h.isDisponibilidade()); // só horários livres
 
-    /**
-     Permite registrar uma receita para uma consulta específica.
+    if (horarios.isEmpty()) {
+        System.out.println(ConsoleColors.RED + "❌ Nenhum horário disponível para agendamento." + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+        return;
+    }
 
-     @param scanner objeto Scanner
-     @param medico  o médico
-     */
-    private static void registrarReceita(Scanner scanner, Medico medico) {
-        System.out.println("\n========== REGISTRAR RECEITA ==========");
+    System.out.println(ConsoleColors.CYAN + "\nHorários disponíveis:" + ConsoleColors.RESET);
+    for (Horario h : horarios) {
+        System.out.printf("ID: %d | Data/Hora: %s%n", h.getIdHorario(), h.getData());
+    }
 
-        Consulta consulta = selecionarConsultaMedico(scanner, medico);
-        if (consulta == null) {
-            System.out.println("Operação cancelada.");
-            return;
+    System.out.print(ConsoleColors.YELLOW + "\nDigite o ID do horário escolhido: " + ConsoleColors.RESET);
+    int idHorario = lerInteiro();
+
+    Horario horarioEscolhido = null;
+    for (Horario h : horarios) {
+        if (h.getIdHorario() == idHorario) {
+            horarioEscolhido = h;
+            break;
         }
+    }
 
-        exibirDetalhesConsulta(consulta);
+    if (horarioEscolhido == null) {
+        System.out.println(ConsoleColors.RED + "❌ Horário inválido!" + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+        return;
+    }
 
-        System.out.print("Digite a receita (ou deixe vazio para cancelar): ");
+    // ==========================
+    // Digitar descrição
+    // ==========================
+    System.out.print(ConsoleColors.YELLOW + "Digite a descrição da consulta: " + ConsoleColors.RESET);
+    String descricao = scanner.nextLine().trim();
+
+    // ==========================
+    // Agendar a consulta
+    // ==========================
+    boolean sucesso = consultaService.agendarConsulta(null, medico.getCrm(), idHorario, descricao); 
+    // TODO: Substituir null pelo paciente correto (buscar por CPF)
+    if (sucesso) {
+        System.out.println(ConsoleColors.GREEN + "✔ Consulta agendada com sucesso!" + ConsoleColors.RESET);
+    } else {
+        System.out.println(ConsoleColors.RED + "❌ Falha ao agendar a consulta." + ConsoleColors.RESET);
+    }
+
+    MetodosAuxiliares.pausarTela();
+}
+
+
+    // ==========================
+    //       OPERAÇÕES
+    // ==========================
+    private void registrarReceita() {
+        Consulta consulta = selecionarConsultaRealizada();
+        if (consulta == null) return;
+
+        System.out.print(ConsoleColors.YELLOW + "Digite a receita: " + ConsoleColors.RESET);
         String receita = scanner.nextLine().trim();
-
-        if (receita.isEmpty()) {
-            System.out.println("Receita não foi registrada.");
-            return;
-        }
-
-        consulta.setReceita(receita);
-        System.out.println("Receita registrada com sucesso!");
-    }
-
-    /**
-     Permite registrar anotações para uma consulta específica.
-
-     @param scanner objeto Scanner
-     @param medico  o médico
-     */
-    private static void registrarAnotacoes(Scanner scanner, Medico medico) {
-        System.out.println("\n========== REGISTRAR ANOTAÇÕES ==========");
-
-        Consulta consulta = selecionarConsultaMedico(scanner, medico);
-        if (consulta == null) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
-
-        exibirDetalhesConsulta(consulta);
-
-        System.out.print("Digite as anotações (ou deixe vazio para cancelar): ");
-        String anotacoes = scanner.nextLine().trim();
-
-        if (anotacoes.isEmpty()) {
-            System.out.println("Anotações não foram registradas.");
-            return;
-        }
-
-        consulta.registrarAnotacao(anotacoes);
-        System.out.println("Anotações registradas com sucesso!");
-    }
-
-    /**
-     Marca uma consulta como realizada.
-
-     @param scanner objeto Scanner
-     @param medico  o médico
-     */
-    private static void marcarComRealizada(Scanner scanner, Medico medico) {
-        System.out.println("\n========== MARCAR CONSULTA COMO REALIZADA ==========");
-
-        Consulta consulta = selecionarConsultaMedico(scanner, medico);
-        if (consulta == null) {
-            System.out.println("Operação cancelada.");
-            return;
-        }
-
-        if (consulta.getStatus() == ConsultaStatus.REALIZADA) {
-            System.out.println("Esta consulta já foi marcada como realizada!");
-            return;
-        }
-
-        if (consulta.getStatus() == ConsultaStatus.CANCELADA) {
-            System.out.println("Não é possível marcar como realizada uma consulta cancelada!");
-            return;
-        }
-
-        consulta.realizarConsultaStatus();
-        System.out.println("Consulta marcada como realizada com sucesso!");
-    }
-
-    /**
-     Permite cancelar uma consulta agendada.
-
-     @param scanner objeto Scanner
-     @param medico  o médico
-     */
-
-    private static void cancelarConsultaMedico(Scanner scanner, Medico medico) {
-        System.out.println("\n========== CANCELAR CONSULTA ==========");
-
-        Consulta consulta = selecionarConsultaMedico(scanner, medico);
-        if (consulta == null) { System.out.println("Operação cancelada."); return; }
-
-        if (consulta.getStatus() == ConsultaStatus.CANCELADA) {System.out.println("Esta consulta já está cancelada!");
-            return;
-        }
-
-        if (consulta.getStatus() == ConsultaStatus.REALIZADA) {
-            System.out.println("Não é possível cancelar uma consulta já realizada!");
-            return;
-        }
-
-        exibirDetalhesConsulta(consulta);
-
-        System.out.print("Tem certeza que deseja cancelar? (s/n): ");
-        String confirmacao = scanner.nextLine().trim().toLowerCase();
-
-        if (confirmacao.equals("s")) {
-            consulta.cancelarConsultaStatus();
-            System.out.println("Consulta cancelada com sucesso!");
+        if (!receita.isEmpty()) {
+            consultaService.atualizarReceita(consulta.getIdConsulta(), receita);
+            System.out.println(ConsoleColors.GREEN + "✔ Receita registrada com sucesso!" + ConsoleColors.RESET);
         } else {
-            System.out.println("Cancelamento abortado.");
+            System.out.println(ConsoleColors.RED + "❌ Nenhuma alteração feita." + ConsoleColors.RESET);
         }
+        MetodosAuxiliares.pausarTela();
     }
 
-    // MÉTODOS DE SELEÇÃO 
+    private void registrarAnotacoes() {
+        Consulta consulta = selecionarConsultaRealizada();
+        if (consulta == null) return;
 
-    /**
-     Permite selecionar uma consulta da lista de consultas do médico.
+        System.out.print(ConsoleColors.YELLOW + "Digite as anotações: " + ConsoleColors.RESET);
+        String anotacoes = scanner.nextLine().trim();
+        if (!anotacoes.isEmpty()) {
+            consultaService.atualizarAnotacoes(consulta.getIdConsulta(), anotacoes);
+            System.out.println(ConsoleColors.GREEN + "✔ Anotações registradas com sucesso!" + ConsoleColors.RESET);
+        } else {
+            System.out.println(ConsoleColors.RED + "❌ Nenhuma alteração feita." + ConsoleColors.RESET);
+        }
+        MetodosAuxiliares.pausarTela();
+    }
 
-     @param scanner objeto Scanner
-     @param medico  o médico
-     @return a consulta selecionada ou null
-     */
-    private static Consulta selecionarConsultaMedico(Scanner scanner, Medico medico) {
-        List<Consulta> minhasConsultas = filtrarConsultasMedico(medico);
+    private void marcarComoRealizada() {
+        Consulta consulta = selecionarConsulta();
+        if (consulta == null) return;
 
-        if (minhasConsultas.isEmpty()) {
-            System.out.println("Você não possui consultas para esta operação.");
+        boolean sucesso = consultaService.realizarConsulta(consulta.getIdConsulta());
+        System.out.println(sucesso ? ConsoleColors.GREEN + "✔ Consulta marcada como realizada!" + ConsoleColors.RESET
+                                    : ConsoleColors.RED + "❌ Não foi possível marcar a consulta." + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+    }
+
+    private void cancelarConsulta() {
+        Consulta consulta = selecionarConsulta();
+        if (consulta == null) return;
+
+        boolean sucesso = consultaService.cancelarConsulta(consulta.getIdConsulta());
+        System.out.println(sucesso ? ConsoleColors.GREEN + "✔ Consulta cancelada com sucesso!" + ConsoleColors.RESET
+                                    : ConsoleColors.RED + "❌ Não foi possível cancelar a consulta." + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+    }
+
+    // ==========================
+    //       AUXILIARES
+    // ==========================
+    private Consulta selecionarConsulta() {
+        List<Consulta> consultas = consultaService.listarPorMedico(medico.getCrm());
+
+        if (consultas.isEmpty()) {
+            System.out.println(ConsoleColors.RED + "Nenhuma consulta disponível." + ConsoleColors.RESET);
+            MetodosAuxiliares.pausarTela();
             return null;
         }
 
-        System.out.println("\n--- Suas Consultas ---");
-        for (int i = 0; i < minhasConsultas.size(); i++) {
-            Consulta c = minhasConsultas.get(i);
-            System.out.printf("%d. Paciente: %s | Data: %s | Status: %s%n",
-                i + 1,
-                c.getPaciente().getNome(),
-                c.getData(),
-                c.getStatus());
+        System.out.println("\nEscolha o ID da consulta:");
+        for (Consulta consulta : consultas) {
+            System.out.printf("%sID:%s %d | %sPaciente:%s %s | %sStatus:%s %s%n",
+                    ConsoleColors.BOLD, ConsoleColors.RESET, consulta.getIdConsulta(),
+                    ConsoleColors.BOLD, ConsoleColors.RESET, consulta.getPaciente().getNome(),
+                    ConsoleColors.BOLD, ConsoleColors.RESET, consulta.getStatus());
         }
 
-        System.out.print("Escolha o número da consulta (ou 0 para cancelar): ");
-        try {
-            int escolha = Integer.parseInt(scanner.nextLine().trim());
+        int id = lerInteiro();
+        for (Consulta consulta : consultas) {
+            if (consulta.getIdConsulta() == id) return consulta;
+        }
 
-            if (escolha == 0) {
-                return null;
-            }
+        System.out.println(ConsoleColors.RED + "Consulta não encontrada." + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+        return null;
+    }
 
-            if (escolha > 0 && escolha <= minhasConsultas.size()) {
-                return minhasConsultas.get(escolha - 1);
-            } else {
-                System.out.println("Opção inválida.");
-                return null;
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada inválida.");
+    private Consulta selecionarConsultaRealizada() {
+        Consulta consulta = selecionarConsulta();
+        if (consulta != null && consulta.getStatus() != ConsultaStatus.REALIZADA) {
+            System.out.println(ConsoleColors.RED + "❌ Só é possível alterar consultas já realizadas." + ConsoleColors.RESET);
+            MetodosAuxiliares.pausarTela();
             return null;
         }
+        return consulta;
     }
 
-    // MÉTODOS AUXILIARES 
-
-    /**
-     Filtra as consultas de um médico específico.
-
-     @param medico o médico
-     @return lista de consultas do médico
-     */
-    private static List<Consulta> filtrarConsultasMedico(Medico medico) {
-        List<Consulta> resultado = new ArrayList<>();
-        for (Consulta c : consultasAgendadas) {
-            if (c.getMedico().equals(medico)) {
-                resultado.add(c);
+    private int lerInteiro() {
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.print(ConsoleColors.RED + "❌ Valor inválido! Digite um número: " + ConsoleColors.RESET);
             }
         }
-        return resultado;
-    }
-
-    /**
-     Adiciona uma consulta ao repositório simulado (para testes).
-
-     @param consulta a consulta a ser adicionada
-     */
-    public static void adicionarConsultaAgendada(Consulta consulta) {
-        if (consulta != null && !consultasAgendadas.contains(consulta)) {
-            consultasAgendadas.add(consulta);
-        }
-    }
-
-    /**
-     Retorna a lista de todas as consultas agendadas (para fins de teste/relatório).
-
-     @return lista de consultas
-     */
-    public static List<Consulta> obterTodasAsConsultas() {
-        return new ArrayList<>(consultasAgendadas);
-    }
-
-    // Versão sem parâmetros (compatibilidade)
-    public static void menuConsultaMedico() {
-        Scanner scanner = new Scanner(System.in);
-        // Nota: sem médico, retorna imediatamente
-        menuConsultaMedico(scanner, null);
     }
 }

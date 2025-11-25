@@ -86,4 +86,8 @@ public class Consulta {
         return (int) (Math.random() * 900000) + 100000; 
     }
 
+    public void realizarConsultaStatus() {
+        this.status = ConsultaStatus.REALIZADA;
+    }
+
 }
