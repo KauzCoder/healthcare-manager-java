@@ -138,7 +138,7 @@ public class ConsultaService {
         if (consulta == null) return false;
 
         // Muda o status
-        consulta.cancelarConsultaStatus();
+        consulta.realizarConsultaStatus();
 
         // Libera o horário do médico
         String crm = consulta.getMedico().getCrm();
