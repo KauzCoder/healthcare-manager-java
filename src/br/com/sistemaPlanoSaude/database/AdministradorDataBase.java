@@ -6,14 +6,14 @@ import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
 
 public class AdministradorDataBase {
     
-    private final List<Administrador> administradores = new ArrayList<>();
+    private static final List<Administrador> ADMINISTRADORES = new ArrayList<>();
     
     // ===============================
     //             CREATE
     // ===============================
     public boolean adicionarAdministrador(Administrador admin) {
         if (buscarPorCpf(admin.getCpf()) != null) return false; 
-        administradores.add(admin);
+        ADMINISTRADORES.add(admin);
         return true;
     }
     
@@ -24,7 +24,7 @@ public class AdministradorDataBase {
     // Busca um administrador pelo CPF
   public Administrador buscarPorCpf(String cpf) {
         if (cpf == null) return null;
-        for (Administrador administrador : administradores) {
+        for (Administrador administrador : ADMINISTRADORES) {
             if (cpf.equals(administrador.getCpf())) {
                 return administrador;
             }
@@ -70,7 +70,7 @@ public class AdministradorDataBase {
     //             DELETE
     // ===============================
     public boolean removerAdministrador(Administrador admin) {
-        return administradores.remove(admin);
+        return ADMINISTRADORES.remove(admin);
     }
 
 
@@ -79,6 +79,6 @@ public class AdministradorDataBase {
     // ===============================
     // Lista todos os administradores (cópia defensiva)
     public List<Administrador> listarTodos() {
-        return new ArrayList<>(administradores);
+        return new ArrayList<>(ADMINISTRADORES);
     }
 }

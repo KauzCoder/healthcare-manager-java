@@ -183,5 +183,12 @@ public class Paciente extends Pessoa {
 
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("[Paciente] %s | CPF: %s | Carteirinha: %s | Status: %s",
+                getNome(),
+                getCpf(),
+                (numeroCarteirinha != null ? numeroCarteirinha : "N/A"),
+                status);
+    }
 }

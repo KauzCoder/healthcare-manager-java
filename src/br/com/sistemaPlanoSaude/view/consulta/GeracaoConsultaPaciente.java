@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
-public class GeraçãoConsultaPaciente {
+public class GeracaoConsultaPaciente {
 
     private final Paciente paciente;
     private final ConsultaService consultaService;
@@ -18,7 +18,7 @@ public class GeraçãoConsultaPaciente {
     private final DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
 
-    public GeraçãoConsultaPaciente(Paciente paciente, ConsultaService consultaService) {
+    public GeracaoConsultaPaciente(Paciente paciente, ConsultaService consultaService) {
         this.paciente = paciente;
         this.consultaService = consultaService;
         this.scanner = new Scanner(System.in);

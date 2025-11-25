@@ -17,9 +17,9 @@ public class FormularioAdministrador {
 
     public Administrador criarAdministrador() {
 
-        System.out.println(ConsoleColors.CYAN + "╔══════════════════════════════════════════════╗");
-        System.out.println("║          📝 FORMULÁRIO DO ADMINISTRADOR       ║");
-        System.out.println("╚══════════════════════════════════════════════╝\n" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.CYAN + "+==============================================+" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.CYAN + "|          FORMULARIO DO ADMINISTRADOR         |" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.CYAN + "+==============================================+\n" + ConsoleColors.RESET);
 
         // Nome
         String nome;
@@ -27,7 +27,7 @@ public class FormularioAdministrador {
             System.out.print(ConsoleColors.YELLOW + "Nome completo: " + ConsoleColors.RESET);
             nome = scanner.nextLine();
             if (ValidacaoUtil.validarNome(nome)) break;
-            System.out.println(ConsoleColors.RED + "❌ Nome inválido! Digite pelo menos 10 caracteres e apenas letras." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Nome invalido! Digite pelo menos 10 caracteres e apenas letras." + ConsoleColors.RESET);
         }
 
         // CPF
@@ -36,7 +36,7 @@ public class FormularioAdministrador {
             System.out.print(ConsoleColors.YELLOW + "CPF: " + ConsoleColors.RESET);
             cpf = scanner.nextLine();
             if (ValidacaoUtil.validarCPF(cpf)) break;
-            System.out.println(ConsoleColors.RED + "❌ CPF inválido! Deve conter 11 dígitos." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "CPF invalido! Deve conter 11 digitos." + ConsoleColors.RESET);
         }
 
         // Idade
@@ -46,14 +46,14 @@ public class FormularioAdministrador {
             try {
                 idade = Integer.parseInt(scanner.nextLine());
                 if (ValidacaoUtil.validarIdade(idade)) break;
-                System.out.println(ConsoleColors.RED + "❌ Idade inválida! Digite entre 1 e 150." + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "Idade invalida! Digite entre 1 e 150." + ConsoleColors.RESET);
             } catch (Exception e) {
-                System.out.println(ConsoleColors.RED + "❌ Digite um número válido!" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "Digite um numero valido!" + ConsoleColors.RESET);
             }
         }
 
-        // Endereço
-        System.out.print(ConsoleColors.YELLOW + "Endereço: " + ConsoleColors.RESET);
+        // Endereco
+        System.out.print(ConsoleColors.YELLOW + "Endereco: " + ConsoleColors.RESET);
         String endereco = scanner.nextLine();
 
         // Telefone
@@ -63,15 +63,15 @@ public class FormularioAdministrador {
             String entrada = scanner.nextLine();
             String fmt = ValidacaoUtil.validarEFormatarTelefone(entrada);
             if (fmt != null) { telefone = fmt; break; }
-            System.out.println(ConsoleColors.RED + "❌ Telefone inválido!" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Telefone invalido!" + ConsoleColors.RESET);
         }
 
         // E-mail
         System.out.print(ConsoleColors.YELLOW + "E-mail (opcional): " + ConsoleColors.RESET);
         String email = scanner.nextLine().trim();
-        if (email.isEmpty()) email = "não informado";
+        if (email.isEmpty()) email = "nao informado";
         else if (!ValidacaoUtil.validarEmail(email))
-            System.out.println(ConsoleColors.RED + "⚠ E-mail parece inválido, mas será registrado." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "E-mail parece invalido, mas sera registrado." + ConsoleColors.RESET);
 
         // Sexo
         Sexo sexo;
@@ -92,7 +92,7 @@ public class FormularioAdministrador {
                 dataNasc = LocalDate.parse(texto, fmt);
                 break;
             }
-            System.out.println(ConsoleColors.RED + "❌ Data inválida!" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Data invalida!" + ConsoleColors.RESET);
         }
 
         // Senha
@@ -104,7 +104,7 @@ public class FormularioAdministrador {
             sexo, dataNasc, NivelAcesso.ADMINISTRADOR, senhaHash, null, null
         )); 
 
-        System.out.println(ConsoleColors.GREEN + "\n✔ Administrador criado com sucesso!" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.GREEN + "\nAdministrador criado com sucesso!" + ConsoleColors.RESET);
         return adminService.buscarPorCpf(cpf);
     }
 }

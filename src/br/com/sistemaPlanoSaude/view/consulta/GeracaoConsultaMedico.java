@@ -4,25 +4,29 @@ import br.com.sistemaPlanoSaude.model.consulta.Consulta;
 import br.com.sistemaPlanoSaude.model.consulta.Horario;
 import br.com.sistemaPlanoSaude.model.enums.ConsultaStatus;
 import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.service.ConsultaService;
 import br.com.sistemaPlanoSaude.service.HorarioService;
+import br.com.sistemaPlanoSaude.service.PacienteService;
 import br.com.sistemaPlanoSaude.util.ConsoleColors;
 import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
 
 import java.util.List;
 import java.util.Scanner;
 
-public class GeraçãoConsultaMedico {
+public class GeracaoConsultaMedico {
 
     private final Medico medico;
     private final ConsultaService consultaService;
     private final HorarioService horarioService;
+    private final PacienteService pacienteService;
     private final Scanner scanner = new Scanner(System.in);
 
-    public GeraçãoConsultaMedico(Medico medico, ConsultaService consultaService, HorarioService horarioService) {
+    public GeracaoConsultaMedico(Medico medico, ConsultaService consultaService, HorarioService horarioService) {
         this.medico = medico;
         this.consultaService = consultaService;
         this.horarioService = horarioService;
+        this.pacienteService = new PacienteService();
     }
 
     public void iniciar() {
@@ -37,7 +41,7 @@ public class GeraçãoConsultaMedico {
         }
         System.out.println(ConsoleColors.GREEN + "\nSaindo do sistema. Ate mais!" + ConsoleColors.RESET);
     }
-    //Toda a interface de interação do médico com o sistema de consultas se encontra aqui
+    //Toda a interface de interacao do medico com o sistema de consultas se encontra aqui
 
 
 
@@ -78,7 +82,7 @@ public class GeraçãoConsultaMedico {
     }
 
     // ==========================
-    //       VISUALIZAÇÃO
+    //       VISUALIZACAO
     // ==========================
     private void exibirConsultas() {
         MetodosAuxiliares.limparTela();
@@ -122,8 +126,20 @@ public class GeraçãoConsultaMedico {
         return;
     }
 
+    // Buscar paciente no banco de dados pelo CPF
+    Paciente paciente = pacienteService.buscarPorCpf(cpfPaciente);
+    if (paciente == null) {
+        System.out.println(ConsoleColors.RED + "Paciente nao encontrado no sistema!" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "Verifique se o CPF esta correto." + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+        return;
+    }
+
+    System.out.println(ConsoleColors.GREEN + "Paciente encontrado: " + paciente.getNome() + ConsoleColors.RESET);
+    System.out.println(ConsoleColors.CYAN + "CPF: " + paciente.getCpf() + ConsoleColors.RESET);
+
     // ==========================
-    // Listar horários disponíveis
+    // Listar horarios disponiveis
     // ==========================
     List<Horario> horarios = horarioService.listarHorariosPorMedico(medico.getCrm());
     horarios.removeIf(h -> !h.isDisponibilidade()); // somente horarios livres
@@ -140,7 +156,16 @@ public class GeraçãoConsultaMedico {
     }
 
     System.out.print(ConsoleColors.YELLOW + "\nDigite o ID do horario escolhido: " + ConsoleColors.RESET);
-    int idHorario = lerInteiro();
+    String idInput = scanner.nextLine().trim();
+    
+    int idHorario;
+    try {
+        idHorario = Integer.parseInt(idInput);
+    } catch (NumberFormatException e) {
+        System.out.println(ConsoleColors.RED + "ID invalido!" + ConsoleColors.RESET);
+        MetodosAuxiliares.pausarTela();
+        return;
+    }
 
     Horario horarioEscolhido = null;
     for (Horario h : horarios) {
@@ -157,7 +182,7 @@ public class GeraçãoConsultaMedico {
     }
 
     // ==========================
-    // Digitar descrição
+    // Digitar descricao
     // ==========================
     System.out.print(ConsoleColors.YELLOW + "Digite a descricao da consulta: " + ConsoleColors.RESET);
     String descricao = scanner.nextLine().trim();
@@ -165,10 +190,11 @@ public class GeraçãoConsultaMedico {
     // ==========================
     // Agendar a consulta
     // ==========================
-    boolean sucesso = consultaService.agendarConsulta(null, medico.getCrm(), idHorario, descricao); 
-    // TODO: Substituir null pelo paciente correto (buscar por CPF)
+    boolean sucesso = consultaService.agendarConsulta(paciente, medico.getCrm(), idHorario, descricao);
     if (sucesso) {
         System.out.println(ConsoleColors.GREEN + "Consulta agendada com sucesso!" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.CYAN + "Paciente: " + paciente.getNome() + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.CYAN + "Horario: " + horarioEscolhido.getData() + ConsoleColors.RESET);
     } else {
         System.out.println(ConsoleColors.RED + "Falha ao agendar a consulta." + ConsoleColors.RESET);
     }
@@ -178,7 +204,7 @@ public class GeraçãoConsultaMedico {
 
 
     // ==========================
-    //       OPERAÇÕES
+    //       OPERACOES
     // ==========================
     private void registrarReceita() {
         Consulta consulta = selecionarConsultaRealizada();

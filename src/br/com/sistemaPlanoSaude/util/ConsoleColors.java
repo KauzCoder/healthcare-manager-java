@@ -18,4 +18,8 @@ public class ConsoleColors {
     public static final String BG_GREEN = "\033[42m";
     public static final String BOLD = "\033[1m";
     public static final String BG_PURPLE = "\u001B[45m";
+    public static final String GREEN_BOLD = "\033[1;32m";
+    public static final String RED_BOLD = "\033[1;31m";
+    public static final String YELLOW_BOLD = "\033[1;33m";
+    public static final String BLUE_BOLD = "\033[1;34m";
 }

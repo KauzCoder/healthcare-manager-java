@@ -7,7 +7,10 @@ public class MetodosAuxiliares {
         System.out.flush();
     }
     public static void pausarTela() {
-        System.out.print("\n👉 Pressione ENTER para continuar...");
-        new java.util.Scanner(System.in).nextLine();
+    try {
+        Thread.sleep(2000); // pausa 2 segundos
+    } catch (InterruptedException ignored) {
+        Thread.currentThread().interrupt();
+    }
     }
 }

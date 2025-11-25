@@ -1,152 +1,36 @@
 package br.com.sistemaPlanoSaude.main;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
-import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
-import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
-import br.com.sistemaPlanoSaude.util.ConsoleColors;
-import br.com.sistemaPlanoSaude.view.interfaces.interfaceInterresado;
-import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
-import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
-import br.com.sistemaPlanoSaude.util.PacienteMockUtil;
-import br.com.sistemaPlanoSaude.view.interfaces.InterfaceConsulta;
+import br.com.sistemaPlanoSaude.view.menu.MenuPrincipal;
 
 public class Main {
-
-	public static void main(String[] args) throws InterruptedException {
-		Scanner scanner = new Scanner(System.in);
-		List<Paciente> pacientes = new ArrayList<>();
-
-System.out.println(
+	    public static void main(String[] args) throws InterruptedException {
+        System.out.println(
 """
-
-───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-─██████──██████─██████████████─██████████████─██████─────────██████████████─██████──██████─██████████████─██████████████─████████████████───██████████████─
-─██░░██──██░░██─██░░░░░░░░░░██─██░░░░░░░░░░██─██░░██─────────██░░░░░░░░░░██─██░░██──██░░██─██░░░░░░░░░░██─██░░░░░░░░░░██─██░░░░░░░░░░░░██───██░░░░░░░░░░██─
-─██░░██──██░░██─██░░██████████─██░░██████░░██─██░░██─────────██████░░██████─██░░██──██░░██─██░░██████████─██░░██████░░██─██░░████████░░██───██░░██████████─
-─██░░██──██░░██─██░░██─────────██░░██──██░░██─██░░██─────────────██░░██─────██░░██──██░░██─██░░██─────────██░░██──██░░██─██░░██────██░░██───██░░██─────────
-─██░░██████░░██─██░░██████████─██░░██████░░██─██░░██─────────────██░░██─────██░░██████░░██─██░░██─────────██░░██████░░██─██░░████████░░██───██░░██████████─
-─██░░░░░░░░░░██─██░░░░░░░░░░██─██░░░░░░░░░░██─██░░██─────────────██░░██─────██░░░░░░░░░░██─██░░██─────────██░░░░░░░░░░██─██░░░░░░░░░░░░██───██░░░░░░░░░░██─
-─██░░██████░░██─██░░██████████─██░░██████░░██─██░░██─────────────██░░██─────██░░██████░░██─██░░██─────────██░░██████░░██─██░░██████░░████───██░░██████████─
-─██░░██──██░░██─██░░██─────────██░░██──██░░██─██░░██─────────────██░░██─────██░░██──██░░██─██░░██─────────██░░██──██░░██─██░░██──██░░██─────██░░██─────────
-─██░░██──██░░██─██░░██████████─██░░██──██░░██─██░░██████████─────██░░██─────██░░██──██░░██─██░░██████████─██░░██──██░░██─██░░██──██░░██████─██░░██████████─
-─██░░██──██░░██─██░░░░░░░░░░██─██░░██──██░░██─██░░░░░░░░░░██─────██░░██─────██░░██──██░░██─██░░░░░░░░░░██─██░░██──██░░██─██░░██──██░░░░░░██─██░░░░░░░░░░██─
-─██████──██████─██████████████─██████──██████─██████████████─────██████─────██████──██████─██████████████─██████──██████─██████──██████████─██████████████─
-───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  ▄         ██  ██ ██████ ▄████▄ ██    ██████ ██  ██   ▄█████ ▄████▄ █████▄  ██████ 
+▄▄█▄▄       ██████ ██▄▄   ██▄▄██ ██      ██   ██████   ██     ██▄▄██ ██▄▄██▄ ██▄▄   
+  █         ██  ██ ██▄▄▄▄ ██  ██ ██████  ██   ██  ██   ▀█████ ██  ██ ██   ██ ██▄▄▄▄ 
 """
 );
 
-		int maxGrupos = 10;
+    int maxGrupos = 10;
 
         System.out.println("\nCarregando programa:");
 
-		for (int i = 1; i <= maxGrupos; i++) {
-			printBarra(i, maxGrupos);
+    for (int i = 1; i <= maxGrupos; i++) {
+        printBarra(i, maxGrupos);
             Thread.sleep(300);
         }
-		
-		System.out.println("\n" + ConsoleColors.GREEN +
-"╔════════════════════════════════════════════╗\n" +
-"║   SISTEMA DE GERENCIAMENTO DE SAÚDE        ║\n" +
-"╚════════════════════════════════════════════╝" + ConsoleColors.RESET);
 
-boolean loopMenu = true;
-
-while (loopMenu) {
-
-    System.out.println(ConsoleColors.BLUE +
-    "\n╔════════════════════════════════════════════╗" +
-    "\n║                MENU PRINCIPAL              ║" +
-    "\n╠════════════════════════════════════════════╣" + ConsoleColors.RESET);
-
-    System.out.println(ConsoleColors.CYAN + "║  [1] 🧑 Cadastrar paciente                  ║" + ConsoleColors.RESET);
-    System.out.println(ConsoleColors.CYAN + "║  [2] 📋 Criar paciente exemplo              ║" + ConsoleColors.RESET);
-    System.out.println(ConsoleColors.CYAN + "║  [3] 📄 Listar pacientes                    ║" + ConsoleColors.RESET);
-    System.out.println(ConsoleColors.CYAN + "║  [4] 👨‍⚕️ Cadastrar médico                 ║" + ConsoleColors.RESET);
-    System.out.println(ConsoleColors.CYAN + "║  [6] 🧾 Área do Interessado                ║" + ConsoleColors.RESET);
-    System.out.println(ConsoleColors.RED  + "║  [7] ❌ Sair                                ║" + ConsoleColors.RESET);
-
-		System.out.println(ConsoleColors.BLUE + "╠════════════════════════════════════════════╣" + ConsoleColors.RESET);
-		System.out.print(ConsoleColors.YELLOW + "║ 🔹 Escolha uma opção: " + ConsoleColors.RESET);
-		String opcaoNumero = scanner.nextLine().trim();
-		System.out.println(ConsoleColors.BLUE + "╚════════════════════════════════════════════╝" + ConsoleColors.RESET);
-
-			switch (opcaoNumero) {
-				case "1":
-					Paciente p = FormularioPaciente.cadastrarPaciente(scanner);
-					pacientes.add(p);
-					System.out.println(ConsoleColors.GREEN + "✅ Cadastro de paciente selecionado!" + ConsoleColors.RESET);
-					break;
-
-				case "2":
-					Paciente exemplo = PacienteMockUtil.criarPacientePlanoBasicoExemplo();
-					pacientes.add(exemplo);
-					System.out.println(ConsoleColors.GREEN + "✅ Cadastro de paciente selecionado!" + ConsoleColors.RESET);
-					break;
-
-				case "3":
-					if (pacientes.isEmpty()) {
-						System.out.println(ConsoleColors.YELLOW + "Nenhum paciente cadastrado." + ConsoleColors.RESET);
-					} else {
-						System.out.println(ConsoleColors.GREEN + "\n✅ Listando pacientes..." + ConsoleColors.RESET);
-						for (int i = 0; i < pacientes.size(); i++) {
-							System.out.println("\n--- Paciente " + (i + 1) + " ---");
-							pacientes.get(i).exibirInfo();
-						}
-					}
-					break;
-
-				case "4":
-					System.out.println(ConsoleColors.GREEN + "\n✅ Cadastro de médico selecionado!" + ConsoleColors.RESET);
-					FormularioMedico.cadastrarMedico();
-					break;
-                case "6": 
-                        System.out.println(ConsoleColors.RED + "\n TESTANDO SISTEMA DE INTERRESSADO" + ConsoleColors.RESET);
-                        exibirInterfaceInteressado();
-                        break;
-				case "7":
-					System.out.println(ConsoleColors.RED + "\n🚪 Saindo do sistema... Obrigado!" + ConsoleColors.RESET);
-					loopMenu = false;
-					break;
-
-				case "8":
-					System.out.println(GREEN + "\n✅ Área do Médico selecionada!" + RESET);
-					exibirInterfaceMedico();
-					break;
-
-				default:
-					System.out.println(ConsoleColors.YELLOW + "\n⚠ Opção inválida! Tente novamente." + ConsoleColors.RESET);
-			}
-		}
-
-		System.out.println("Encerrando aplicação. Até mais!");
-	}
-
-	private static void exibirInterfaceInteressado() {
-		interfaceInterresado telaInteressado = new interfaceInterresado();
-		telaInteressado.exibirMenu();
-	}
-
-	private static void exibirInterfaceMedico() {
-	InterfaceMedico telaMedico = new InterfaceMedico();
-		telaMedico.exibirMenu();}
-	
-	private static void exibirInterfaceConsulta() {
-		InterfaceConsulta telaConsulta = new InterfaceConsulta();
-		telaConsulta.exibirMenuConsulta();
-	}
-
-		private static void printBarra(int grupos, int total) {
-    StringBuilder barra = new StringBuilder();
-    int porcentagem = (grupos * 100) / total;
-
-    for (int j = 0; j < grupos; j++) {
-        barra.append(" ■ ");
+        new MenuPrincipal().exibirMenuPrincipal();
     }
 
-    System.out.print("\r" + barra + " " + porcentagem + "%");
-}
-}
+    private static void printBarra(int grupos, int total) {
+        StringBuilder barra = new StringBuilder();
+        int porcentagem = (grupos * 100) / total;
 
+        for (int j = 0; j < grupos; j++) {
+            barra.append(" ■ ");
+        }
+
+        System.out.print("\r" + barra + " " + porcentagem + "%");
+    }
+}

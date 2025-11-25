@@ -28,6 +28,10 @@ public class PacienteService {
         return pacienteDB.buscarCarteirinha(numeroCarteirinha);
     }
 
+    public Paciente buscarPorCpf(String cpf) {
+        return pacienteDB.buscarPorCpf(cpf);
+    }
+
     // ===============================
     //          UPDATE
     // ===============================

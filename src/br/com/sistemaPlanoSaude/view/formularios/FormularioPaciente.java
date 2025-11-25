@@ -4,26 +4,34 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
-
 import br.com.sistemaPlanoSaude.model.enums.Sexo;
 import br.com.sistemaPlanoSaude.model.enums.TipoSanguineo;
-
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+import br.com.sistemaPlanoSaude.util.ValidacaoUtil;
+import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
 
 public class FormularioPaciente {
 
     public static Paciente cadastrarPaciente(Scanner scanner) {
 
-        System.out.println("\n=== Cadastro de Paciente ===");
+        MetodosAuxiliares.limparTela();
+        exibirCabecalhoPrincipal();
+
+        // ============================================================
+        //                       INFORMACOES PESSOAIS
+        // ============================================================
+        System.out.println("+====================== INFORMACOES PESSOAIS ======================+");
 
         // Nome
         String nome;
         while (true) {
             System.out.print("Nome completo: ");
             nome = scanner.nextLine();
-            if (ValidacaoUtil.validarNome(nome)) { nome = nome.trim(); break; }
-            System.out.println("Nome inválido. Informe um nome com pelo menos 10 caracteres e apenas letras.");
+            if (ValidacaoUtil.validarNome(nome)) {
+                nome = nome.trim();
+                break;
+            }
+            System.out.println("Nome invalido. Informe ao menos 10 caracteres e apenas letras.");
         }
 
         // CPF
@@ -32,7 +40,7 @@ public class FormularioPaciente {
             System.out.print("CPF: ");
             cpf = scanner.nextLine().trim();
             if (ValidacaoUtil.validarCPF(cpf)) break;
-            System.out.println("CPF inválido. Informe um CPF válido (11 dígitos).");
+            System.out.println("CPF invalido! Digite um CPF com 11 digitos.");
         }
 
         // Idade
@@ -43,35 +51,36 @@ public class FormularioPaciente {
             try {
                 idade = Integer.parseInt(idadeInput);
                 if (ValidacaoUtil.validarIdade(idade)) break;
-                System.out.println("Idade inválida. Informe um número inteiro entre 1 e 150.");
-            } catch (NumberFormatException ex) {
-                System.out.println("Entrada inválida. Informe a idade como um número inteiro (ex: 35).");
+                System.out.println("Idade invalida. Digite um numero entre 1 e 150.");
+            } catch (Exception ex) {
+                System.out.println("Entrada invalida. Apenas numeros.");
             }
         }
 
-        // Endereço
-        System.out.print("Endereço: ");
+        // Endereco
+        System.out.print("Endereco: ");
         String endereco = scanner.nextLine().trim();
 
-        // Telefone (validação e formatação via Pessoa)
+        // Telefone
         String telefone;
         while (true) {
             System.out.print("Telefone: ");
             String telefoneInput = scanner.nextLine().trim();
-            String formatado =  ValidacaoUtil.validarEFormatarTelefone(telefoneInput);
-            if (formatado != null) { 
-				telefone = formatado; break; 
-			}
-            System.out.println("Telefone inválido. Informe apenas dígitos ou formato comum (ex: (11)99999-0000).");
+            String formatado = ValidacaoUtil.validarEFormatarTelefone(telefoneInput);
+
+            if (formatado != null) {
+                telefone = formatado;
+                break;
+            }
+            System.out.println("Telefone invalido. Ex: 11999990000 ou (11)99999-0000.");
         }
 
-        // E-mail (opcional)
+        // E-mail
         System.out.print("E-mail (opcional): ");
         String email = scanner.nextLine().trim();
-        if (email == null || email.isEmpty()) email = "não informado";
-        else if (!ValidacaoUtil.validarEmail(email)) System.out.println("Aviso: formato de e-mail parece inválido, mas será registrado.");
-
-
+        if (email.isEmpty()) email = "nao informado";
+        else if (!ValidacaoUtil.validarEmail(email))
+            System.out.println("Aviso: e-mail fora do padrao, mas sera registrado.");
 
         // Sexo
         System.out.print("Sexo (MASCULINO/FEMININO): ");
@@ -81,153 +90,172 @@ public class FormularioPaciente {
         } catch (Exception e) {
             sexo = Sexo.MASCULINO;
         }
-        // toUpperCase() garante que a entrada seja convertida para letras maiúsculas, permitindo que corresponda exatamente aos nomes do enum.
-        // valueOf() tenta converter a string para um valor do enum Sexo. Se a entrada não corresponder a nenhum valor válido, uma exceção será lançada, e o código dentro do catch será executado.
 
-        
         // Data de nascimento
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dataDeNascimento;
         while (true) {
             System.out.print("Data de nascimento (dd/MM/yyyy): ");
-            String InputDataString = scanner.nextLine().trim();
-            if (ValidacaoUtil.validarDataNascimento(InputDataString)) {
-                dataDeNascimento = LocalDate.parse(InputDataString, fmt);
+            String dataStr = scanner.nextLine().trim();
+
+            if (ValidacaoUtil.validarDataNascimento(dataStr)) {
+                dataDeNascimento = LocalDate.parse(dataStr, fmt);
                 break;
-            }   
-            System.out.println("Data inválida. Use dd/MM/yyyy e não informe uma data futura.");
+            }
+            System.out.println("Data invalida! Siga o formato dd/MM/yyyy.");
         }
 
+        System.out.println("+===================================================================+\n");
 
-        // Tipo sanguíneo
-        System.out.print("Tipo sanguíneo (A_POS/A_NEG/B_POS/B_NEG/AB_POS/AB_NEG/O_POS/O_NEG): ");
-        TipoSanguineo tipoSanguineo;
+        // ============================================================
+        //                        DADOS ADICIONAIS
+        // ============================================================
+        System.out.println("+========================== DADOS MEDICOS ==========================+");
+
+        // Tipo sanguineo
+        System.out.println("Tipos sanguineos aceitos:");
+        System.out.println("A_POS, A_NEG, B_POS, B_NEG, AB_POS, AB_NEG, O_POS, O_NEG");
+
+        TipoSanguineo tipoSanguineo = null;
         try {
+            System.out.print("Tipo sanguineo: ");
             tipoSanguineo = TipoSanguineo.valueOf(scanner.nextLine().trim().toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
+        } catch (Exception ignored) {
             tipoSanguineo = null;
-			//vai tratar tanto entrada inválida quanto nula
         }
 
         // Peso
-		// solicita até que o usuário insira um número positivo ou deixe vazio para pular
-        double peso = 0.0;
         final double PESO_MIN = 0.5;
         final double PESO_MAX = 500.0;
+        double peso = 0.0;
+
         while (true) {
-            System.out.print("Peso (kg) entre " + PESO_MIN + " e " + PESO_MAX + " (deixe vazio para pular): ");
-            String scannerPeso = scanner.nextLine().trim();
-            if (scannerPeso.isEmpty()) { peso = 0.0; break; }
+            System.out.print("Peso (kg) entre " + PESO_MIN + " e " + PESO_MAX + " (Enter para pular): ");
+            String entrada = scanner.nextLine().trim();
+
+            if (entrada.isEmpty()) break;
+
             try {
-                peso = Double.parseDouble(scannerPeso.replace(',', '.'));
-                if (peso < PESO_MIN || peso > PESO_MAX) { System.out.println("Valor fora da faixa aceitável."); continue; }
+                peso = Double.parseDouble(entrada.replace(',', '.'));
+                if (peso < PESO_MIN || peso > PESO_MAX) {
+                    System.out.println("Valor fora do intervalo permitido.");
+                    continue;
+                }
                 break;
-            } catch (NumberFormatException ex) {
-                System.out.println("Entrada inválida. Use um número (ex: 70.5) ou deixe vazio para pular.");
+            } catch (Exception e) {
+                System.out.println("Entrada invalida! Exemplo: 70.5");
             }
         }
 
-       	// Validação de altura: solicita até que o usuário insira um número dentro de faixa realista ou deixe vazio para pular
-        double altura = 0.0;
+        // Altura
         final double ALTURA_MIN = 0.4;
         final double ALTURA_MAX = 3.0;
+        double altura = 0.0;
+
         while (true) {
-            System.out.print("Altura (m) entre " + ALTURA_MIN + " e " + ALTURA_MAX + " (deixe vazio para pular): ");
-            String s = scanner.nextLine().trim();
-            if (s.isEmpty()) { altura = 0.0; break; }
+            System.out.print("Altura (m) entre " + ALTURA_MIN + " e " + ALTURA_MAX + " (Enter para pular): ");
+            String entrada = scanner.nextLine().trim();
+
+            if (entrada.isEmpty()) break;
+
             try {
-                altura = Double.parseDouble(s.replace(',', '.'));
-                if (altura < ALTURA_MIN || altura > ALTURA_MAX) { System.out.println("Valor fora da faixa aceitável."); continue; }
+                altura = Double.parseDouble(entrada.replace(',', '.'));
+                if (altura < ALTURA_MIN || altura > ALTURA_MAX) {
+                    System.out.println("Valor fora do intervalo permitido.");
+                    continue;
+                }
                 break;
-            } catch (NumberFormatException ex) {
-                System.out.println("Entrada inválida. Use um número (ex: 1.75) ou deixe vazio para pular.");
+            } catch (Exception e) {
+                System.out.println("Entrada invalida! Exemplo: 1.75");
             }
         }
 
+        System.out.println("+===================================================================+\n");
+
+        // ============================================================
+        //         COLETA DE LISTAS (alergias, cirurgias, etc.)
+        // ============================================================
         Paciente novo = new Paciente(
-            nome,
-            cpf,
-            idade,
-            endereco,
-            telefone,
-            email,
-            sexo,
-            dataDeNascimento
+                nome, cpf, idade, endereco, telefone, email, sexo, dataDeNascimento
         );
 
-		// Atribui tipo sanguíneo se informado (o nível de acesso permanece padrão definido em Pessoa/Paciente)
-		if (tipoSanguineo != null) {
-			novo.setTipoSanguineo(tipoSanguineo);
-		}
+        if (tipoSanguineo != null) novo.setTipoSanguineo(tipoSanguineo);
+        if (peso > 0) novo.setPeso(peso);
+        if (altura > 0) novo.setAltura(altura);
 
-		// Atribui peso e altura se informados
-		if (peso > 0) novo.setPeso(peso);
-		if (altura > 0) novo.setAltura(altura);
+        coletarAlergias(novo, scanner);
+        coletarDoencasCronicas(novo, scanner);
+        coletarHistoricoCirurgias(novo, scanner);
+        coletarMedicamentosEmUso(novo, scanner);
 
-		// Coleta condições de saúde (alergias, doenças crônicas, cirurgias, medicamentos)
-		coletarAlergias(novo, scanner);
-		coletarDoencasCronicas(novo, scanner);
-		coletarHistoricoCirurgias(novo, scanner);
-		coletarMedicamentosEmUso(novo, scanner);
+        // ============================================================
+        //                         RESULTADO
+        // ============================================================
+        System.out.println("\n+==================== RESUMO DO PRE-CADASTRO =====================+");
+        System.out.println("Dados coletados com sucesso! Confirme o plano para finalizar.");
+        System.out.println("Nome: " + novo.getNome());
+        System.out.println("CPF: " + novo.getCpf());
+        System.out.println("Telefone: " + novo.getTelefone());
+        System.out.println("+===================================================================+\n");
 
-        System.out.println("\n✅ Paciente cadastrado com sucesso: " + novo.getNome());
+        MetodosAuxiliares.pausarTela();
+
         return novo;
     }
 
-    // ------------------ Coleta de listas (interativas) ------------------
+    // ============================================================
+    //                    METODOS DE COLETA
+    // ============================================================
 
-
-    public static void coletarAlergias(Paciente paciente, Scanner scanner) {
-        if (paciente == null || scanner == null) return; 
-        //Essa condicional faz o processo ser interrompido se paciente ou scanner forem nulos, porem nao faz o programa travar e nem perder o scanner dado.
-        System.out.println("\nAdicionar alergias (pressione Enter para terminar):");
+    private static void coletarAlergias(Paciente paciente, Scanner scanner) {
+        System.out.println("\nAdicionar alergias (Enter para finalizar):");
         while (true) {
-            System.out.print("Alergia: ");
-            String s = scanner.nextLine();
-            if (s == null) break;
-            s = s.trim();
-            if (s.isEmpty()) break;
-            paciente.adicionarAlergia(s);
+            System.out.print(" - Alergia: ");
+            String scannerAlergia = scanner.nextLine().trim();
+            if (scannerAlergia.isEmpty()) break;
+            paciente.adicionarAlergia(scannerAlergia);
         }
     }
 
-    public static void coletarDoencasCronicas(Paciente paciente, Scanner scanner) {
-        if (paciente == null || scanner == null) return;
-        System.out.println("\nAdicionar doenças crônicas (pressione Enter para terminar):");
+    private static void coletarDoencasCronicas(Paciente paciente, Scanner scanner) {
+        System.out.println("\nAdicionar doencas cronicas (Enter para finalizar):");
         while (true) {
-            System.out.print("Doença crônica: ");
-            String s = scanner.nextLine();
-            if (s == null) break;
-            s = s.trim();
-            if (s.isEmpty()) break;
-            paciente.adicionarDoencaCronica(s);
+            System.out.print(" - Doenca: ");
+            String scannerDoenca = scanner.nextLine().trim();
+            if (scannerDoenca.isEmpty()) break;
+            paciente.adicionarDoencaCronica(scannerDoenca);
         }
     }
 
-    public static void coletarHistoricoCirurgias(Paciente paciente, Scanner scanner) {
-        if (paciente == null || scanner == null) return;
-        System.out.println("\nAdicionar histórico de cirurgias (pressione Enter para terminar):");
+    private static void coletarHistoricoCirurgias(Paciente paciente, Scanner scanner) {
+        System.out.println("\nAdicionar historico de cirurgias (Enter para finalizar):");
         while (true) {
-            System.out.print("Cirurgia: ");
-            String s = scanner.nextLine();
-            if (s == null) break;
-            s = s.trim();
-            if (s.isEmpty()) break;
-            paciente.adicionarHistoricoCirurgia(s);
+            System.out.print(" - Cirurgia: ");
+            String scannerCirurgia = scanner.nextLine().trim();
+            if (scannerCirurgia.isEmpty()) break;
+            paciente.adicionarHistoricoCirurgia(scannerCirurgia);
         }
     }
 
-    public static void coletarMedicamentosEmUso(Paciente paciente, Scanner scanner) {
-        if (paciente == null || scanner == null) return;
-        System.out.println("\nAdicionar medicamentos em uso (pressione Enter para terminar):");
+    private static void coletarMedicamentosEmUso(Paciente paciente, Scanner scanner) {
+        System.out.println("\nAdicionar medicamentos em uso (Enter para finalizar):");
         while (true) {
-            System.out.print("Medicamento: ");
-            String s = scanner.nextLine();
-            if (s == null) break;
-            s = s.trim();
-            if (s.isEmpty()) break;
-            paciente.adicionarMedicamento(s);
+            System.out.print(" - Medicamento: ");
+            String scannerMedicamento = scanner.nextLine().trim();
+            if (scannerMedicamento.isEmpty()) break;
+            paciente.adicionarMedicamento(scannerMedicamento);
         }
+    }
+
+    // ============================================================
+    //                       CABECALHO
+    // ============================================================
+
+    private static void exibirCabecalhoPrincipal() {
+        System.out.println("+==================================================================+");
+        System.out.println("|                 CADASTRO DE PACIENTE - SISTEMA                  |");
+        System.out.println("+------------------------------------------------------------------+");
+        System.out.println("| Preencha corretamente para garantir a seguranca dos atendimentos.|");
+        System.out.println("+==================================================================+\n");
     }
 }
-

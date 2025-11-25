@@ -6,7 +6,7 @@ import java.util.List;
 
 public class PacienteDataBase {
 
-    private final List<Paciente> pacientes = new ArrayList<>();
+    private static final List<Paciente> PACIENTES = new ArrayList<>();
 
 
     // ===============================
@@ -14,9 +14,13 @@ public class PacienteDataBase {
     // ===============================
     
     public boolean adicionarPaciente(Paciente paciente) {
-    if (buscarCarteirinha(paciente.getNumeroCarteirinha()) != null) return false;
-    pacientes.add(paciente);
-    return true;
+        if (paciente == null || paciente.getNumeroCarteirinha() == null) {
+            return false;
+        }
+
+        if (buscarCarteirinha(paciente.getNumeroCarteirinha()) != null) return false;
+        PACIENTES.add(paciente);
+        return true;
     }
     //Evita a duplicidade de carteirinhas ao adicionar um paciente.
 
@@ -25,8 +29,23 @@ public class PacienteDataBase {
     //             READ
     // ===============================
     public Paciente buscarCarteirinha(String numeroCarteirinhaPesquisada) {
-        for (Paciente paciente : pacientes) {
-            if (paciente.getNumeroCarteirinha().equals(numeroCarteirinhaPesquisada)) {
+        if (numeroCarteirinhaPesquisada == null) {
+            return null;
+        }
+        for (Paciente paciente : PACIENTES) {
+            if (numeroCarteirinhaPesquisada.equals(paciente.getNumeroCarteirinha())) {
+                return paciente;
+            }
+        }
+        return null;
+    }
+
+    public Paciente buscarPorCpf(String cpf) {
+        if (cpf == null) {
+            return null;
+        }
+        for (Paciente paciente : PACIENTES) {
+            if (cpf.equals(paciente.getCpf())) {
                 return paciente;
             }
         }
@@ -65,7 +84,7 @@ public class PacienteDataBase {
     public boolean removerPorCarteirinha(String numeroCarteirinha) {
         Paciente paciente = buscarCarteirinha(numeroCarteirinha);
         if (paciente != null) {
-            pacientes.remove(paciente);
+            PACIENTES.remove(paciente);
             return true;
         }
         return false;
@@ -74,7 +93,7 @@ public class PacienteDataBase {
 
 
     public List<Paciente> listarTodos() {
-        return new ArrayList<>(pacientes);
+        return new ArrayList<>(PACIENTES);
     }
     //Criei um copia  da lista para evitar que a lista original seja modificada externamente.
 

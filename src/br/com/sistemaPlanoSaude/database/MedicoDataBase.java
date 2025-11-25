@@ -6,7 +6,7 @@ import java.util.List;
 
 public class MedicoDataBase {
 
-    private final List<Medico> medicos = new ArrayList<>();
+    private static final List<Medico> MEDICOS = new ArrayList<>();
 
 
     // ===============================
@@ -16,7 +16,7 @@ public class MedicoDataBase {
     // Adiciona um médico à lista, evitando duplicidade de CRM
     public boolean adicionarMedico(Medico medico) {
         if (buscarPorCrm(medico.getCrm()) != null) return false; // já existe
-        medicos.add(medico);
+        MEDICOS.add(medico);
         return true;
     }
 
@@ -27,7 +27,7 @@ public class MedicoDataBase {
     public boolean removerPorCrm(String crm) {
         Medico medico = buscarPorCrm(crm);
         if (medico != null) {
-            medicos.remove(medico);
+            MEDICOS.remove(medico);
             return true;
         }
         return false;
@@ -39,8 +39,19 @@ public class MedicoDataBase {
     // Busca um médico pelo CRM
     public Medico buscarPorCrm(String crm) {
         if (crm == null) return null;
-        for (Medico medico : medicos) {
+        for (Medico medico : MEDICOS) {
             if (crm.equals(medico.getCrm())) {
+                return medico;
+            }
+        }
+        return null;
+    }
+
+    // Busca um médico pelo CPF
+    public Medico buscarPorCpf(String cpf) {
+        if (cpf == null) return null;
+        for (Medico medico : MEDICOS) {
+            if (cpf.equals(medico.getCpf())) {
                 return medico;
             }
         }
@@ -86,6 +97,6 @@ public class MedicoDataBase {
     // ===============================
     // Lista todos os médicos (cópia defensiva)
     public List<Medico> listarTodos() {
-        return new ArrayList<>(medicos);
+        return new ArrayList<>(MEDICOS);
     }
 }

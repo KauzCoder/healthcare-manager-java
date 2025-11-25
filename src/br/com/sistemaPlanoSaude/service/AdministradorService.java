@@ -45,13 +45,16 @@ public class AdministradorService {
     // ===============================
     //         AUTH / LOGIN
     // ===============================
-    public boolean autenticarAdministrador(String cpf, String senha) {
-        if (cpf == null || senha == null) return false;
+    public Administrador autenticarAdministrador(String cpf, String senha) {
+        if (cpf == null || senha == null) return null;
 
         Administrador admin = administradoresDB.buscarPorCpf(cpf);
-        if (admin == null) return false;
+        if (admin == null) return null;
 
-        return admin.getSenhaHash().equals(senha);
+        if (admin.getSenhaHash() != null && admin.getSenhaHash().equals(senha)) {
+            return admin;
+        }
+        return null;
     }
 
     // ===============================

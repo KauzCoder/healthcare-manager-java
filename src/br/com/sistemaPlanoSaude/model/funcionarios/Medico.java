@@ -76,4 +76,12 @@ public class Medico extends Pessoa {
         System.out.println("=================================\n");
     }
 
+    @Override
+    public String toString() {
+        return String.format("[Medico] %s | CRM: %s | Especialidade: %s | CPF: %s",
+                getNome(),
+                crm,
+                especialidade,
+                getCpf());
+    }
 }

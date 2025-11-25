@@ -3,6 +3,7 @@ package br.com.sistemaPlanoSaude.view.admin;
 import br.com.sistemaPlanoSaude.database.MedicoDataBase;
 import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
 import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.service.MedicoService;
 import br.com.sistemaPlanoSaude.util.ConsoleColors;
 import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioMedico;
@@ -12,6 +13,7 @@ public class AdminMedicoView {
 
     private final Scanner scanner = new Scanner(System.in);
     private final MedicoDataBase medicoDB = new MedicoDataBase();
+    private final MedicoService medicoService = new MedicoService();
 
     public void exibirMenu(Administrador admin) {
 
@@ -22,27 +24,27 @@ public class AdminMedicoView {
         while (opcao != 0) {
 
             System.out.println(ConsoleColors.BLUE + ConsoleColors.BOLD +
-                "╔══════════════════════════════════════════════════════════════╗\n" +
-                "║                                                              ║\n" +
-                "║           🩺  PAINEL DO ADMINISTRADOR — MÉDICOS  🩺          ║\n" +
-                "║                                                              ║\n" +
-                "║     Gerencie profissionais, cadastre novos médicos,           ║\n" +
-                "║     visualize informações e mantenha tudo organizado.         ║\n" +
-                "║                                                              ║\n" +
-                "╚══════════════════════════════════════════════════════════════╝"
+                "+==============================================================+\n" +
+                "|                                                              |\n" +
+                "|        PAINEL DO ADMINISTRADOR - MEDICOS                     |\n" +
+                "|                                                              |\n" +
+                "|  Gerencie profissionais, cadastre novos medicos,             |\n" +
+                "|  visualize informacoes e mantenha tudo organizado.           |\n" +
+                "|                                                              |\n" +
+                "+==============================================================+"
                 + ConsoleColors.RESET);
 
             System.out.println();
 
-            System.out.println(ConsoleColors.CYAN + "📌 **Opções para Gerenciamento de Médicos:**\n" + ConsoleColors.RESET);
-            System.out.println(" [ 1 ] ➜ Cadastrar Médico");
-            System.out.println(" [ 2 ] ➜ Listar Médicos");
-            System.out.println(" [ 3 ] ➜ Remover Médico pelo CRM");
-            System.out.println(" [ 4 ] ➜ Exibir Informações de um Médico");
-            System.out.println(" [ 0 ] ➜ Voltar");
+            System.out.println(ConsoleColors.CYAN + "Opcoes para gerenciamento de medicos:\n" + ConsoleColors.RESET);
+            System.out.println(" [ 1 ] -> Cadastrar medico");
+            System.out.println(" [ 2 ] -> Listar medicos");
+            System.out.println(" [ 3 ] -> Buscar medico (CRM ou CPF)");
+            System.out.println(" [ 4 ] -> Remover medico pelo CRM");
+            System.out.println(" [ 0 ] -> Voltar");
             System.out.println();
 
-            System.out.print(ConsoleColors.YELLOW + "👉 Digite sua opção: " + ConsoleColors.RESET);
+            System.out.print(ConsoleColors.YELLOW + "Digite sua opcao: " + ConsoleColors.RESET);
             opcao = lerInteiro();
 
             processarOpcao(opcao, admin);
@@ -59,15 +61,15 @@ public class AdminMedicoView {
         switch (opcao) {
             case 1 -> cadastrarMedico(admin);
             case 2 -> listarMedicos(admin);
-            case 3 -> removerMedico(admin);
-            case 4 -> exibirMedico(admin);
+            case 3 -> buscarMedico(admin);
+            case 4 -> removerMedico(admin);
 
             case 0 -> {
-                System.out.println(ConsoleColors.BLUE + "Retornando ao menu principal... 💼" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.BLUE + "Retornando ao menu principal..." + ConsoleColors.RESET);
                 return;
             }
 
-            default -> System.out.println(ConsoleColors.RED + "❌ Opção inválida! Tente novamente." + ConsoleColors.RESET);
+            default -> System.out.println(ConsoleColors.RED + "Opcao invalida! Tente novamente." + ConsoleColors.RESET);
         }
 
         System.out.println(ConsoleColors.PURPLE + "\nPressione ENTER para continuar..." + ConsoleColors.RESET);
@@ -76,109 +78,131 @@ public class AdminMedicoView {
     }
 
     // ===============================================================
-    // CADASTRAR MÉDICO
+    // CADASTRAR MEDICO
     // ===============================================================
     private void cadastrarMedico(Administrador admin) {
+        MetodosAuxiliares.limparTela();
         System.out.println(ConsoleColors.BLUE + ConsoleColors.BOLD +
-            "╔═════════════════════════════╗\n" +
-            "║       ➕ CADASTRAR MÉDICO    ║\n" +
-            "╚═════════════════════════════╝\n" +
+            "+=============================+\n" +
+            "|       CADASTRAR MEDICO      |\n" +
+            "+=============================+\n" +
             ConsoleColors.RESET);
 
         Medico novo = FormularioMedico.cadastrarMedico(scanner);
 
         if (novo == null) {
-            System.out.println(ConsoleColors.RED + "\n❌ Cadastro cancelado." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "\nCadastro cancelado." + ConsoleColors.RESET);
             return;
         }
 
-        boolean added = medicoDB.adicionarMedico(novo);
+        boolean added = medicoService.cadastrar(novo);
         if (added) {
             admin.getMedicos().add(novo);
-            System.out.println(ConsoleColors.GREEN + "\n✔ Médico cadastrado com sucesso (DB em memória atualizado)!" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.GREEN + "\nMedico cadastrado com sucesso!" + ConsoleColors.RESET);
         } else {
-            System.out.println(ConsoleColors.RED + "\n❌ Não foi possível cadastrar: CRM já existe no banco de dados." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "\nNao foi possivel cadastrar: CRM ja existe." + ConsoleColors.RESET);
         }
     }
 
     // ===============================================================
-    // LISTAR MÉDICOS
+    // LISTAR MEDICOS
     // ===============================================================
     private void listarMedicos(Administrador admin) {
-
+        MetodosAuxiliares.limparTela();
         System.out.println(ConsoleColors.BLUE + ConsoleColors.BOLD +
-            "╔═════════════════════════╗\n" +
-            "║       📋 LISTA DE MÉDICOS\n" +
-            "╚═════════════════════════╝\n" +
+            "+=========================+\n" +
+            "|       LISTA DE MEDICOS  |\n" +
+            "+=========================+\n" +
             ConsoleColors.RESET);
 
-        java.util.List<Medico> lista = medicoDB.listarTodos();
+        java.util.List<Medico> lista = medicoService.listarTodos();
 
         admin.getMedicos().clear();
         admin.getMedicos().addAll(lista);
 
         if (lista.isEmpty()) {
-            System.out.println(ConsoleColors.YELLOW + "Nenhum médico cadastrado." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.YELLOW + "Nenhum medico cadastrado." + ConsoleColors.RESET);
             return;
         }
 
-        System.out.println(ConsoleColors.CYAN + "\n--- Lista de Médicos (do banco em memória) ---" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.CYAN + "\n--- Lista de medicos ---" + ConsoleColors.RESET);
         for (Medico m : lista) {
             System.out.println(m);
         }
     }
 
     // ===============================================================
-    // REMOVER MÉDICO
+    // REMOVER MEDICO
     // ===============================================================
     private void removerMedico(Administrador admin) {
-
+        MetodosAuxiliares.limparTela();
         System.out.println(ConsoleColors.BLUE + ConsoleColors.BOLD +
-            "╔══════════════════════════════╗\n" +
-            "║       ❌ REMOVER MÉDICO       ║\n" +
-            "╚══════════════════════════════╝\n" +
+            "+==============================+\n" +
+            "|        REMOVER MEDICO        |\n" +
+            "+==============================+\n" +
             ConsoleColors.RESET);
 
-        System.out.print(ConsoleColors.YELLOW + "Digite o CRM do médico para remover: " + ConsoleColors.RESET);
+        System.out.print(ConsoleColors.YELLOW + "Digite o CRM do medico para remover: " + ConsoleColors.RESET);
         String crm = scanner.nextLine();
 
-        boolean removed = medicoDB.removerPorCrm(crm);
+        boolean removed = medicoService.remover(crm);
         if (removed) {
             admin.removerMedico(crm);
-            System.out.println(ConsoleColors.GREEN + "\n✔ Médico removido (do DB em memória e do administrador)." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.GREEN + "\nMedico removido com sucesso!" + ConsoleColors.RESET);
         } else {
-            System.out.println(ConsoleColors.RED + "\n❌ Médico não encontrado no banco de dados." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "\nMedico nao encontrado." + ConsoleColors.RESET);
         }
     }
 
     // ===============================================================
-    // EXIBIR INFO DO MÉDICO
+    // BUSCAR MEDICO (por CRM ou CPF)
     // ===============================================================
-    private void exibirMedico(Administrador admin) {
-
+    private void buscarMedico(Administrador admin) {
+        MetodosAuxiliares.limparTela();
         System.out.println(ConsoleColors.BLUE + ConsoleColors.BOLD +
-            "╔══════════════════════════════╗\n" +
-            "║  🔎 CONSULTAR DADOS DO MÉDICO  ║\n" +
-            "╚══════════════════════════════╝\n" +
+            "+==============================+\n" +
+            "|        BUSCAR MEDICO         |\n" +
+            "+==============================+\n" +
             ConsoleColors.RESET);
 
-        System.out.print(ConsoleColors.YELLOW + "Informe o CRM: " + ConsoleColors.RESET);
-        String crm = scanner.nextLine();
+        System.out.println("Escolha o tipo de busca:");
+        System.out.println(" [ 1 ] -> Buscar por CRM");
+        System.out.println(" [ 2 ] -> Buscar por CPF");
+        System.out.print(ConsoleColors.YELLOW + "Opcao: " + ConsoleColors.RESET);
+        int opcaoBusca = lerInteiro();
 
-        Medico m = medicoDB.buscarPorCrm(crm);
+        Medico m = null;
+
+        switch (opcaoBusca) {
+            case 1 -> {
+                System.out.print(ConsoleColors.YELLOW + "Informe o CRM: " + ConsoleColors.RESET);
+                String crm = scanner.nextLine().trim();
+                m = medicoService.buscarPorCrm(crm);
+            }
+            case 2 -> {
+                System.out.print(ConsoleColors.YELLOW + "Informe o CPF: " + ConsoleColors.RESET);
+                String cpf = scanner.nextLine().trim();
+                m = medicoDB.buscarPorCpf(cpf);
+            }
+            default -> {
+                System.out.println(ConsoleColors.RED + "Opcao invalida!" + ConsoleColors.RESET);
+                return;
+            }
+        }
+
         if (m != null) {
             if (!admin.getMedicos().contains(m)) {
                 admin.getMedicos().add(m);
             }
+            System.out.println("\n" + ConsoleColors.GREEN + "Medico encontrado!" + ConsoleColors.RESET);
             m.exibirInfo();
-            return;
+        } else {
+            System.out.println(ConsoleColors.RED + "Medico nao encontrado!" + ConsoleColors.RESET);
         }
-
-        System.out.println(ConsoleColors.RED + "❌ Médico não encontrado no banco de dados!" + ConsoleColors.RESET);
     }
 
     // ===============================================================
-    // UTILITÁRIOS
+    // UTILITARIOS
     // ===============================================================
 
     private int lerInteiro() {
@@ -186,7 +210,7 @@ public class AdminMedicoView {
             try {
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (Exception e) {
-                System.out.print(ConsoleColors.RED + "Digite um número válido: " + ConsoleColors.RESET);
+                System.out.print(ConsoleColors.RED + "Digite um numero valido: " + ConsoleColors.RESET);
             }
         }
     }
