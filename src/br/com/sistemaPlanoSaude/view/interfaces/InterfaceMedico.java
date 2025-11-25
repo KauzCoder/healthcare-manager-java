@@ -1,15 +1,18 @@
 package br.com.sistemaPlanoSaude.view.interfaces;
 
+import br.com.sistemaPlanoSaude.model.enums.Especialidades;
+import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
+import br.com.sistemaPlanoSaude.model.consulta.Horario;
+import br.com.sistemaPlanoSaude.service.HorarioService;
+import br.com.sistemaPlanoSaude.service.MedicoService;
+import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
-
-import br.com.sistemaPlanoSaude.model.enums.Especialidades;
-import br.com.sistemaPlanoSaude.model.funcionarios.Medico;
-import br.com.sistemaPlanoSaude.model.consulta.Horario;
 
 public class InterfaceMedico {
 
@@ -17,16 +20,23 @@ public class InterfaceMedico {
     private Medico medicoLogado; // médico atualmente logado
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+    private final MedicoService medicoService;
+    private final HorarioService horarioService;
+
+    public InterfaceMedico(MedicoService medicoService, HorarioService horarioService) {
+        this.medicoService = medicoService;
+        this.horarioService = horarioService;
+    }
+
     // =========================
     // Exibir menu principal
     // =========================
     public void exibirMenu() {
-        limparTela();
+        MetodosAuxiliares.limparTela();
 
         System.out.println("╔════════════════════════════════════════╗");
         System.out.println("║        🩺 ÁREA DO MÉDICO 🩺           ║");
-        System.out.println("╚════════════════════════════════════════╝");
-        System.out.println();
+        System.out.println("╚════════════════════════════════════════╝\n");
 
         System.out.println("📌 **Opções Disponíveis:**\n");
         System.out.println(" [1] ➜ Visualizar agenda de horários");
@@ -44,7 +54,7 @@ public class InterfaceMedico {
     // Processar opção do menu
     // =========================
     private void processarOpcao(String opcao) {
-        limparTela();
+        MetodosAuxiliares.limparTela();
 
         switch (opcao) {
             case "1":
@@ -53,40 +63,8 @@ public class InterfaceMedico {
                     break;
                 }
 
-                System.out.println("╔══════════════════════════════════════╗");
-                System.out.println("║       🗓 AGENDA DE HORÁRIOS         ║");
-                System.out.println("╚══════════════════════════════════════╝\n");
+                exibirAgenda();
 
-                if (medicoLogado.getHorarioAtendimento().isEmpty()) {
-                    System.out.println("Nenhum horário cadastrado ainda.");
-                } else {
-                    System.out.println("Horários cadastrados:");
-                    int count = 1;
-                    for (Horario h : medicoLogado.getHorarioAtendimento()) {
-                        String status = h.isDisponibilidade() ? "Disponível" : "Ocupado";
-                        String dataFormatada = formatter.format(h.getData());
-                        System.out.println(count + ". " + dataFormatada + " - " + status);
-                        count++;
-                    }
-                }
-
-                System.out.print("\nDeseja adicionar um novo horário? (S/N): ");
-                String respostaHorario = scanner.nextLine().trim().toUpperCase();
-                if (respostaHorario.equals("S")) {
-                    try {
-                        System.out.print("Digite a data e hora do novo horário (yyyy-MM-dd HH:mm): ");
-                        Date novaData = formatter.parse(scanner.nextLine().trim());
-
-                        // Cria novo Horario e adiciona
-                        Horario novoHorario = new Horario(novaData, true);
-                        medicoLogado.adicionarHorario(novoHorario);
-
-                        System.out.println("✅ Horário adicionado com sucesso: " + formatter.format(novaData));
-
-                    } catch (ParseException e) {
-                        System.out.println("⚠ Data/hora inválida! Use o formato yyyy-MM-dd HH:mm");
-                    }
-                }
                 break;
 
             case "2":
@@ -108,6 +86,49 @@ public class InterfaceMedico {
         System.out.println("\n👉 Pressione ENTER para continuar...");
         scanner.nextLine();
         exibirMenu();
+    }
+
+    // =========================
+    // Exibir agenda de horários
+    // =========================
+    private void exibirAgenda() {
+        List<Horario> horarios = horarioService.listarHorariosPorMedico(medicoLogado.getCrm());
+
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║       🗓 AGENDA DE HORÁRIOS         ║");
+        System.out.println("╚══════════════════════════════════════╝\n");
+
+        if (horarios.isEmpty()) {
+            System.out.println("Nenhum horário cadastrado ainda.");
+        } else {
+            System.out.println("Horários cadastrados:");
+            int count = 1;
+            for (Horario h : horarios) {
+                String status = h.isDisponibilidade() ? "Disponível" : "Ocupado";
+                String dataFormatada = formatter.format(h.getData());
+                System.out.println(count + ". " + dataFormatada + " - " + status);
+                count++;
+            }
+        }
+
+        System.out.print("\nDeseja adicionar um novo horário? (S/N): ");
+        String respostaHorario = scanner.nextLine().trim().toUpperCase();
+        if (respostaHorario.equals("S")) {
+            try {
+                System.out.print("Digite a data e hora do novo horário (yyyy-MM-dd HH:mm): ");
+                Date novaData = formatter.parse(scanner.nextLine().trim());
+
+                boolean sucesso = horarioService.criarHorario(novaData, true, medicoLogado.getCrm());
+                if (sucesso) {
+                    System.out.println("✅ Horário adicionado com sucesso: " + formatter.format(novaData));
+                } else {
+                    System.out.println("❌ Não foi possível adicionar o horário.");
+                }
+
+            } catch (ParseException e) {
+                System.out.println("⚠ Data/hora inválida! Use o formato yyyy-MM-dd HH:mm");
+            }
+        }
     }
 
     // =========================
@@ -148,33 +169,33 @@ public class InterfaceMedico {
             switch (campo) {
                 case "1":
                     System.out.print("Novo nome: ");
-                    medicoLogado.setNome(scanner.nextLine());
+                    medicoService.atualizarNome(medicoLogado.getCrm(), scanner.nextLine());
                     break;
                 case "2":
                     System.out.print("Novo endereço: ");
-                    medicoLogado.setEndereco(scanner.nextLine());
+                    medicoService.atualizarEndereco(medicoLogado.getCrm(), scanner.nextLine());
                     break;
                 case "3":
                     System.out.print("Novo telefone: ");
-                    medicoLogado.setTelefone(scanner.nextLine());
+                    medicoService.atualizarTelefone(medicoLogado.getCrm(), scanner.nextLine());
                     break;
                 case "4":
                     System.out.print("Novo email: ");
-                    medicoLogado.setEmail(scanner.nextLine());
+                    medicoService.atualizarEmail(medicoLogado.getCrm(), scanner.nextLine());
                     break;
                 case "5":
                     System.out.println("Escolha especialidade:");
-                    for (Especialidades e : Especialidades.values()) {
-                        System.out.println("- " + e);
+                    for (Especialidades especialidade : Especialidades.values()) {
+                        System.out.println("- " + especialidade);
                     }
                     System.out.print("Especialidade: ");
-                    medicoLogado.setEspecialidade(
-                        Especialidades.valueOf(scanner.nextLine().trim().toUpperCase())
+                    medicoService.atualizarEspecialidade(
+                            medicoLogado.getCrm(),
+                            Especialidades.valueOf(scanner.nextLine().trim().toUpperCase())
                     );
                     break;
                 case "6":
-                    System.out.print("Novo CRM: ");
-                    medicoLogado.setCrm(scanner.nextLine());
+                    System.out.println("⚠ CRM não pode ser alterado!");
                     break;
                 case "7":
                     System.out.print("Nova data de contratação (yyyy-MM-dd): ");
@@ -182,18 +203,13 @@ public class InterfaceMedico {
                         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                         Date data = df.parse(scanner.nextLine().trim());
                         LocalDate localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                        medicoLogado.setDataContratacao(localDate);
+                        medicoService.atualizarDataContratacao(medicoLogado.getCrm(), localDate);
                     } catch (ParseException e) {
                         System.out.println("⚠ Data inválida!");
                     }
                     break;
                 case "8":
-                    System.out.print("Novo salário: ");
-                    try {
-                        medicoLogado.setSalario(Integer.parseInt(scanner.nextLine().trim()));
-                    } catch (Exception e) {
-                        System.out.println("⚠ Salário inválido!");
-                    }
+                    System.out.println("⚠ Salário só pode ser alterado por administrador!");
                     break;
                 case "0":
                     editar = false;
@@ -205,13 +221,8 @@ public class InterfaceMedico {
         }
     }
 
-    // =========================
-    // Limpar tela
-    // =========================
-    private void limparTela() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
+    
+    
 
     // =========================
     // Método para definir o médico logado
