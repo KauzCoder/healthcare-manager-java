@@ -1,303 +1,276 @@
 package br.com.sistemaPlanoSaude.view.admin;
 
+import br.com.sistemaPlanoSaude.database.PacienteDataBase;
 import br.com.sistemaPlanoSaude.model.enums.PlanosDeSaude;
-import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
+import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
 import br.com.sistemaPlanoSaude.model.planos.PlanoBasico;
 import br.com.sistemaPlanoSaude.model.planos.PlanoPremium;
-import br.com.sistemaPlanoSaude.model.planos.PlanoSaude;
-import java.util.ArrayList;
+import br.com.sistemaPlanoSaude.service.PlanoDeSaudeService;
+import br.com.sistemaPlanoSaude.util.ConsoleColors;
 import java.util.List;
 import java.util.Scanner;
 
 public class AdminPlanoView {
 
     private final Scanner scanner = new Scanner(System.in);
-    private final Administrador admin;
+    private final PlanoDeSaudeService service = new PlanoDeSaudeService();
+    private final PacienteDataBase pacienteDB = new PacienteDataBase();
 
-    public AdminPlanoView(Administrador admin) {
-        this.admin = admin;
-    }
-
-    // =====================================================================
-    //                              MENU PRINCIPAL
-    // =====================================================================
-
+    // ============================================================
+    // MENU PRINCIPAL
+    // ============================================================
     public void exibirMenu() {
 
         limparTela();
-
-        System.out.println("╔══════════════════════════════════════════════════════════════╗");
-        System.out.println("║                                                              ║");
-        System.out.println("║            🏥  PAINEL ADMINISTRATIVO - PLANOS  🏥            ║");
-        System.out.println("║                                                              ║");
-        System.out.println("║     Gerencie preços, reajustes e informações dos planos      ║");
-        System.out.println("║                 da plataforma Health Care.                   ║");
-        System.out.println("║                                                              ║");
-        System.out.println("╚══════════════════════════════════════════════════════════════╝");
-        System.out.println();
-
-        System.out.println("📌 **Opções de Administração:**\n");
-        System.out.println(" [ 1 ] ➜ Atualizar valor de um plano");
-        System.out.println(" [ 2 ] ➜ Aplicar reajuste percentual em um plano");
-        System.out.println(" [ 3 ] ➜ Aplicar reajuste em todos os planos");
-        System.out.println(" [ 4 ] ➜ Listar planos e preços atuais");
-        System.out.println(" [ 0 ] ➜ Voltar / Encerrar");
-        System.out.println();
-
-        System.out.print("👉 Digite sua opção: ");
         int opcao = -1;
-        try {
-            opcao = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            opcao = -1;
-        }
 
-        processarOpcao(opcao);
+        while (opcao != 0) {
+
+            System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                    "╔══════════════════════════════════════════════════════════════╗");
+            System.out.println("║                                                              ║");
+            System.out.println("║      🏥  PAINEL DO ADMINISTRADOR — PLANOS DE SAÚDE   🩺      ║");
+            System.out.println("║                                                              ║");
+            System.out.println("║   Gerencie planos, trocas, carteirinhas e verificações       ║");
+            System.out.println("║      com total controle sobre os pacientes.                  ║");
+            System.out.println("║                                                              ║");
+            System.out.println("╚══════════════════════════════════════════════════════════════╝"
+                    + ConsoleColors.RESET);
+
+            System.out.println("\n📌 " + ConsoleColors.YELLOW + ConsoleColors.BOLD + "Opções Disponíveis:" + ConsoleColors.RESET + "\n");
+
+            System.out.println(ConsoleColors.BLUE + " [ 1 ] ➜ Aplicar Plano Básico" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.BLUE + " [ 2 ] ➜ Aplicar Plano Premium" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.BLUE + " [ 3 ] ➜ Trocar para Plano Básico" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.BLUE + " [ 4 ] ➜ Trocar para Plano Premium" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.BLUE + " [ 5 ] ➜ Gerar Carteirinha" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.BLUE + " [ 6 ] ➜ Listar Pacientes por Plano" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.BLUE + " [ 7 ] ➜ Verificar se Paciente Possui Plano" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + " [ 0 ] ➜ Voltar" + ConsoleColors.RESET);
+
+            System.out.print(ConsoleColors.PURPLE + "👉 Digite sua opção: " + ConsoleColors.RESET);
+            opcao = lerInteiro();
+
+            processarOpcao(opcao);
+        }
     }
 
+    // ============================================================
+    // PROCESSAMENTO DAS OPÇÕES
+    // ============================================================
     private void processarOpcao(int opcao) {
 
         limparTela();
 
         switch (opcao) {
-            case 1:
-                atualizarValorPlano();
-                break;
-            case 2:
-                reajustePercentualPlano();
-                break;
-            case 3:
-                reajusteEmTodos();
-                break;
-            case 4:
-                listarPlanos();
-                break;
-            case 0:
-                System.out.println("Voltando ao menu principal... 👋");
+
+            case 1 -> aplicarPlanoBasico();
+            case 2 -> aplicarPlanoPremium();
+            case 3 -> trocarParaBasico();
+            case 4 -> trocarParaPremium();
+            case 5 -> gerarCarteirinha();
+            case 6 -> listarPorPlano();
+            case 7 -> verificarPossuiPlano();
+
+            case 0 -> {
+                System.out.println(ConsoleColors.YELLOW +
+                        "Retornando ao menu principal... 💼" +
+                        ConsoleColors.RESET);
                 return;
-            default:
-                System.out.println("❌ Opção inválida!");
-                break;
+            }
+
+            default -> System.out.println(ConsoleColors.RED +
+                    "❌ Opção inválida! Tente novamente." +
+                    ConsoleColors.RESET);
         }
 
-        System.out.println("\nPressione ENTER para continuar...");
+        System.out.println(ConsoleColors.CYAN +
+                "\nPressione ENTER para continuar..." + ConsoleColors.RESET);
         scanner.nextLine();
-        exibirMenu();
+        limparTela();
     }
 
-    // =====================================================================
-    //                   MÉTODOS DE ADMINISTRAÇÃO DE PLANOS
-    // =====================================================================
+    // ============================================================
+    // APLICAR PLANO
+    // ============================================================
+    private void aplicarPlanoBasico() {
 
-    private void atualizarValorPlano() {
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║      ➕  APLICAR PLANO BÁSICO         ║");
+        System.out.println("╚══════════════════════════════════════╝" +
+                ConsoleColors.RESET);
 
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║     📝 ALTERAÇÃO DE VALOR        ║");
-        System.out.println("╚══════════════════════════════════╝\n");
+        Paciente p = buscarPacienteCPF();
+        if (p == null) return;
 
-        PlanoSaude plano = escolherPlano();
-        if (plano == null) return;
-
-        System.out.print("\nInforme o novo valor: R$ ");
-        double novoValor = scanner.nextDouble();
-        scanner.nextLine();
-
-        admin.atualizarPrecoPlano(plano, novoValor);
+        boolean ok = service.aplicarPlanoBasico(p, new PlanoBasico());
+        System.out.println(ok
+                ? ConsoleColors.GREEN + "✔ Plano Básico aplicado com sucesso!" + ConsoleColors.RESET
+                : ConsoleColors.RED + "❌ Erro ao aplicar plano." + ConsoleColors.RESET);
     }
 
-    private void reajustePercentualPlano() {
+    private void aplicarPlanoPremium() {
 
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║      📈 REAJUSTE PERCENTUAL      ║");
-        System.out.println("╚══════════════════════════════════╝\n");
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║      ⭐  APLICAR PLANO PREMIUM         ║");
+        System.out.println("╚══════════════════════════════════════╝" +
+                ConsoleColors.RESET);
 
-        PlanoSaude plano = escolherPlano();
-        if (plano == null) return;
+        Paciente p = buscarPacienteCPF();
+        if (p == null) return;
 
-        System.out.print("\nDigite o percentual (ex: 10 para +10% ou -5 para -5%): ");
-        double percentual = scanner.nextDouble();
-        scanner.nextLine();
-
-        admin.aplicarReajustePercentual(plano, percentual);
+        boolean ok = service.aplicarPlanoPremium(p, new PlanoPremium());
+        System.out.println(ok
+                ? ConsoleColors.GREEN + "✔ Plano Premium aplicado com sucesso!" + ConsoleColors.RESET
+                : ConsoleColors.RED + "❌ Erro ao aplicar plano." + ConsoleColors.RESET);
     }
 
-    private void reajusteEmTodos() {
+    // ============================================================
+    // TROCAR PLANO
+    // ============================================================
+    private void trocarParaBasico() {
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║      🔄 TROCAR PARA PLANO BÁSICO      ║");
+        System.out.println("╚══════════════════════════════════════╝" +
+                ConsoleColors.RESET);
 
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║    📊 REAJUSTE EM TODOS PLANOS   ║");
-        System.out.println("╚══════════════════════════════════╝\n");
+        System.out.print(ConsoleColors.PURPLE + "Número da carteirinha: " + ConsoleColors.RESET);
+        String cart = scanner.nextLine();
 
-        List<PlanoSaude> lista = new ArrayList<>();
-        lista.add(new PlanoBasico());
-        lista.add(new PlanoPremium());
-
-        System.out.print("Percentual de reajuste: ");
-        double percentual = scanner.nextDouble();
-        scanner.nextLine();
-
-        admin.aplicarReajusteEmLista(lista, percentual);
+        boolean ok = service.trocarPlanoParaBasico(cart, new PlanoBasico());
+        System.out.println(ok
+                ? ConsoleColors.GREEN + "✔ Plano trocado para Básico!" + ConsoleColors.RESET
+                : ConsoleColors.RED + "❌ Erro ao trocar plano." + ConsoleColors.RESET);
     }
 
-    private void listarPlanos() {
+    private void trocarParaPremium() {
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║      🔄 TROCAR PARA PLANO PREMIUM     ║");
+        System.out.println("╚══════════════════════════════════════╝" +
+                ConsoleColors.RESET);
 
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║      📄 LISTA DE PLANOS          ║");
-        System.out.println("╚══════════════════════════════════╝\n");
+        System.out.print(ConsoleColors.PURPLE + "Número da carteirinha: " + ConsoleColors.RESET);
+        String cart = scanner.nextLine();
 
-        List<PlanoSaude> planos = new ArrayList<>();
-        planos.add(new PlanoBasico());
-        planos.add(new PlanoPremium());
+        boolean ok = service.trocarPlanoParaPremium(cart, new PlanoPremium());
+        System.out.println(ok
+                ? ConsoleColors.GREEN + "✔ Plano trocado para Premium!" + ConsoleColors.RESET
+                : ConsoleColors.RED + "❌ Erro ao trocar plano." + ConsoleColors.RESET);
+    }
 
-        for (PlanoSaude p : planos) {
-            System.out.println("- " + formatarNomePlano(p));
-            System.out.printf("  Valor atual: R$ %.2f%n", p.getValorBase());
-            System.out.println("  Última atualização: " + p.getUltimaAtualizacao());
-            System.out.println();
+    // ============================================================
+    // GERAR CARTEIRINHA
+    // ============================================================
+    private void gerarCarteirinha() {
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║        🪪 GERAR CARTEIRINHA           ║");
+        System.out.println("╚══════════════════════════════════════╝"
+                + ConsoleColors.RESET);
+
+        Paciente p = buscarPacienteCPF();
+        if (p == null) return;
+
+        String cart = service.gerarCarteirinha(p);
+        System.out.println(cart != null
+                ? ConsoleColors.GREEN + "✔ Carteirinha gerada: " + cart + ConsoleColors.RESET
+                : ConsoleColors.RED + "❌ Erro ao gerar carteirinha." + ConsoleColors.RESET);
+    }
+
+    // ============================================================
+    // LISTAR POR PLANO
+    // ============================================================
+    private void listarPorPlano() {
+
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║      📋 LISTAR PACIENTES POR PLANO    ║");
+        System.out.println("╚══════════════════════════════════════╝" +
+                ConsoleColors.RESET);
+
+        System.out.println(ConsoleColors.YELLOW + "1 - Básico" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "2 - Premium" + ConsoleColors.RESET);
+        System.out.print(ConsoleColors.PURPLE + "Escolha: " + ConsoleColors.RESET);
+
+        int esc = lerInteiro();
+        PlanosDeSaude plano = (esc == 1) ? PlanosDeSaude.PLANO_BASICO : PlanosDeSaude.PLANO_PREMIUM;
+
+        List<Paciente> lista = service.listarPacientesPorPlano(plano);
+
+        if (lista.isEmpty()) {
+            System.out.println(ConsoleColors.RED +
+                    "Nenhum paciente encontrado com o plano " + plano + "." +
+                    ConsoleColors.RESET);
+            return;
+        }
+
+        System.out.println(ConsoleColors.GREEN +
+                "\nPacientes com o plano " + plano + ":\n" +
+                ConsoleColors.RESET);
+
+        for (Paciente p : lista) {
+            System.out.println(ConsoleColors.CYAN +
+                    "- " + p.getNome() + " | CPF: " + p.getCpf() +
+                    ConsoleColors.RESET);
         }
     }
 
-    // =====================================================================
-    //                        MÉTODOS AUXILIARES
-    // =====================================================================
+    // ============================================================
+    // VERIFICAR PLANO
+    // ============================================================
+    private void verificarPossuiPlano() {
 
-    private PlanoSaude escolherPlano() {
+        System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD +
+                "╔══════════════════════════════════════╗");
+        System.out.println("║        🔎 VERIFICAR PLANO DO PACIENTE ║");
+        System.out.println("╚══════════════════════════════════════╝"
+                + ConsoleColors.RESET);
 
-        System.out.println("Selecione o plano:");
-        System.out.println(" [1] Plano Básico");
-        System.out.println(" [2] Plano Premium");
-        System.out.println(" [0] Cancelar\n");
+        System.out.print(ConsoleColors.PURPLE + "Número da carteirinha: " + ConsoleColors.RESET);
+        String cart = scanner.nextLine();
 
-        System.out.print("👉 Sua escolha: ");
-        String escolha = scanner.nextLine();
-
-        switch (escolha) {
-            case "1":
-                return new PlanoBasico();
-            case "2":
-                return new PlanoPremium();
-            case "0":
-                return null;
-            default:
-                System.out.println("❌ Opção inválida.");
-                return null;
-        }
+        boolean ok = service.possuiPlano(cart);
+        System.out.println(ok
+                ? ConsoleColors.GREEN + "✔ O paciente possui plano ativo." + ConsoleColors.RESET
+                : ConsoleColors.RED + "❌ O paciente NÃO possui plano." + ConsoleColors.RESET);
     }
 
-    private String formatarNomePlano(PlanoSaude plano) {
+    // ============================================================
+    // MÉTODO AUXILIAR
+    // ============================================================
+    private Paciente buscarPacienteCPF() {
+        System.out.print(ConsoleColors.PURPLE + "Digite o CPF do paciente: " + ConsoleColors.RESET);
+        String cpf = scanner.nextLine();
 
-        if (plano == null || plano.getNomePlano() == null)
-            return "Plano de Saúde";
-
-        PlanosDeSaude tipo = plano.getNomePlano();
-
-        switch (tipo) {
-            case PLANO_BASICO:
-                return "Plano Básico";
-            case PLANO_PREMIUM:
-                return "Plano Premium";
-            default:
-                return "Plano de Saúde";
+        for (Paciente p : pacienteDB.listarTodos()) {
+            if (p.getCpf().equals(cpf)) {
+                return p;
+            }
         }
+
+        System.out.println(ConsoleColors.RED + "❌ Paciente não encontrado." + ConsoleColors.RESET);
+        return null;
     }
 
-
+    // ============================================================
+    // UTILITÁRIOS
+    // ============================================================
     private void limparTela() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
-    // ===============================
-    // MÉTODOS DE INTEGRAÇÃO COM BANCO EM MEMÓRIA
-    // ===============================
-
-    // Simulação de banco de dados em memória para planos
-    private final List<PlanoSaude> planosDB = new ArrayList<>();
-
-    // Adicionar novo plano
-    public void adicionarPlano() {
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║     ➕ ADICIONAR NOVO PLANO      ║");
-        System.out.println("╚══════════════════════════════════╝\n");
-
-        PlanoSaude novoPlano = escolherPlano();
-        if (novoPlano == null) return;
-
-        System.out.print("Informe o valor base do plano: R$ ");
-        double valor = scanner.nextDouble();
-        scanner.nextLine();
-        novoPlano.setValorBase(valor);
-
-        // Adiciona ao banco em memória
-        boolean exists = planosDB.stream().anyMatch(p -> p.getNomePlano() == novoPlano.getNomePlano());
-        if (exists) {
-            System.out.println("❌ Plano já existe no banco de dados!");
-            return;
-        }
-        planosDB.add(novoPlano);
-        System.out.println("✔ Plano adicionado ao banco de dados em memória!");
-    }
-
-    // Listar todos os planos do banco
-    public void listarPlanosBanco() {
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║   📄 LISTA DE PLANOS (BANCO)     ║");
-        System.out.println("╚══════════════════════════════════╝\n");
-
-        if (planosDB.isEmpty()) {
-            System.out.println("Nenhum plano cadastrado no banco.");
-            return;
-        }
-        for (PlanoSaude p : planosDB) {
-            System.out.println("- " + formatarNomePlano(p));
-            System.out.printf("  Valor base: R$ %.2f\n", p.getValorBase());
-            System.out.println("  Última atualização: " + p.getUltimaAtualizacao());
-            System.out.println();
+    private int lerInteiro() {
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (Exception e) {
+                System.out.print(ConsoleColors.RED + "Digite um número válido: " + ConsoleColors.RESET);
+            }
         }
     }
-
-    // Buscar plano por tipo
-    public void buscarPlano() {
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║   🔎 BUSCAR PLANO PELO TIPO      ║");
-        System.out.println("╚══════════════════════════════════╝\n");
-
-        System.out.print("Digite o tipo (1-Básico, 2-Premium): ");
-        String tipo = scanner.nextLine();
-        PlanoSaude plano = null;
-        if ("1".equals(tipo)) {
-            plano = planosDB.stream().filter(p -> p instanceof PlanoBasico).findFirst().orElse(null);
-        } else if ("2".equals(tipo)) {
-            plano = planosDB.stream().filter(p -> p instanceof PlanoPremium).findFirst().orElse(null);
-        }
-        if (plano != null) {
-            System.out.println("Plano encontrado:");
-            System.out.println("- " + formatarNomePlano(plano));
-            System.out.printf("  Valor base: R$ %.2f\n", plano.getValorBase());
-            System.out.println("  Última atualização: " + plano.getUltimaAtualizacao());
-        } else {
-            System.out.println("❌ Plano não encontrado no banco de dados.");
-        }
-    }
-
-    // Remover plano pelo tipo
-    public void removerPlano() {
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║     ❌ REMOVER PLANO             ║");
-        System.out.println("╚══════════════════════════════════╝\n");
-
-        System.out.print("Digite o tipo do plano para remover (1-Básico, 2-Premium): ");
-        String tipo = scanner.nextLine();
-        boolean removed = false;
-        if ("1".equals(tipo)) {
-            removed = planosDB.removeIf(p -> p instanceof PlanoBasico);
-        } else if ("2".equals(tipo)) {
-            removed = planosDB.removeIf(p -> p instanceof PlanoPremium);
-        }
-        if (removed) {
-            System.out.println("✔ Plano removido do banco de dados em memória!");
-        } else {
-            System.out.println("❌ Plano não encontrado para remoção.");
-        }
-    }
-
 }

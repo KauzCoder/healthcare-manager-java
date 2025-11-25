@@ -4,6 +4,8 @@ import br.com.sistemaPlanoSaude.database.PacienteDataBase;
 import br.com.sistemaPlanoSaude.model.enums.NivelAcesso;
 import br.com.sistemaPlanoSaude.model.funcionarios.Administrador;
 import br.com.sistemaPlanoSaude.model.pessoas.Paciente;
+import br.com.sistemaPlanoSaude.util.ConsoleColors;
+import br.com.sistemaPlanoSaude.util.MetodosAuxiliares;
 import br.com.sistemaPlanoSaude.view.formularios.FormularioPaciente;
 import java.util.Scanner;
 
@@ -14,23 +16,23 @@ public class AdminPacienteView {
 
     public void exibirMenu(Administrador admin) {
 
-        limparTela();
+        MetodosAuxiliares.limparTela();
 
         int opcao = -1;
 
         while (opcao != 0) {
 
-            System.out.println("╔══════════════════════════════════════════════════════════════╗");
+            System.out.println(ConsoleColors.CYAN + "╔══════════════════════════════════════════════════════════════╗" + ConsoleColors.RESET);
             System.out.println("║                                                              ║");
-            System.out.println("║        🧑‍⚕️  PAINEL DO ADMINISTRADOR — PACIENTES   🧑‍⚕️       ║");
+            System.out.println("║   " + ConsoleColors.BOLD + "🧑‍⚕️  PAINEL DO ADMINISTRADOR — PACIENTES   🧑‍⚕️" + ConsoleColors.RESET + "       ║");
             System.out.println("║                                                              ║");
-            System.out.println("║       Gerencie pacientes, permissões e status da conta        ║");
-            System.out.println("║        com facilidade e total controle administrativo.         ║");
+            System.out.println("║   Gerencie pacientes, permissões e status da conta           ║");
+            System.out.println("║      com facilidade e total controle administrativo.          ║");
             System.out.println("║                                                              ║");
             System.out.println("╚══════════════════════════════════════════════════════════════╝");
             System.out.println();
 
-            System.out.println("📌 **Opções Disponíveis:**\n");
+            System.out.println(ConsoleColors.BLUE + "📌 OPÇÕES DISPONÍVEIS:\n" + ConsoleColors.RESET);
             System.out.println(" [ 1 ] ➜ Cadastrar Paciente");
             System.out.println(" [ 2 ] ➜ Listar Pacientes");
             System.out.println(" [ 3 ] ➜ Bloquear Paciente");
@@ -39,7 +41,7 @@ public class AdminPacienteView {
             System.out.println(" [ 0 ] ➜ Voltar");
             System.out.println();
 
-            System.out.print("👉 Digite sua opção: ");
+            System.out.print(ConsoleColors.YELLOW + "👉 Digite sua opção: " + ConsoleColors.RESET);
             opcao = lerInteiro();
 
             processarOpcao(admin, opcao);
@@ -51,7 +53,7 @@ public class AdminPacienteView {
     // ===============================================================
     private void processarOpcao(Administrador admin, int opcao) {
 
-        limparTela();
+        MetodosAuxiliares.limparTela();
 
         switch (opcao) {
 
@@ -70,39 +72,38 @@ public class AdminPacienteView {
             case 7 -> buscarPaciente(admin);
 
             case 0 -> {
-                System.out.println("Retornando ao menu principal... 💼");
+                System.out.println(ConsoleColors.GREEN + "Retornando ao menu principal... 💼" + ConsoleColors.RESET);
                 return;
             }
 
-            default -> System.out.println("❌ Opção inválida! Tente novamente.");
+            default -> System.out.println(ConsoleColors.RED + "❌ Opção inválida! Tente novamente." + ConsoleColors.RESET);
         }
 
         System.out.println("\nPressione ENTER para continuar...");
         scanner.nextLine();
-        limparTela();
+        MetodosAuxiliares.limparTela();
     }
 
     // ===============================================================
     // 1 — CADASTRAR PACIENTE
     // ===============================================================
     private void cadastrarPaciente(Administrador admin) {
-        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔══════════════════════════════════════╗");
         System.out.println("║        📝 CADASTRAR PACIENTE         ║");
-        System.out.println("╚══════════════════════════════════════╝\n");
+        System.out.println("╚══════════════════════════════════════╝\n" + ConsoleColors.RESET);
 
         Paciente novo = FormularioPaciente.cadastrarPaciente(scanner);
 
         if (novo != null) {
             boolean added = pacienteDB.adicionarPaciente(novo);
             if (added) {
-                // Mantém o administrador atualizado com o paciente criado
                 admin.criarPaciente(novo);
-                System.out.println("\n✔ Paciente cadastrado com sucesso (DB em memória atualizado)!");
+                System.out.println(ConsoleColors.GREEN + "\n✔ Paciente cadastrado com sucesso!" + ConsoleColors.RESET);
             } else {
-                System.out.println("\n❌ Não foi possível cadastrar: carteirinha já existe no banco de dados.");
+                System.out.println(ConsoleColors.RED + "\n❌ Erro: carteirinha já cadastrada." + ConsoleColors.RESET);
             }
         } else {
-            System.out.println("\n❌ Operação cancelada.");
+            System.out.println(ConsoleColors.RED + "\n❌ Operação cancelada." + ConsoleColors.RESET);
         }
     }
 
@@ -111,29 +112,26 @@ public class AdminPacienteView {
     // ===============================================================
     private void listarPacientes(Administrador admin) {
 
-        System.out.println("╔═══════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔═══════════════════════════════╗");
         System.out.println("║       📋 LISTA DE PACIENTES    ║");
-        System.out.println("╚═══════════════════════════════╝\n");
+        System.out.println("╚═══════════════════════════════╝\n" + ConsoleColors.RESET);
 
         java.util.List<Paciente> lista = pacienteDB.listarTodos();
 
-        // Sincroniza o administrador com os pacientes existentes no DB (não remove, apenas adiciona ausentes)
         for (Paciente p : lista) {
             boolean presente = admin.getPacientes().stream()
                     .anyMatch(ap -> ap.getNumeroCarteirinha().equals(p.getNumeroCarteirinha()));
-            if (!presente) {
-                admin.criarPaciente(p);
-            }
+            if (!presente) admin.criarPaciente(p);
         }
 
         if (lista.isEmpty()) {
-            System.out.println("Nenhum paciente cadastrado.");
+            System.out.println(ConsoleColors.YELLOW + "⚠ Nenhum paciente cadastrado." + ConsoleColors.RESET);
             return;
         }
 
-        System.out.println("\n--- Lista de Pacientes (do banco em memória) ---");
+        System.out.println(ConsoleColors.BLUE + "\n--- Lista de Pacientes ---" + ConsoleColors.RESET);
         for (Paciente p : lista) {
-            System.out.println(p);
+            System.out.println(ConsoleColors.WHITE + p + ConsoleColors.RESET);
         }
     }
 
@@ -142,19 +140,23 @@ public class AdminPacienteView {
     // ===============================================================
     private void bloquearPaciente(Administrador admin) {
 
-        System.out.println("╔══════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔══════════════════════════════╗");
         System.out.println("║       🔒 BLOQUEAR PACIENTE    ║");
-        System.out.println("╚══════════════════════════════╝\n");
+        System.out.println("╚══════════════════════════════╝\n" + ConsoleColors.RESET);
 
-        System.out.print("Informe o número da carteirinha: ");
+        System.out.print(ConsoleColors.YELLOW + "Informe o número da carteirinha: " + ConsoleColors.RESET);
         String codigo = scanner.nextLine();
 
-        // Tenta bloquear no DB primeiro e também no administrador (se existir)
         boolean dbBlock = pacienteDB.buscarCarteirinha(codigo) != null;
         if (dbBlock) {
-            // marca no objeto do DB
-            pacienteDB.buscarCarteirinha(codigo).setStatus(br.com.sistemaPlanoSaude.model.enums.StatusPaciente.BLOQUEADO);
+            pacienteDB.buscarCarteirinha(codigo)
+                    .setStatus(br.com.sistemaPlanoSaude.model.enums.StatusPaciente.BLOQUEADO);
+
+            System.out.println(ConsoleColors.GREEN + "✔ Paciente bloqueado!" + ConsoleColors.RESET);
+        } else {
+            System.out.println(ConsoleColors.RED + "❌ Paciente não encontrado no banco." + ConsoleColors.RESET);
         }
+
         admin.bloquearPaciente(codigo);
     }
 
@@ -163,17 +165,23 @@ public class AdminPacienteView {
     // ===============================================================
     private void desbloquearPaciente(Administrador admin) {
 
-        System.out.println("╔════════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔════════════════════════════════╗");
         System.out.println("║      🔓 DESBLOQUEAR PACIENTE    ║");
-        System.out.println("╚════════════════════════════════╝\n");
+        System.out.println("╚════════════════════════════════╝\n" + ConsoleColors.RESET);
 
-        System.out.print("Informe o número da carteirinha: ");
+        System.out.print(ConsoleColors.YELLOW + "Informe o número da carteirinha: " + ConsoleColors.RESET);
         String codigo = scanner.nextLine();
 
         boolean dbFound = pacienteDB.buscarCarteirinha(codigo) != null;
         if (dbFound) {
-            pacienteDB.buscarCarteirinha(codigo).setStatus(br.com.sistemaPlanoSaude.model.enums.StatusPaciente.ATIVO);
+            pacienteDB.buscarCarteirinha(codigo)
+                    .setStatus(br.com.sistemaPlanoSaude.model.enums.StatusPaciente.ATIVO);
+
+            System.out.println(ConsoleColors.GREEN + "✔ Paciente desbloqueado!" + ConsoleColors.RESET);
+        } else {
+            System.out.println(ConsoleColors.RED + "❌ Paciente não encontrado." + ConsoleColors.RESET);
         }
+
         admin.desbloquearPaciente(codigo);
     }
 
@@ -182,17 +190,17 @@ public class AdminPacienteView {
     // ===============================================================
     private void alterarPermissoesPaciente(Administrador admin) {
 
-        System.out.println("╔══════════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔══════════════════════════════════╗");
         System.out.println("║      🛂  ALTERAR PERMISSÕES       ║");
-        System.out.println("╚══════════════════════════════════╝\n");
+        System.out.println("╚══════════════════════════════════╝\n" + ConsoleColors.RESET);
 
-        System.out.print("Número da carteirinha: ");
+        System.out.print(ConsoleColors.YELLOW + "Número da carteirinha: " + ConsoleColors.RESET);
         String codigo = scanner.nextLine();
 
         System.out.println("\nEscolha o novo nível de acesso:");
         System.out.println("  [1] PACIENTE");
         System.out.println("  [2] ADMINISTRADOR");
-        System.out.print("👉 Sua escolha: ");
+        System.out.print(ConsoleColors.YELLOW + "👉 Sua escolha: " + ConsoleColors.RESET);
 
         NivelAcesso nivel = null;
 
@@ -201,16 +209,16 @@ public class AdminPacienteView {
             switch (escolha) {
                 case "1" -> nivel = NivelAcesso.PACIENTE;
                 case "2" -> nivel = NivelAcesso.ADMINISTRADOR;
-                default -> System.out.print("Opção inválida. Digite 1 ou 2: ");
+                default -> System.out.print(ConsoleColors.RED + "Opção inválida. Digite 1 ou 2: " + ConsoleColors.RESET);
             }
         }
 
-        // altera tanto no administrador quanto no DB (se existir)
         Paciente p = pacienteDB.buscarCarteirinha(codigo);
-        if (p != null) {
-            p.setNivelAcesso(nivel);
-        }
+        if (p != null) p.setNivelAcesso(nivel);
+
         admin.alterarPermissoes(codigo, nivel);
+
+        System.out.println(ConsoleColors.GREEN + "\n✔ Permissões atualizadas!" + ConsoleColors.RESET);
     }
 
     // ===============================================================
@@ -218,19 +226,21 @@ public class AdminPacienteView {
     // ===============================================================
     private void resetarSenha(Administrador admin) {
 
-        System.out.println("╔════════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔════════════════════════════════╗");
         System.out.println("║        🔁 RESETAR SENHA         ║");
-        System.out.println("╚════════════════════════════════╝\n");
+        System.out.println("╚════════════════════════════════╝\n" + ConsoleColors.RESET);
 
-        System.out.print("Número da carteirinha: ");
+        System.out.print(ConsoleColors.YELLOW + "Número da carteirinha: " + ConsoleColors.RESET);
         String codigo = scanner.nextLine();
 
-        // Reset simulado no admin e no DB (se aplicável)
         Paciente p = pacienteDB.buscarCarteirinha(codigo);
         if (p != null) {
-            // Não há setSenhaHash em Paciente, apenas informar que foi resetado no DB simuladamente
-            System.out.println("Senha resetada (simulada) no DB para a carteirinha: " + codigo);
+            System.out.println(ConsoleColors.GREEN +
+                    "✔ Senha resetada (simulação no DB)." + ConsoleColors.RESET);
+        } else {
+            System.out.println(ConsoleColors.RED + "❌ Paciente não encontrado." + ConsoleColors.RESET);
         }
+
         admin.resetarSenhaPaciente(codigo);
     }
 
@@ -239,45 +249,38 @@ public class AdminPacienteView {
     // ===============================================================
     private void buscarPaciente(Administrador admin) {
 
-        System.out.println("╔════════════════════════════════════════╗");
+        System.out.println(ConsoleColors.CYAN + "╔════════════════════════════════════════╗");
         System.out.println("║     🔎 CONSULTAR PACIENTE POR CARTEIRINHA ║");
-        System.out.println("╚════════════════════════════════════════╝\n");
+        System.out.println("╚════════════════════════════════════════╝\n" + ConsoleColors.RESET);
 
-        System.out.print("Informe o número da carteirinha: ");
+        System.out.print(ConsoleColors.YELLOW + "Informe o número da carteirinha: " + ConsoleColors.RESET);
         String codigo = scanner.nextLine();
 
         Paciente encontrado = pacienteDB.buscarCarteirinha(codigo);
 
         if (encontrado == null) {
-            System.out.println("❌ Paciente não encontrado no banco de dados.");
+            System.out.println(ConsoleColors.RED + "❌ Paciente não encontrado." + ConsoleColors.RESET);
             return;
         }
 
-        // garante que o administrador possua referência ao paciente em memória
         boolean presente = admin.getPacientes().stream()
                 .anyMatch(ap -> ap.getNumeroCarteirinha().equals(encontrado.getNumeroCarteirinha()));
-        if (!presente) {
-            admin.criarPaciente(encontrado);
-        }
+        if (!presente) admin.criarPaciente(encontrado);
 
-        System.out.println("\n📄 **Dados do Paciente:**\n");
+        System.out.println(ConsoleColors.BLUE + "\n📄 Dados do Paciente:\n" + ConsoleColors.RESET);
         encontrado.exibirInfo();
     }
 
     // ===============================================================
     // UTILITÁRIOS
     // ===============================================================
-    private void limparTela() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
 
     private int lerInteiro() {
         while (true) {
             try {
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (Exception e) {
-                System.out.print("Digite um número válido: ");
+                System.out.print(ConsoleColors.RED + "Digite um número válido: " + ConsoleColors.RESET);
             }
         }
     }
