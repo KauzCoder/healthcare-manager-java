@@ -78,57 +78,10 @@ public class Consulta {
         return paciente != null ? paciente.getNumeroCarteirinha() : null;
     }
 
-    // Métodos
-    public void cancelarConsultaStatus() {
-        if (this.status == ConsultaStatus.CANCELADA) {
-            System.out.println("A consulta já está cancelada!");
-            return;
-        }
-        this.status = ConsultaStatus.CANCELADA;
-        System.out.println("Consulta cancelada com sucesso.");
-        liberarHorario();
-        System.out.println("Horário liberado.");
-    }
-
-    public void realizarConsultaStatus() {
-        if (this.status == ConsultaStatus.REALIZADA) {
-            System.out.println("A consulta já foi realizada!");
-            return;
-        }
-        this.status = ConsultaStatus.REALIZADA;
-        System.out.println("Consulta marcada como realizada.");
-    }
-    
     public void registrarAnotacao(String texto) {
         this.anotacoes = texto;
     }
 
-    // Retorna se o horário associado a esta consulta está disponível.
-    public boolean isHorarioDisponivel() {
-        return this.horario != null && this.horario.isDisponibilidade();
-    }
-
-    //Reserva o horário associado a esta consulta (marca como indisponível e vincula o paciente ao horário). 
-    // Lança IllegalArgumentException se o horário for nulo ou já estiver ocupado.
-    public void reservarHorario() {
-        if (this.horario == null) {
-            throw new IllegalStateException("Nenhum horário associado à consulta.");
-        }
-        if (!this.horario.isDisponibilidade()) {
-            throw new IllegalStateException("Horário já está reservado.");
-        }
-        this.horario.setDisponibilidade(false);
-        this.horario.setPaciente(this.paciente);
-    }
-
-    //Libera o horário associado a esta consulta (marca como disponível 
-    // e desvincula o paciente). Se não houver horário, não faz nada.
-    public void liberarHorario() {
-        if (this.horario == null) return;
-        this.horario.setDisponibilidade(true);
-        this.horario.setPaciente(null);
-    }
-    
     private static int gerarIdAleatorio() {
         return (int) (Math.random() * 900000) + 100000; 
     }
